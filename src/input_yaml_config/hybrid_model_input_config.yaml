@@ -1,0 +1,8 @@
+hybrid_model_args:
+    batch_size: 128
+    num_workers: 0
+    nb_epochs: 100
+    num_classes: 2
+    learning_rate: 0.001
+    hidden_layer_dim: 384
+    top_k: 10
