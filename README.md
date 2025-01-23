@@ -7,15 +7,21 @@ The application is composed of 3 modules.
 3. Hybrid Link Prediction using Semantic and Graph Embeddings
 
 
-To run the application.
+## Requirements should be installed before executing the application.
 
-`$bash launch.sh`
+`pip install -r link-prediction-local/requirements.txt`
 
-Parameters and Hyperparameters for training the algorithmes are defined in Yaml files as input config files.
+## Parameters and Hyperparameters for training the algorithms are defined in Yaml files as input config files.
 
 `link-prediction-local/src/input_yaml_config/load_data_input_config.yaml`
 
 `link-prediction-local/src/input_yaml_config/graph_model_input_config.yaml`
 
 `link-prediction-local/src/input_yaml_config/hybrid_model_input_config.yaml`
+
+## To run the application.
+
+`$bash launch.sh`
+
+
 
