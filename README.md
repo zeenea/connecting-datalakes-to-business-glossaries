@@ -21,7 +21,7 @@ The application is composed of 3 modules.
 
 ## To run the application.
 
-`$bash launch.sh`
+`$bash link-prediction-local/src/launch.sh`
 
 
 
