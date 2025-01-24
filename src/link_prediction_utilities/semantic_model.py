@@ -130,8 +130,8 @@ def main(args):
     object_to_predict = args.object_to_predict
     random_state_index = args.random_state_index
     parameters = {
-        'top_k':args.top_k,
-        'nb_epochs':0}
+        "top_k":args.top_k,
+        "nb_epochs":0}
     
     
 
@@ -171,7 +171,7 @@ def main(args):
             test_pos_col_edge_index, 
             col_sem_embeddings,
             be_sem_embeddings,
-            k=parameters['top_k'],
+            k=parameters["top_k"],
             device=device
             )
     else:
@@ -181,7 +181,7 @@ def main(args):
             test_pos_ds_edge_index, 
             ds_sem_embeddings,
             be_sem_embeddings,
-            k=parameters['top_k'],
+            k=parameters["top_k"],
             device=device
             )
         
@@ -192,11 +192,11 @@ def main(args):
     
     metric_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/semantic-model"
     metrics = {
-        'MRR': f'{mrr:.4f}',
-        'Hit@10': f'{hit_at_10:.4f}',
-        'epochs': parameters['nb_epochs'],
-        'random_state':random_state,
-        'dataset_name':dataset_name
+        "MRR": round(mrr, 4),
+        "Hit@10": round(hit_at_10, 4),
+        "epochs": parameters["nb_epochs"],
+        "random_state":random_state,
+        "dataset_name": str(dataset_name)
     }
 
     save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)

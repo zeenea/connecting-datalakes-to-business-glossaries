@@ -1,27 +1,45 @@
 import pandas as pd
 import json
 import os
+import ast
 
 if __name__ == '__main__':
 
     metrics_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics"
 
-    model_dirs = [dir for dir in os.listdir(metrics_path) if not os.path.isfile(dir) ]
+    model_dirs = [dir for dir in os.listdir(metrics_path) if not os.path.isfile(dir) and '.' not in dir ]
 
     metrics_df = pd.DataFrame(columns=['model', 'dataset_name', 'nb_epochs', 'random_state', 'mrr', 'hit@10'])
+    print(f"models_dir: {model_dirs}")
 
+    all_metrics_df = pd.DataFrame()
+    
     for model_name in model_dirs:
+        print(f"model name: {model_name}")
+        
+        for metric_file in os.listdir(f"{metrics_path}/{model_name}"):
+            
+            if os.path.isfile(f"{metrics_path}/{model_name}/{metric_file}"):
+                print(f"metric_file: {metric_file}")
+                
+                with open(f"{metrics_path}/{model_name}/{metric_file}", 'r') as f:
+                    dict_str = f.read()
+                    metric_dict_df = ast.literal_eval(dict_str)
+                    metric_dict_df['model'] = model_name
 
-        row_dict = {}
-        row_dict['model'] = model_name
+                    all_metrics_df = pd.concat([all_metrics_df, pd.DataFrame(metric_dict_df, index=[0])], axis=0)
+                    all_metrics_df = all_metrics_df.reset_index(drop=True)
+                    
+        break
+        
+    print(all_metrics_df)
+    all_metrics_df.to_csv(f"/home/aknopuchea/link-prediction-experiments/hybrid-link-prediction/src/final_results/all_metrics_with_random_stats.csv")
 
-        for metric_file in os.listdir():
+    metrics_df = all_metrics_df.groupby(['model', 'dataset_name', 'nb_epochs']).agg({'mrr':'mean', 'hit@10':'mean'}).reset_index()
+    print(metrics_df)
+    
 
-            with open(f"{metrics_path}/{model_name}/metric_file", 'r') as f:
-                metric_tmp_dict_file = f.read()
-                metric_tmp_dict = json.load(metric_tmp_dict_file)
-
-        print(metric_tmp_dict)
+    
         
     
     

@@ -493,11 +493,11 @@ def main(args):
     
     metric_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/hybrid-model"
     metrics = {
-        'MRR': f'{mrr:.4f}',
-        'Hit@10': f'{hit_at_10:.4f}',
-        'epochs': parameters['nb_epochs'],
-        'random_state':random_state,
-        'dataset_name':dataset_name
+        "MRR": round(mrr, 4),
+        "Hit@10": round(hit_at_10, 4),
+        "epochs": parameters["nb_epochs"],
+        "random_state":random_state,
+        "dataset_name": str(dataset_name)
     }
     
     save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
