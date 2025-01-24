@@ -1,4 +1,4 @@
-from link_prediction_utilities import load_data, semantic_model, graph_model, hybrid_model
+from link_prediction_utilities import load_data, semantic_model, graph_model, hybrid_model, hybrid_similarity_model
 import argparse
 import yaml
 import logging
@@ -76,6 +76,27 @@ def starts_hybrid_model():
     hybrid_model_args, _ = hybrid_model_parser.parse_known_args()
     hybrid_model.main(hybrid_model_args)
 
+def starts_hybrid_sim_model():
+    hybrid_sim_model_yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/hybrid_similarity_model_input_config.yaml"
+    hybrid_sim_model_yaml = load_yaml(hybrid_sim_model_yaml_file_path)
+    hybrid_sim_model_yaml_args = hybrid_sim_model_yaml.get("hybrid_similarity_model_args", {})
+
+    hybrid_sim_model_parser = argparse.ArgumentParser("Hybrid Similarity Model Parser")
+    hybrid_sim_model_parser.add_argument('--dataset_name', type=str)
+    hybrid_sim_model_parser.add_argument('--object_to_predict', type=str)
+    hybrid_sim_model_parser.add_argument('--random_state_index', type=int)
+    hybrid_sim_model_parser.add_argument('--batch_size', type=int, default=hybrid_sim_model_yaml_args.get('batch_size'))
+    hybrid_sim_model_parser.add_argument('--num_workers', type=int, default=hybrid_sim_model_yaml_args.get('num_workers'))
+    hybrid_sim_model_parser.add_argument('--nb_epochs', type=int, default=hybrid_sim_model_yaml_args.get('nb_epochs'))
+    hybrid_sim_model_parser.add_argument('--num_classes', type=int, default=hybrid_sim_model_yaml_args.get('num_classes'))
+    hybrid_sim_model_parser.add_argument('--learning_rate', type=float, default=hybrid_sim_model_yaml_args.get('learning_rate'))
+    hybrid_sim_model_parser.add_argument('--hidden_layer_dim', type=int, default=hybrid_sim_model_yaml_args.get('hidden_layer_dim'))
+    hybrid_sim_model_parser.add_argument('--top_k', type=int, default=hybrid_sim_model_yaml_args.get('top_k'))
+
+
+    hybrid_sim_model_parser_args, _ = hybrid_sim_model_parser.parse_known_args()
+    hybrid_similarity_model.main(hybrid_sim_model_parser_args)
+
 
 if __name__ == "__main__":
 
@@ -90,6 +111,8 @@ if __name__ == "__main__":
     choice_module_parser.add_argument('--enable_semantic_model', type=bool, default=False)
     choice_module_parser.add_argument('--enable_graph_model', type=bool, default=False)
     choice_module_parser.add_argument('--enable_hybrid_model', type=bool, default=False)
+    choice_module_parser.add_argument('--enable_hybrid_sim_model', type=bool, default=False)
+    
     choice_module_parser_args, _ = choice_module_parser.parse_known_args()
     
     logger.info("--------------------- Starts load_data.py Module ---------------------------------")
@@ -114,6 +137,15 @@ if __name__ == "__main__":
             logger.info("----------------------- Starts hybrid_model.py Module ----------------------------")
             starts_hybrid_model()
     
-
+    if choice_module_parser_args.enable_hybrid_sim_model:
+        if choice_module_parser_args.enable_graph_model:
+            logger.info("----------------------- Starts hybrid_sim_model.py Module ----------------------------")
+            starts_hybrid_sim_model()
+        else:
+            logger.info("--------------------- Starts graph_model.py Module -------------------------------")
+            starts_graph_model()
+            
+            logger.info("----------------------- Starts hybrid_sim_model.py Module ----------------------------")
+            starts_hybrid_sim_model()
 
 

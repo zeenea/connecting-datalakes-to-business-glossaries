@@ -359,6 +359,8 @@ def test_mrr_hits_k(col_embeddings, ds_embeddings, be_embeddings, source_object,
 
             embeddings1 = z[source_object][src_to_entities_edge_index[0]]
             embeddings2 = z['business_entity'][src_to_entities_edge_index[1]]
+
+            # cosine similarity 
             edge_scores = hetero_model.decode(embeddings1, embeddings2)
             
             # Rank the scores (higher is better), and get the rank of the true edge
@@ -376,8 +378,6 @@ def test_mrr_hits_k(col_embeddings, ds_embeddings, be_embeddings, source_object,
                 hits_at_k.append(1.0)  # 1 means hit
             else:
                 hits_at_k.append(0.0)  # 0 means miss
-
-        
 
         # Compute average MRR and Hit@K across all test edges
         mrr = torch.tensor(mrrs).mean().item()
