@@ -558,6 +558,15 @@ def load_turl_cta_artifacts(train_on, random_state, stemmer, stop_words, model):
     return train_col_alignments, test_col_alignments, train_ds_alignments, test_ds_alignments, business_glossary_items, ds_to_col, be_to_be, col_embeddings, ds_embeddings, be_embeddings
 
 
+def save_model(model, models_dir_path, trained_on_dataset, trained_for_epochs, model_name, random_state):
+        model_dir = f"{models_dir_path}/trained_on={trained_on_dataset}/random_state={random_state}/epochs={trained_for_epochs}"
+        
+        if os.path.exists(model_dir):
+            torch.save(model.state_dict(), f"{model_dir}/{model_name}.pt")
+        else:
+            os.makedirs(model_dir)
+            torch.save(model.state_dict(), f"{model_dir}/{model_name}.pt")
+            
 
 def main(args):
     """ load data and store it in the system
@@ -596,7 +605,8 @@ def main(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     logger.info("Load model")
-    model = SentenceTransformer('all-MiniLM-L6-v2').to(device)
+    model_name = 'all-MiniLM-L6-v2'
+    model = SentenceTransformer(model_name).to(device)
 
     logger.info("Load Data Artefacts")
     if dataset_name == 't2dv2':
@@ -657,3 +667,9 @@ def main(args):
     store_dataframe(business_glossary_items, "business_glossary_items.parquet", dataset_name, random_state)
     store_dataframe(ds_to_col, "ds_to_col.parquet", dataset_name, random_state)
     store_dataframe(be_to_be, "be_to_be.parquet", dataset_name, random_state)
+
+    logger.info("Save semantic Model")
+    models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
+    
+    save_model(model, models_dir_path, dataset_name, 0, model_name, random_state)
+
