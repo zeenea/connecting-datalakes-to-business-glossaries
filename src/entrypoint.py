@@ -100,9 +100,9 @@ def starts_hybrid_sim_model():
 
 def are_embeddings_generated(dataset_name, model_name, random_state_index):
     
-    random_state = [42, 84, 13][choice_module_parser_args.random_state_index]
+    random_state = [42, 84, 13][random_state_index]
 
-    embedding_path = f"/home/aknouchea/embeddingslink-prediction-experiments/hybrid-link-prediction/gold_data/embeddings/dataset_name={dataset_name}/model_type={model_name}/random_state={random_state}"
+    embedding_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings/dataset_name={dataset_name}/model_type={model_name}/random_state={random_state}"
 
     return os.path.exists(embedding_path)
         
