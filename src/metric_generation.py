@@ -27,6 +27,11 @@ if __name__ == '__main__':
                     metric_dict_df = ast.literal_eval(dict_str)
                     metric_dict_df['model'] = model_name
 
+                    if "column" in metric_file:
+                        metric_dict_df['object_to_predict'] = 'column'
+                    else:
+                        metric_dict_df['object_to_predict'] = 'dataset'
+
                     all_metrics_df = pd.concat([all_metrics_df, pd.DataFrame(metric_dict_df, index=[0])], axis=0)
                     all_metrics_df = all_metrics_df.reset_index(drop=True)
                     
@@ -36,8 +41,8 @@ if __name__ == '__main__':
     all_metrics_df.to_csv(f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/final_results/model_metrics_with_random_stats.csv")
     all_metrics_df['MRR'] = all_metrics_df['MRR'].astype(float)
     all_metrics_df['Hit@10'] = all_metrics_df['Hit@10'].astype(float)
-    metrics_df = all_metrics_df.groupby(['model', 'dataset_name', 'epochs']).agg({'MRR':'mean', 'Hit@10':'mean'}).reset_index()
-    
+    metrics_df = all_metrics_df.groupby(['dataset_name', 'object_to_predict', 'model', 'epochs']).agg({'MRR':['mean', 'std'], 'Hit@10':['mean', 'std']}).reset_index()
+    metrics_df.columns = ['dataset_name', 'object_to_predict', 'model', 'epochs', 'MRR-mean', 'MRR-std', 'Hit@10-mean', 'Hit@10-std']
     print(metrics_df)
     metrics_df.to_csv(f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/final_results/model_metrics.csv")
 
