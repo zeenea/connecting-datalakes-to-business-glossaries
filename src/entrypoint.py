@@ -2,7 +2,7 @@ from link_prediction_utilities import load_data, semantic_model, graph_model, hy
 import argparse
 import yaml
 import logging
-
+import os
 
 def load_yaml(file_path):
     with open(file_path, 'r') as file:
@@ -98,6 +98,15 @@ def starts_hybrid_sim_model():
     hybrid_similarity_model.main(hybrid_sim_model_parser_args)
 
 
+def are_embeddings_generated(dataset_name, model_name, random_state_index):
+    
+    random_state = [42, 84, 13][choice_module_parser_args.random_state_index]
+
+    embedding_path = f"/home/aknouchea/embeddingslink-prediction-experiments/hybrid-link-prediction/gold_data/embeddings/dataset_name={dataset_name}/model_type={model_name}/random_state={random_state}"
+
+    return os.path.exists(embedding_path)
+        
+
 if __name__ == "__main__":
 
     logger = logging.getLogger(__name__)
@@ -112,9 +121,11 @@ if __name__ == "__main__":
     choice_module_parser.add_argument('--enable_graph_model', type=bool, default=False)
     choice_module_parser.add_argument('--enable_hybrid_model', type=bool, default=False)
     choice_module_parser.add_argument('--enable_hybrid_sim_model', type=bool, default=False)
+    choice_module_parser.add_argument('--dataset_name', type=str)
+    choice_module_parser.add_argument('--random_state_index', type=int)
     
     choice_module_parser_args, _ = choice_module_parser.parse_known_args()
-    
+
     logger.info("--------------------- Starts load_data.py Module ---------------------------------")
     starts_load_data()
 
@@ -127,7 +138,7 @@ if __name__ == "__main__":
         starts_graph_model()
 
     if choice_module_parser_args.enable_hybrid_model:
-        if choice_module_parser_args.enable_graph_model:
+        if choice_module_parser_args.enable_graph_model or (are_embeddings_generated(dataset_name, 'graph-based', random_state_index ) and are_embeddings_generated(dataset_name, 'semantic-based', random_state_index)):
             logger.info("----------------------- Starts hybrid_model.py Module ----------------------------")
             starts_hybrid_model()
         else:
@@ -138,7 +149,7 @@ if __name__ == "__main__":
             starts_hybrid_model()
     
     if choice_module_parser_args.enable_hybrid_sim_model:
-        if choice_module_parser_args.enable_graph_model:
+        if choice_module_parser_args.enable_graph_model or (are_embeddings_generated(dataset_name, 'graph-based', random_state_index ) and are_embeddings_generated(dataset_name, 'semantic-based', random_state_index)):
             logger.info("----------------------- Starts hybrid_sim_model.py Module ----------------------------")
             starts_hybrid_sim_model()
         else:

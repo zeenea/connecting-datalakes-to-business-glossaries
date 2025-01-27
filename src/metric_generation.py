@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     model_dirs = [dir for dir in os.listdir(metrics_path) if not os.path.isfile(dir) and '.' not in dir ]
 
-    metrics_df = pd.DataFrame(columns=['model', 'dataset_name', 'nb_epochs', 'random_state', 'mrr', 'hit@10'])
+    #metrics_df = pd.DataFrame(columns=['model', 'dataset_name', 'nb_epochs', 'random_state', 'mrr', 'hit@10'])
     print(f"models_dir: {model_dirs}")
 
     all_metrics_df = pd.DataFrame()
@@ -30,13 +30,17 @@ if __name__ == '__main__':
                     all_metrics_df = pd.concat([all_metrics_df, pd.DataFrame(metric_dict_df, index=[0])], axis=0)
                     all_metrics_df = all_metrics_df.reset_index(drop=True)
                     
-        break
         
     print(all_metrics_df)
-    all_metrics_df.to_csv(f"/home/aknopuchea/link-prediction-experiments/hybrid-link-prediction/src/final_results/all_metrics_with_random_stats.csv")
-
-    metrics_df = all_metrics_df.groupby(['model', 'dataset_name', 'nb_epochs']).agg({'mrr':'mean', 'hit@10':'mean'}).reset_index()
+    print
+    all_metrics_df.to_csv(f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/final_results/model_metrics_with_random_stats.csv")
+    all_metrics_df['MRR'] = all_metrics_df['MRR'].astype(float)
+    all_metrics_df['Hit@10'] = all_metrics_df['Hit@10'].astype(float)
+    metrics_df = all_metrics_df.groupby(['model', 'dataset_name', 'epochs']).agg({'MRR':'mean', 'Hit@10':'mean'}).reset_index()
+    
     print(metrics_df)
+    metrics_df.to_csv(f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/final_results/model_metrics.csv")
+
     
 
     
