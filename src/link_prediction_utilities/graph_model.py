@@ -612,9 +612,9 @@ def main(args):
         options['be_to_be_pos_edge_index'] = None
 
     options['device'] = device
-
+    
     logger.info("Training - Train Loss - Test Loss - Test AUC")
-
+    
     for epoch in range(0, max_epochs):
             
         train_loss, train_pos_edge_index = train(hetero_model, optimizer, object_to_predict, hetero_dataset, train_pos_col_edge_index, train_neg_col_edge_index, train_pos_ds_edge_index, train_neg_ds_edge_index, **options)
@@ -675,7 +675,7 @@ def main(args):
     save_torch_tensor(col_graph_embeddings, graph_embeddings_dir_path, 'col_embeddings.pt')
     save_torch_tensor(ds_graph_embeddings, graph_embeddings_dir_path, 'ds_embeddings.pt')
     save_torch_tensor(be_graph_embeddings, graph_embeddings_dir_path, 'be_embeddings.pt')
-
+    
     logger.info("Save edge indexes")
     edge_indexes_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/edge_indexes/dataset_name={dataset_name}/object_to_predict={object_to_predict}/random_state={random_state}"
 

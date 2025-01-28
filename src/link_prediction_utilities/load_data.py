@@ -8,6 +8,7 @@ from nltk.tokenize import word_tokenize
 from sentence_transformers import SentenceTransformer
 import logging
 import string
+from collections import Counter
 
 def load_business_glossary(business_glossary_path, dataset_name=None):
 
@@ -184,7 +185,6 @@ def load_t2dv2_artifacts(neg_strategy, random_state, stemmer, stop_words, model)
 
     be_to_be = pd.merge(be_source_tmp[['be_id', 'domain']], be_target_tmp[['be_id', 'uri']].rename(columns={'be_id':'dm_id'}), left_on='domain', right_on='uri', how='inner')
 
-    #be_to_be = pd.merge(business_glossary_items[['be_id','uri']], business_glossary_items[['be_id','domain']], left_on='uri', right_on='domain', how='left')
     be_to_be = be_to_be[['be_id', 'dm_id']]
     be_to_be = be_to_be[be_to_be['dm_id'].notnull()]
     be_to_be = be_to_be.reset_index(drop=True)
@@ -193,20 +193,22 @@ def load_t2dv2_artifacts(neg_strategy, random_state, stemmer, stop_words, model)
     train_alignments = pd.merge(train_alignments, business_glossary_items[['be_id', 'uri']], left_on='target_uri', right_on='uri', how='inner')
     test_alignments = pd.merge(test_alignments, business_glossary_items[['be_id', 'uri']], left_on='target_uri', right_on='uri', how='inner')
 
-    #ds_to_be = pd.merge(dataset_alignments[dataset_alignments['ds_id'].isin(ds_to_obj['ds_id'])], business_glossary_items, left_on='target_uri', right_on='uri', how='left')
-    #ds_to_be = ds_to_be[['ds_id', 'be_id']]
-    #ds_to_be = ds_to_be[ds_to_be['be_id'].notnull()]
-    #ds_to_be = ds_to_be.reset_index(drop=True)
-    #ds_to_be['be_id'] = ds_to_be['be_id'].astype(int) 
-
-    #dataset_alignments = pd.merge(dataset_alignments[dataset_alignments['ds_id'].isin(ds_to_obj['ds_id'])], business_glossary_items, left_on='target_uri', right_on='uri', how='left')
     train_ds_alignments = pd.merge(dataset_alignments, business_glossary_items, left_on='target_uri', right_on='uri', how='left')
     test_ds_alignments = pd.DataFrame()
 
+    train_ds_alignments = train_ds_alignments.rename(columns={'table_file':'table_name'})
+
+    business_glossary_items = business_glossary_items.rename(columns={'label':'be_name'})
+    dataset_alignments = dataset_alignments.rename(columns={'table_file':'table_name'})
+    
+    
 
     obj_embeddings = encode_semantic_textual_data(pos_obj_alignments['column_name'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
-    be_embeddings = encode_semantic_textual_data(business_glossary_items['label'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
-    ds_embeddings = encode_semantic_textual_data(dataset_alignments['table_file'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
+    #be_embeddings = encode_semantic_textual_data(business_glossary_items['label'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
+    be_embeddings = encode_semantic_textual_data(business_glossary_items['be_name'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
+    
+    #ds_embeddings = encode_semantic_textual_data(dataset_alignments['table_file'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
+    ds_embeddings = encode_semantic_textual_data(dataset_alignments['table_name'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
 
     
     return train_alignments, test_alignments, train_ds_alignments, test_ds_alignments, business_glossary_items, ds_to_obj, be_to_be, obj_embeddings, ds_embeddings, be_embeddings
@@ -293,11 +295,16 @@ def load_zeenea_open_ds_artifacts(train_on, random_state, stemmer, stop_words, m
     ds_to_col = pd.merge(ds_to_col, pos_ds_alignments[['ds_id', 'dataset_code']], left_on='dataset_name', right_on='dataset_code', how='inner')
     ds_to_col = ds_to_col[['ds_id', 'col_id']]
     ds_to_col = ds_to_col.reset_index(drop=True)
+
+    business_glossary_items = business_glossary_items.rename(columns={'name':'be_name'})
+    pos_ds_alignments = pos_ds_alignments.rename(columns={'dataset_code':'table_name'})
     
 
     col_embeddings = encode_semantic_textual_data(pos_col_alignments['column_name'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
-    be_embeddings = encode_semantic_textual_data(business_glossary_items['name'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
-    ds_embeddings = encode_semantic_textual_data(pos_ds_alignments['dataset_code'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
+    #be_embeddings = encode_semantic_textual_data(business_glossary_items['name'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
+    be_embeddings = encode_semantic_textual_data(business_glossary_items['be_name'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
+    #ds_embeddings = encode_semantic_textual_data(pos_ds_alignments['dataset_code'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
+    ds_embeddings = encode_semantic_textual_data(pos_ds_alignments['table_name'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
 
     # split test and train for dataset alignments
     neg_ds_alignments_path = f"/home/aknouchea/link-prediction-experiments/data/zeenea-open-ds/negative-alignments/random_neg_dataset_alignments.csv"
@@ -544,16 +551,21 @@ def load_turl_cta_artifacts(train_on, random_state, stemmer, stop_words, model):
     ds_to_col = ds_to_col[['ds_id', 'col_id']]
     ds_to_col = ds_to_col.reset_index(drop=True)
 
+    business_glossary_items = business_glossary_items.rename(columns={'business_entity_name':'be_name'})
+    pos_ds_alignments = pos_ds_alignments.rename(columns={'table_title':'table_name'})
+    train_ds_alignments = train_ds_alignments.rename(columns={'table_title':'table_name'})
+
 
     col_embeddings = encode_semantic_textual_data(pos_col_alignments['column_name'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
-    be_embeddings = encode_semantic_textual_data(business_glossary_items['business_entity_name'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
-    ds_embeddings = encode_semantic_textual_data(pos_ds_alignments['table_title'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
+    be_embeddings = encode_semantic_textual_data(business_glossary_items['be_name'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
+    ds_embeddings = encode_semantic_textual_data(pos_ds_alignments['table_name'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
     
     if train_on == 'column':
         test_ds_alignments = None
 
     if train_on == 'dataset':
         test_col_alignments = None
+        test_ds_alignments = test_ds_alignments.rename(columns={'table_title':'table_name'})
     
     return train_col_alignments, test_col_alignments, train_ds_alignments, test_ds_alignments, business_glossary_items, ds_to_col, be_to_be, col_embeddings, ds_embeddings, be_embeddings
 
@@ -568,6 +580,52 @@ def save_model(model, models_dir_path, trained_on_dataset, trained_for_epochs, m
             torch.save(model.state_dict(), f"{model_dir}/{model_name}.pt")
             
 
+def get_text_batches(file_path, object_name, batch_size=10000):
+    for chunk in pd.read_csv(file_path, chunksize=batch_size):
+        yield chunk[object_name].astype('str')
+
+
+
+def update_vocabulary(file_path, object_name, batch_size, vocabulary):
+        for batch in get_text_batches(file_path, object_name, batch_size):
+            for text in batch:
+                tokens = text.split()
+                vocabulary.update(tokens)
+        return vocabulary
+
+def get_embeddings(file_path, object_name, batch_size, vectorizer):
+        tfidf_matrices = []
+        for batch in get_text_batches(file_path, object_name, batch_size):
+            tfidf_matrix  = vectorizer.fit_transform(batch).toarray()
+            tfidf_matrices.append(tfidf_matrix)
+    
+        return np.concat(tfidf_matrices, axis=0)
+
+
+def generate_tfidf_embeddings(col_file_path, ds_file_path, be_file_path, batch_size):
+
+    vocabulary = Counter()
+
+    col_name = 'column_name'
+    ds_name = 'table_name'
+    be_name = 'be_name'
+    
+    vocabulary = update_vocabulary(col_file_path, col_name, batch_size, vocabulary)
+    vocabulary = update_vocabulary(ds_file_path, ds_name, batch_size, vocabulary)
+    vocabulary = update_vocabulary(be_file_path, be_name, batch_size, vocabulary)
+
+    unique_vocab = lis(vocabulary.keys())
+
+    vectorizer = TfidfVectorizer(vocabulary=unique_vocab, stop_words='english')
+
+    col_embeddings = get_embeddings(col_file_path, col_name, batch_size, vectorizer)
+    ds_embeddings = get_embeddings(ds_file_path, ds_name, batch_size, vectorizer)
+    be_embeddings = get_embeddings(be_file_path, be_name, batch_size, vectorizer)
+
+    return col_embeddings, ds_embeddings, be_embeddings
+    
+
+    
 def main(args):
     """ load data and store it in the system
     params:
@@ -591,6 +649,7 @@ def main(args):
     object_to_predict = args.object_to_predict
     random_state_index = args.random_state_index
     neg_strategy = args.neg_strategy
+    generate_syntactic_embeddings = args.generate_syntactic_embeddings
 
     logger.info(args)
     
@@ -672,4 +731,24 @@ def main(args):
     models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
     
     save_model(model, models_dir_path, dataset_name, 0, model_name, random_state)
+
+    if generate_syntactic_embeddings:
+        logger.info("Generate Syntactic Embeddings")
+        col_alignments = pd.concat([train_col_alignments, test_col_alignments], axis=0)
+        ds_alignments = pd.concat([train_ds_alignments, test_ds_alignments], axis=0)
+        
+        syntactic_embeddings = generate_tfidf_embeddings(
+            col_alignments,
+            ds_alignments,
+            business_glossary_items,
+            batch_size=1000
+        )
+        
+        col_syn_embeddings = syntactic_embeddings[0]
+        ds_syn_embeddings = syntactic_embeddings[1]
+        be_syn_embeddings = syntactic_embeddings[2]
+    
+        logger.info("Save Syntactic Embeddings")
+        store_embeddings(col_syn_embeddings, ds_syn_embeddings, be_syn_embeddings, dataset_name, 'syntactic-based', random_state)
+    
 

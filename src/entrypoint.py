@@ -1,4 +1,4 @@
-from link_prediction_utilities import load_data, semantic_model, graph_model, hybrid_model, hybrid_similarity_model
+from link_prediction_utilities import load_data, semantic_model, syntactic_model, random_model, graph_model, hybrid_model, hybrid_similarity_model
 import argparse
 import yaml
 import logging
@@ -19,9 +19,40 @@ def starts_load_data():
         load_data_parser.add_argument('--object_to_predict', type=str)
         load_data_parser.add_argument('--random_state_index', type=int)
         load_data_parser.add_argument('--neg_strategy', type=str, default=load_data_yaml_args.get('neg_strategy'))
+        load_data_parser.add_argument('--generate_syntactic_embeddings', action='store_true', default=False)
         
         load_data_args, _ = load_data_parser.parse_known_args()
         load_data.main(load_data_args)
+
+def starts_random_model():
+    random_model_yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/random_model_input_config.yaml"
+    random_model_yaml = load_yaml(random_model_yaml_file_path)
+    random_model_yaml_args = random_model_yaml.get("random_model_args", {})
+
+    random_model_parser = argparse.ArgumentParser("Random Model Parser")
+    random_model_parser.add_argument('--dataset_name', type=str)
+    random_model_parser.add_argument('--object_to_predict', type=str)
+    random_model_parser.add_argument('--random_state_index', type=int)
+    random_model_parser.add_argument('--top_k', type=int, default=random_model_yaml_args.get('top_k'))
+
+    random_model_parser_args, _ = random_model_parser.parse_known_args()
+    random_model.main(random_model_parser_args)
+
+def starts_syntactic_model():
+
+    syntactic_model_yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/syntactic_model_input_config.yaml"
+    syntactic_model_yaml = load_yaml(syntactic_model_yaml_file_path)
+    syntactic_model_yaml_args = syntactic_model_yaml.get("syntactic_model_args", {})
+
+    syntactic_model_parser = argparse.ArgumentParser("Syntactic Model Parser")
+    syntactic_model_parser.add_argument('--dataset_name', type=str)
+    syntactic_model_parser.add_argument('--object_to_predict', type=str)
+    syntactic_model_parser.add_argument('--random_state_index', type=int)
+    syntactic_model_parser.add_argument('--top_k', type=int, default=syntactic_model_yaml_args.get('top_k'))
+    syntactic_model_parser.add_argument('--nb_epochs', type=int, default=syntactic_model_yaml_args.get('nb_epochs'))
+    
+    syntactic_model_args, _ = syntactic_model_parser.parse_known_args()
+    syntactic_model.main(syntactic_model_args)
 
 def starts_semantic_model():
         semantic_model_yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/semantic_model_input_config.yaml"
@@ -117,6 +148,8 @@ if __name__ == "__main__":
 
     logger.info("--------------------- Link Prediction Model Selection ----------------------------")
     choice_module_parser = argparse.ArgumentParser("Choice Module Parser")
+    choice_module_parser.add_argument('--enable_random_model', action='store_true', default=False)
+    choice_module_parser.add_argument('--enable_syntactic_model', action='store_true', default=False)
     choice_module_parser.add_argument('--enable_semantic_model', action='store_true', default=False)
     choice_module_parser.add_argument('--enable_graph_model', action='store_true', default=False)
     choice_module_parser.add_argument('--enable_hybrid_model', action='store_true', default=False)
@@ -132,37 +165,45 @@ if __name__ == "__main__":
     logger.info(choice_module_parser_args)
     logger.info(unkown_args)
 
-    logger.info("--------------------- Starts load_data.py Module ---------------------------------")
+    logger.info("--------------------- Starts load_data.py Module -------------------------------------------")
     starts_load_data()
 
+    if choice_module_parser_args.enable_random_model:
+        logger.info("--------------------- Starts random_model.py Module ------------------------------------")
+        starts_random_model()
+
+    if choice_module_parser_args.enable_syntactic_model:
+        logger.info("--------------------- Starts syntactic_model.py Module ---------------------------------")
+        starts_syntactic_model()
+        
     if choice_module_parser_args.enable_semantic_model:
-        logger.info("--------------------- Starts semantic_model.py Module ----------------------------")
+        logger.info("--------------------- Starts semantic_model.py Module ----------------------------------")
         starts_semantic_model()
 
     if choice_module_parser_args.enable_graph_model:
-        logger.info("--------------------- Starts graph_model.py Module -------------------------------")
+        logger.info("--------------------- Starts graph_model.py Module -------------------------------------")
         starts_graph_model()
 
     if choice_module_parser_args.enable_hybrid_model:
         if choice_module_parser_args.enable_graph_model or (are_embeddings_generated(dataset_name, 'graph-based', random_state_index ) and are_embeddings_generated(dataset_name, 'semantic-based', random_state_index)):
-            logger.info("----------------------- Starts hybrid_model.py Module ----------------------------")
+            logger.info("----------------------- Starts hybrid_model.py Module ------------------------------")
             starts_hybrid_model()
         else:
-            logger.info("--------------------- Starts graph_model.py Module -------------------------------")
+            logger.info("--------------------- Starts graph_model.py Module ---------------------------------")
             starts_graph_model()
             
-            logger.info("----------------------- Starts hybrid_model.py Module ----------------------------")
+            logger.info("----------------------- Starts hybrid_model.py Module ------------------------------")
             starts_hybrid_model()
     
     if choice_module_parser_args.enable_hybrid_sim_model:
         if choice_module_parser_args.enable_graph_model or (are_embeddings_generated(dataset_name, 'graph-based', random_state_index ) and are_embeddings_generated(dataset_name, 'semantic-based', random_state_index)):
-            logger.info("----------------------- Starts hybrid_sim_model.py Module ----------------------------")
+            logger.info("----------------------- Starts hybrid_sim_model.py Module --------------------------")
             starts_hybrid_sim_model()
         else:
-            logger.info("--------------------- Starts graph_model.py Module -------------------------------")
+            logger.info("--------------------- Starts graph_model.py Module ---------------------------------")
             starts_graph_model()
             
-            logger.info("----------------------- Starts hybrid_sim_model.py Module ----------------------------")
+            logger.info("----------------------- Starts hybrid_sim_model.py Module --------------------------")
             starts_hybrid_sim_model()
 
 
