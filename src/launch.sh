@@ -14,11 +14,8 @@ conda activate myenv                # Activation de votre environnement python
 
 dataset_name='zeenea-open-ds'
 object_to_predict='column'
-enable_semantic_model=False
-enable_graph_model=False
-enable_hybrid_model=False
-enable_hybrid_sim_model=True
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0 --enable_semantic_model=$enable_semantic_model --enable_graph_model=$enable_graph_model --enable_hybrid_model=$enable_hybrid_model enable_hybrid_sim_model=$enable_hybrid_sim_model   # Prediciton de lien
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1 --enable_semantic_model=$enable_semantic_model --enable_graph_model=$enable_graph_model --enable_hybrid_model=$enable_hybrid_model enable_hybrid_sim_model=$enable_hybrid_sim_model   # Prediciton de lien
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=2 --enable_semantic_model=$enable_semantic_model --enable_graph_model=$enable_graph_model --enable_hybrid_model=$enable_hybrid_model enable_hybrid_sim_model=$enable_hybrid_sim_model  # Prediciton de lien
+
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0 --enable_graph_model --enable_hybrid_sim_model   # Prediciton de lien
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1 --enable_graph_model --enable_hybrid_sim_model   # Prediciton de lien
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=2 --enable_graph_model --enable_hybrid_sim_model  # Prediciton de lien

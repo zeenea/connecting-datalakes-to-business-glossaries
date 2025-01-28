@@ -362,7 +362,7 @@ def main(args):
     be_graph_embeddings = graph_embeddings[2]
 
     logger.info("Load Edge Indexes")
-    edge_indexes_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/edge_indexes/dataset_name={dataset_name}/random_state={random_state}"
+    edge_indexes_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/edge_indexes/dataset_name={dataset_name}/object_to_predict={object_to_predict}/random_state={random_state}"
     
     if object_to_predict == 'column':
         train_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_col_edge_index.pt')

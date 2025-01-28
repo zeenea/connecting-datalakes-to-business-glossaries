@@ -19,9 +19,9 @@ def load_embeddings(embeddings_dir_path, dataset_name, model_type, random_state)
             print(f'File not found: {file_path}')
 
 
-def load_processed_data(data_dir_path,dataset_name, random_state):
+def load_processed_data(data_dir_path, dataset_name, object_to_predict, random_state):
 
-    files_dir_path = f"{data_dir_path}/dataset_name={dataset_name}/random_state={random_state}"
+    files_dir_path = f"{data_dir_path}/dataset_name={dataset_name}/object_to_predict={object_to_predict}/random_state={random_state}"
 
     list_file_names = [
         'train_col_alignments.parquet',
@@ -149,7 +149,7 @@ def main(args):
         
     logger.info('Load processed data')
     data_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/raw_to_dataframes"
-    data_out = list(load_processed_data(data_dir_path, dataset_name, random_state))
+    data_out = list(load_processed_data(data_dir_path, dataset_name, object_to_predict, random_state))
     train_col_alignments = data_out[0]
     test_col_alignments = data_out[1]
     train_ds_alignments = data_out[2]

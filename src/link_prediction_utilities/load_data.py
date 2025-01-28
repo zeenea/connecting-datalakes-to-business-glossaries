@@ -76,9 +76,9 @@ def store_embeddings(col_embeddings, ds_embeddings, be_embeddings, dataset_name,
         obj = torch.from_numpy(obj)
         torch.save(obj, f"{obj_path}/{obj_name}")
 
-def store_dataframe(data, data_save_name, dataset_name, random_state):
+def store_dataframe(data, data_save_name, dataset_name, object_to_predict, random_state):
     
-    obj_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/raw_to_dataframes/dataset_name={dataset_name}/random_state={random_state}"
+    obj_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/raw_to_dataframes/dataset_name={dataset_name}/object_to_predict={object_to_predict}/random_state={random_state}"
     
     if not os.path.exists(obj_path):
         os.makedirs(obj_path)
@@ -656,17 +656,17 @@ def main(args):
     store_embeddings(col_embeddings, ds_embeddings, be_embeddings, dataset_name, 'semantic-based', random_state)
 
     logger.info("Save Data Artefacts")
-    store_dataframe(train_col_alignments, "train_col_alignments.parquet", dataset_name, random_state)
+    store_dataframe(train_col_alignments, "train_col_alignments.parquet", dataset_name, object_to_predict, random_state)
     if object_to_predict == 'column':
-        store_dataframe(test_col_alignments, "test_col_alignments.parquet", dataset_name, random_state)
+        store_dataframe(test_col_alignments, "test_col_alignments.parquet", dataset_name, object_to_predict, random_state)
     
-    store_dataframe(train_ds_alignments, "train_ds_alignments.parquet", dataset_name, random_state)
+    store_dataframe(train_ds_alignments, "train_ds_alignments.parquet", dataset_name, object_to_predict, random_state)
     if object_to_predict == 'dataset':
-        store_dataframe(train_ds_alignments, "test_ds_alignments.parquet", dataset_name, random_state)
+        store_dataframe(train_ds_alignments, "test_ds_alignments.parquet", dataset_name, object_to_predict, random_state)
     
-    store_dataframe(business_glossary_items, "business_glossary_items.parquet", dataset_name, random_state)
-    store_dataframe(ds_to_col, "ds_to_col.parquet", dataset_name, random_state)
-    store_dataframe(be_to_be, "be_to_be.parquet", dataset_name, random_state)
+    store_dataframe(business_glossary_items, "business_glossary_items.parquet", dataset_name, object_to_predict, random_state)
+    store_dataframe(ds_to_col, "ds_to_col.parquet", dataset_name, object_to_predict, random_state)
+    store_dataframe(be_to_be, "be_to_be.parquet", dataset_name, object_to_predict, random_state)
 
     logger.info("Save semantic Model")
     models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"

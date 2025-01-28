@@ -117,14 +117,20 @@ if __name__ == "__main__":
 
     logger.info("--------------------- Link Prediction Model Selection ----------------------------")
     choice_module_parser = argparse.ArgumentParser("Choice Module Parser")
-    choice_module_parser.add_argument('--enable_semantic_model', type=bool, default=False)
-    choice_module_parser.add_argument('--enable_graph_model', type=bool, default=False)
-    choice_module_parser.add_argument('--enable_hybrid_model', type=bool, default=False)
-    choice_module_parser.add_argument('--enable_hybrid_sim_model', type=bool, default=False)
+    choice_module_parser.add_argument('--enable_semantic_model', action='store_true', default=False)
+    choice_module_parser.add_argument('--enable_graph_model', action='store_true', default=False)
+    choice_module_parser.add_argument('--enable_hybrid_model', action='store_true', default=False)
+    choice_module_parser.add_argument('--enable_hybrid_sim_model', action='store_true', default=False)
     choice_module_parser.add_argument('--dataset_name', type=str)
     choice_module_parser.add_argument('--random_state_index', type=int)
     
-    choice_module_parser_args, _ = choice_module_parser.parse_known_args()
+    choice_module_parser_args, unkown_args = choice_module_parser.parse_known_args()
+
+    dataset_name = choice_module_parser_args.dataset_name
+    random_state_index = choice_module_parser_args.random_state_index
+    
+    logger.info(choice_module_parser_args)
+    logger.info(unkown_args)
 
     logger.info("--------------------- Starts load_data.py Module ---------------------------------")
     starts_load_data()
