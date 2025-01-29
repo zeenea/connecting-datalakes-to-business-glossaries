@@ -419,7 +419,7 @@ def main(args):
     train_neg_edge_loader = torch.utils.data.DataLoader(train_neg_edge_dataset, collate_fn=collate_fn, shuffle=True, batch_size=parameters['batch_size'], num_workers=parameters['num_workers'])
 
     logger.info("Tensorboard SummaryWriter Instatiation")
-    writer_log_dir = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/hybrid_model_trainings/dataset_name={dataset_name}/random_state={random_state}/epochs={parameters['nb_epochs']}"
+    writer_log_dir = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/trainings/hybrid_model_trainings/dataset_name={dataset_name}/random_state={random_state}/epochs={parameters['nb_epochs']}"
 
     if not os.path.exists(writer_log_dir):
         os.makedirs(writer_log_dir)

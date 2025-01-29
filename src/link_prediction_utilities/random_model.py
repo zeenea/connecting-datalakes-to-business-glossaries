@@ -3,6 +3,11 @@ import logging
 import argparse
 import os
 import pandas as pd
+import yaml
+
+def load_yaml(file_path):
+    with open(file_path, 'r') as file:
+        return yaml.safe_load(file)
 
 
 def load_embeddings(embeddings_dir_path, dataset_name, model_type, random_state):
@@ -41,19 +46,14 @@ def load_processed_data(data_dir_path, dataset_name, object_to_predict, random_s
         else:
             yield pd.DataFrame()
 
-def test_mrr_hits_sem_model(
+def test_mrr_hits_random_model(
     test_pos_edge_index,
-    obj_sem_embeddings,
-    be_sem_embeddings,
     k=10,
     device=None
     ):
     
     all_entity_ids = test_pos_edge_index[1,:].unique() # get the right test data, and load the right data
 
-    obj_sem_embeddings = obj_sem_embeddings.to(device)
-    be_sem_embeddings = be_sem_embeddings.to(device)
-    
     with torch.no_grad():
         
         mrrs = []
@@ -66,17 +66,12 @@ def test_mrr_hits_sem_model(
 
             # Compute the score for all possible links from src to all target entities
             src_to_entities_edge_index = torch.stack([src.repeat(all_entity_ids.size(0)), all_entity_ids], dim=0).to(device)
-            src_w_embed = obj_sem_embeddings[src_to_entities_edge_index[0]]
-            trg_w_embed = be_sem_embeddings[src_to_entities_edge_index[1]]
+
+            # random index 
+            random_index = torch.randperm(src_to_entities_edge_index.shape[1])
             
-            cosine_similarity = torch.nn.functional.cosine_similarity(src_w_embed, trg_w_embed)
-            
-            # Rank the scores (higher is better), and get the rank of the true edge
-            sorted_scores, sorted_indices = torch.sort(cosine_similarity, descending=True)
-            
-            # get sorted entity ids by score
-            sorted_entity_indices = src_to_entities_edge_index[1][sorted_indices]
-            #print(f"sorted_entity_indices: {sorted_entity_indices}")
+            # random sorted entity ids by score
+            sorted_entity_indices = src_to_entities_edge_index[1][random_index]
 
             # get rank of true target entity 
             true_edge_rank = (sorted_entity_indices == tgt).nonzero(as_tuple=True)[0].item()
@@ -133,21 +128,10 @@ def main(args):
         "top_k":args.top_k,
         "nb_epochs":0}
     
-    
-
     logger.info(args)
 
     random_state = [42, 84, 13][random_state_index]
 
-    logger.info('Load embeddings')
-    model_type = "semantic-based"
-    embeddings_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings"
-    embeddings_out = list(load_embeddings(embeddings_dir_path, dataset_name, model_type, random_state))
-    col_sem_embeddings = embeddings_out[0]
-    ds_sem_embeddings = embeddings_out[1]
-    be_sem_embeddings = embeddings_out[2] 
-
-    
         
     logger.info('Load processed data')
     data_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/raw_to_dataframes"
@@ -163,26 +147,22 @@ def main(args):
     logger.info("Set device to 'cpu' or 'cuda'")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
-    logger.info("Test Semantic Model. Testing: MRR, Hit@10")
+    logger.info("Test Random Model. Testing: MRR, Hit@10")
 
     if object_to_predict == 'column':
 
         test_pos_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
 
-        mrr, hit_at_10 = test_mrr_hits_sem_model(
+        mrr, hit_at_10 = test_mrr_hits_random_model(
             test_pos_col_edge_index, 
-            col_sem_embeddings,
-            be_sem_embeddings,
             k=parameters["top_k"],
             device=device
             )
     else:
         test_pos_ds_edge_index =  torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
 
-        mrr, hit_at_10 = test_mrr_hits_sem_model(
+        mrr, hit_at_10 = test_mrr_hits_random_model(
             test_pos_ds_edge_index, 
-            ds_sem_embeddings,
-            be_sem_embeddings,
             k=parameters["top_k"],
             device=device
             )
@@ -192,7 +172,7 @@ def main(args):
 
     logger.info("Save metrics")
     
-    metric_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/semantic-model"
+    metric_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/random-model"
     metrics = {
         "MRR": round(mrr, 4),
         "Hit@10": round(hit_at_10, 4),

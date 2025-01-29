@@ -20,6 +20,7 @@ def starts_load_data():
         load_data_parser.add_argument('--random_state_index', type=int)
         load_data_parser.add_argument('--neg_strategy', type=str, default=load_data_yaml_args.get('neg_strategy'))
         load_data_parser.add_argument('--generate_syntactic_embeddings', action='store_true', default=False)
+        load_data_parser.add_argument('--generate_semantic_embeddings', action='store_true', default=False)
         
         load_data_args, _ = load_data_parser.parse_known_args()
         load_data.main(load_data_args)
