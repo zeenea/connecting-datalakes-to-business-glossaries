@@ -12,10 +12,10 @@ module purge                        # Nettoyage de l'environnement
 eval "$(conda shell.bash hook)"     # Initialisation du shell pour conda
 conda activate myenv                # Activation de votre environnement python
 
-dataset_name='turl-cta'
+dataset_name='zeenea-open-ds'
 object_to_predict='dataset'
 
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0 --generate_semantic_embeddings --generate_syntactic_embeddings --enable_syntactic_model   # Prediciton de lien
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1 --generate_semantic_embeddings --generate_syntactic_embeddings --enable_syntactic_model    # Prediciton de lien
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=2 --generate_semantic_embeddings --generate_syntactic_embeddings --enable_syntactic_model  # Prediciton de lien
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0 --generate_semantic_embeddings --generate_syntactic_embeddings --enable_hybrid_model_syn_sem_graph_embed_gen
+#python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1 --generate_semantic_embeddings --generate_syntactic_embeddings --enable_hybrid_model_syn_sem_embed_gen
+#python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=2 --generate_semantic_embeddings --generate_syntactic_embeddings --enable_hybrid_model_syn_sem_embed_gen

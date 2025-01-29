@@ -83,9 +83,6 @@ def store_dataframe(data, data_save_name, dataset_name, object_to_predict, rando
     
     if not os.path.exists(obj_path):
         os.makedirs(obj_path)
-        print(f"Directory '{obj_path}' created.")
-    else:
-        print(f"Directory '{obj_path}' already created.")
 
                      
     data.to_parquet(f"{obj_path}/{data_save_name}")
@@ -539,7 +536,7 @@ def load_turl_cta_artifacts(train_on, random_state):
         test_col_alignments = None
         test_ds_alignments = test_ds_alignments.rename(columns={'table_title':'table_name'})
     
-    return train_col_alignments, test_col_alignments, train_ds_alignments, test_ds_alignments, business_glossary_items, ds_to_col, be_to_be, pos_col_alignments, ds_col_alignments
+    return train_col_alignments, test_col_alignments, train_ds_alignments, test_ds_alignments, business_glossary_items, ds_to_col, be_to_be, pos_col_alignments, pos_ds_alignments
 
 
 def save_model(model, models_dir_path, trained_on_dataset, trained_for_epochs, model_name, random_state):

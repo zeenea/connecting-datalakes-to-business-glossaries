@@ -205,8 +205,7 @@ def main(args):
     be_syn_embeddings = embeddings_out[2] 
 
     logger.info("Set device to 'cpu' or 'cuda'")
-    #device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    device = torch.device('cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     logger.info("Test Syntactic Model. Testing: MRR, Hit@10")
 
