@@ -1,4 +1,4 @@
-from link_prediction_utilities import load_data, semantic_model, syntactic_model, random_model, graph_model, hybrid_model, hybrid_model_syn_sem_embed_gen, hybrid_model_syn_sem_graph_embed_gen, hybrid_similarity_model
+from link_prediction_utilities import load_data, semantic_model, syntactic_model, random_model, graph_model, hybrid_model, hybrid_model_syn_sem_embedding_learning, hybrid_model_syn_sem_graph_embedding_learning, hybrid_similarity_model
 import argparse
 import yaml
 import logging
@@ -109,7 +109,7 @@ def starts_hybrid_model():
     args, _ = parser.parse_known_args()
     hybrid_model.main(args)
 
-def starts_hybrid_model_syn_sem_embed_gen():
+def starts_hybrid_model_syn_sem_embedding_learning():
     yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
     yaml = load_yaml(yaml_file_path)
     yaml_args = yaml.get("hybrid_model_syn_sem_embed_gen_args", {})
@@ -127,9 +127,9 @@ def starts_hybrid_model_syn_sem_embed_gen():
     parser.add_argument('--top_k', type=int, default=yaml_args.get('top_k'))
 
     args, _ = parser.parse_known_args()
-    hybrid_model_syn_sem_embed_gen.main(args)
+    hybrid_model_syn_sem_embedding_learning.main(args)
     
-def starts_hybrid_model_syn_sem_graph_embed_gen():
+def starts_hybrid_model_syn_sem_graph_embedding_learning():
     yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("hybrid_model_syn_sem_graph_embed_gen_args", {})
@@ -147,7 +147,7 @@ def starts_hybrid_model_syn_sem_graph_embed_gen():
     parser.add_argument('--top_k', type=int, default=yaml_args.get('top_k'))
 
     args, _ = parser.parse_known_args()
-    hybrid_model_syn_sem_graph_embed_gen.main(args)
+    hybrid_model_syn_sem_graph_embedding_learning.main(args)
 
 def starts_hybrid_sim_model():
     yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
@@ -196,8 +196,8 @@ if __name__ == "__main__":
     choice_module_parser.add_argument('--enable_graph_model', action='store_true', default=False)
     choice_module_parser.add_argument('--enable_hybrid_model', action='store_true', default=False)
     choice_module_parser.add_argument('--enable_hybrid_sim_model', action='store_true', default=False)
-    choice_module_parser.add_argument('--enable_hybrid_model_syn_sem_embed_gen', action='store_true', default=False)
-    choice_module_parser.add_argument('--enable_hybrid_model_syn_sem_graph_embed_gen', action='store_true', default=False)
+    choice_module_parser.add_argument('--enable_hybrid_model_syn_sem_embedding_learning', action='store_true', default=False)
+    choice_module_parser.add_argument('--enable_hybrid_model_syn_sem_graph_embedding_learning', action='store_true', default=False)
     choice_module_parser.add_argument('--dataset_name', type=str)
     choice_module_parser.add_argument('--random_state_index', type=int)
     
@@ -230,17 +230,17 @@ if __name__ == "__main__":
 
     
     
-    if choice_module_parser_args.enable_hybrid_model_syn_sem_embed_gen:
+    if choice_module_parser_args.enable_hybrid_model_syn_sem_embedding_learning:
         if (choice_module_parser_args.enable_syntactic_model and choice_module_parser_args.enable_semantic_model) or (are_embeddings_generated(dataset_name, 'semantic-based', random_state_index) and are_embeddings_generated(dataset_name, 'semantic-based', random_state_index)):
-            logger.info("---------------------- Starts hybrid_model_syn_sem_embed_gen.py Module -------------")
-            starts_hybrid_model_syn_sem_embed_gen()
+            logger.info("---------------------- Starts hybrid_model_syn_sem_embedding_learning.py Module -------------")
+            starts_hybrid_model_syn_sem_embedding_learning()
         else:
             logger.info("You need to: Enable Generating Semantic and Syntactic Embeddings.")
 
-    if choice_module_parser_args.enable_hybrid_model_syn_sem_graph_embed_gen:
+    if choice_module_parser_args.enable_hybrid_model_syn_sem_graph_embedding_learning:
         if (choice_module_parser_args.enable_syntactic_model and choice_module_parser_args.enable_semantic_model and choice_module_parser_args.enable_graph_model) or (are_embeddings_generated(dataset_name, 'semantic-based', random_state_index) and are_embeddings_generated(dataset_name, 'semantic-based', random_state_index) and are_embeddings_generated(dataset_name, 'graph-based', random_state_index)):
-            logging.info("---------------------- Starts hybrid_model_syn_sem_graph_embed_gen.py Module ------")
-            starts_hybrid_model_syn_sem_graph_embed_gen()
+            logging.info("---------------------- Starts hybrid_model_syn_sem_graph_embedding_learning.py Module ------")
+            starts_hybrid_model_syn_sem_graph_embedding_learning()
         else:
             logger.info("You need to: Enable Generating Semantic and Syntactic and Graph Embeddings.")
     

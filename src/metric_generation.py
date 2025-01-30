@@ -43,8 +43,14 @@ if __name__ == '__main__':
     all_metrics_df['Hit@10'] = all_metrics_df['Hit@10'].astype(float)
     metrics_df = all_metrics_df.groupby(['dataset_name', 'object_to_predict', 'model', 'epochs']).agg({'MRR':['mean', 'std'], 'Hit@10':['mean', 'std']}).reset_index()
     metrics_df.columns = ['dataset_name', 'object_to_predict', 'model', 'epochs', 'MRR-mean', 'MRR-std', 'Hit@10-mean', 'Hit@10-std']
-    print(metrics_df)
+    
     metrics_df.to_csv(f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/final_results/model_metrics.csv")
+    col_metrics_df = metrics_df[metrics_df['object_to_predict']=='column'].sort_values(by=['dataset_name', 'object_to_predict', 'Hit@10-mean'], ascending=False)
+    ds_metrics_df = metrics_df[metrics_df['object_to_predict']=='dataset'].sort_values(by=['dataset_name', 'object_to_predict', 'Hit@10-mean'], ascending=False)
+    print(col_metrics_df)
+    print(ds_metrics_df)
+    col_metrics_df.to_csv(f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/final_results/model_column_metrics.csv")
+    ds_metrics_df.to_csv(f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/final_results/model_dataset_metrics.csv")
 
     
 
