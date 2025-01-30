@@ -1,17 +1,11 @@
 import torch
-import argparse
 import logging
-import os
-import yaml
 from torch.utils.tensorboard import SummaryWriter
+import os
 from torchmetrics.classification import MulticlassPrecision, MulticlassRecall, MulticlassF1Score
 
-
-
-def load_yaml(file_path):
-    with open(file_path, 'r') as file:
-        return yaml.safe_load(file)
-
+os.environ['TOKENIZERS_PARALLELISM']='true'
+os.environ['TORCH_USE_CUDA_DSA']='1'
 
 def load_embeddings(embeddings_dir_path, dataset_name, model_type, random_state):
 
@@ -26,21 +20,33 @@ def load_embeddings(embeddings_dir_path, dataset_name, model_type, random_state)
         else:
             print(f'File not found: {file_path}')
 
+
+
 class LinkDataset(torch.utils.data.Dataset):
 
-    def __init__(self, edge_index, src_sem_embed, src_syn_embed, trg_sem_embed, trg_syn_embed, labels):
+    def __init__(self, edge_index, src_sem_embed, src_syn_embed, src_graph_embed, trg_sem_embed, trg_syn_embed, trg_graph_embed, labels):
         self.edge_index = edge_index
         self.src_sem_embed = src_sem_embed
         self.src_syn_embed = src_syn_embed
+        self.src_graph_embed = src_graph_embed
         self.trg_sem_embed = trg_sem_embed
         self.trg_syn_embed = trg_syn_embed
+        self.trg_graph_embed = trg_graph_embed
         self.labels = labels
 
     def __getitem__(self, item):
         src_id = self.edge_index[0, item]
         trg_id = self.edge_index[1, item]
+        
+        src_sem_embed = self.src_sem_embed[src_id, :]
+        src_syn_embed = self.src_syn_embed[src_id, :]
+        src_graph_embed = self.src_graph_embed[src_id, :]
+        trg_sem_embed = self.trg_sem_embed[trg_id, :]
+        trg_syn_embed = self.trg_syn_embed[trg_id, :]
+        trg_graph_embed = self.trg_graph_embed[trg_id, :]
+        label = self.labels[item]
 
-        return self.src_sem_embed[src_id, :], self.src_syn_embed[src_id, :], self.trg_sem_embed[trg_id, :], self.trg_syn_embed[trg_id, :], self.labels[item]
+        return src_sem_embed, src_syn_embed, src_graph_embed, trg_sem_embed, trg_syn_embed, trg_graph_embed, label
 
     def __len__(self):
         return self.edge_index.shape[1]
@@ -49,21 +55,16 @@ class LinkDataset(torch.utils.data.Dataset):
 def collate_fn(batch):
 
     src_sem_embeddings = torch.stack([x[0] for x in batch])
-    src_graph_embeddings = torch.stack([x[1] for x in batch])
-    trg_sem_embeddings = torch.stack([x[2] for x in batch])
-    trg_graph_embeddings = torch.stack([x[3] for x in batch])
-    labels = torch.stack([x[4] for x in batch])
+    src_syn_embeddings = torch.stack([x[1] for x in batch])
+    src_graph_embeddings = torch.stack([x[2] for x in batch])
+    trg_sem_embeddings = torch.stack([x[3] for x in batch])
+    trg_syn_embeddings = torch.stack([x[4] for x in batch])
+    trg_graph_embeddings = torch.stack([x[5] for x in batch])
+    labels = torch.stack([x[6] for x in batch])
 
-    return src_sem_embeddings, src_graph_embeddings, trg_sem_embeddings, trg_graph_embeddings, labels
+    return src_sem_embeddings, src_syn_embeddings, src_graph_embeddings, trg_sem_embeddings, trg_syn_embeddings, trg_graph_embeddings, labels
 
-
-def load_torch_tensor(tensor_dir_path, tensor_name):
-    
-        return torch.load(f"{tensor_dir_path}/{tensor_name}")
-
-
-
-class HybridSynSemSimLearn(torch.nn.Module):
+class CrossSynSemGraphSimLearn(torch.nn.Module):
 
     def __init__(self, num_similarities, num_classes):
         super().__init__()
@@ -71,28 +72,31 @@ class HybridSynSemSimLearn(torch.nn.Module):
         self.fc_layer_1 = torch.nn.Linear(in_features=num_similarities, out_features=1)
         self.sigmoid = torch.nn.Sigmoid()
 
-    def forward(self, src_sem_embed, src_syn_embed, tgt_sem_embed, tgt_syn_embed):
+    def forward(self, src_sem_embed, src_syn_embed, src_graph_embed, tgt_sem_embed, tgt_syn_embed, tgt_graph_embed):
 
         # cosine similarity on semantic embeddings
         cosine_sim_sem = torch.nn.functional.cosine_similarity(src_sem_embed, tgt_sem_embed)
         cosine_sim_sem = cosine_sim_sem.reshape(-1, 1)
         
-        # cosine similarity on graph embeddings
+        # cosine similarity on syntactic embeddings
         cosine_sim_syn = torch.nn.functional.cosine_similarity(src_syn_embed, tgt_syn_embed)
         cosine_sim_syn = cosine_sim_syn.reshape(-1, 1)
+
+        # cosine similarity on graph embeddings
+        cosine_sim_graph = torch.nn.functional.cosine_similarity(src_graph_embed, tgt_graph_embed)
+        cosine_sim_graph = cosine_sim_graph.reshape(-1, 1)
         
         # matrix of cosine similarities with a size of (batch_size x 2)
-        cosine_sim_matrix = torch.concat([cosine_sim_sem, cosine_sim_syn], dim=1)
+        cosine_sim_matrix = torch.concat([cosine_sim_sem, cosine_sim_syn, cosine_sim_graph], dim=1)
 
         # dense representation embeddings with a size of (batch_size x hidden_layer_dim)
         logits = self.sigmoid(self.fc_layer_1(cosine_sim_matrix))
 
         return logits
 
-
-
-def train_hybrid_model_on_binary_cross_entropy_loss(hybrid_link_predictor, optimizer, parameters, positive_edge_loader, negative_edge_loader, device, writer, logger):
-    hybrid_link_predictor.train()
+def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, parameters, positive_edge_loader, negative_edge_loader, device, writer, logger):
+    
+    link_predictor_model.train()
 
     num_classes = parameters['num_classes']
     
@@ -116,30 +120,37 @@ def train_hybrid_model_on_binary_cross_entropy_loss(hybrid_link_predictor, optim
     
             pos_src_sem_embed = pos_batch[0]
             pos_src_syn_embed = pos_batch[1]
-            pos_trg_sem_embed = pos_batch[2]
-            pos_trg_syn_embed = pos_batch[3]
-            pos_labels = pos_batch[4]
+            pos_src_graph_embed = pos_batch[2]
+            pos_trg_sem_embed = pos_batch[3]
+            pos_trg_syn_embed = pos_batch[4]
+            pos_trg_graph_embed = pos_batch[5]
+            pos_labels = pos_batch[6]
     
             neg_src_sem_embed = neg_batch[0]
             neg_src_syn_embed = neg_batch[1]
-            neg_trg_sem_embed = neg_batch[2]
-            neg_trg_syn_embed = neg_batch[3]
-            neg_labels = neg_batch[4]
+            neg_src_graph_embed = neg_batch[2]
+            neg_trg_sem_embed = neg_batch[3]
+            neg_trg_syn_embed = neg_batch[4]
+            neg_trg_graph_embed = neg_batch[5]
+            neg_labels = neg_batch[6]
     
             len_batchs = pos_labels.shape[0] + neg_labels.shape[0]
             rand_index = torch.randperm(len_batchs)
     
             src_sem_embed = torch.concat([pos_src_sem_embed, neg_src_sem_embed], dim=0)[rand_index].to(device)
             src_syn_embed = torch.concat([pos_src_syn_embed, neg_src_syn_embed], dim=0)[rand_index].to(device)
+            src_graph_embed = torch.concat([pos_src_graph_embed, neg_src_graph_embed], dim=0)[rand_index].to(device)
             trg_sem_embed = torch.concat([pos_trg_sem_embed, neg_trg_sem_embed], dim=0)[rand_index].to(device)
             trg_syn_embed = torch.concat([pos_trg_syn_embed, neg_trg_syn_embed], dim=0)[rand_index].to(device)
-            labels = torch.concat([pos_labels, neg_labels], dim=0)[rand_index]#.long()
+            trg_graph_embed = torch.concat([pos_trg_graph_embed, neg_trg_graph_embed], dim=0)[rand_index].to(device)
+            labels = torch.concat([pos_labels, neg_labels], dim=0)[rand_index].long()
             labels = torch.flatten(labels).to(device)
-            labels = labels.reshape(-1, 1)
+            labels = labels.reshape(-1, 1).float()
+
     
             optimizer.zero_grad()
 
-            logits = hybrid_link_predictor.forward(src_sem_embed, src_syn_embed, trg_sem_embed, trg_syn_embed)
+            logits = link_predictor_model.forward(src_sem_embed, src_syn_embed, src_graph_embed, trg_sem_embed, trg_syn_embed, trg_graph_embed)
 
             #loss = torch.nn.functional.binary_cross_entropy(logits, labels)
             loss = loss_criterion(logits, labels)
@@ -152,18 +163,8 @@ def train_hybrid_model_on_binary_cross_entropy_loss(hybrid_link_predictor, optim
             
             
             # compute precision recall f1 score on training
-            
             with torch.no_grad():
-                #g_cosine_similarity = torch.nn.functional.cosine_similarity(src_g_embed, trg_g_embed)
-                #w_cosine_similarity = torch.nn.functional.cosine_similarity(src_w_embed, trg_w_embed)
-                #cosine_similarity = g_cosine_similarity + w_cosine_similarity
-
-                #predicitons = torch.where(cosine_similarity >= cosine_threshold, 1, -1)
-
-                #binary_labels = torch.where(labels == 1, 1, 0)
-                #binary_predictions = torch.where(predicitons == 1, 1, 0)
                 
-                #accuracy = torch.concat([accuracy, accuracy_func(logits, labels).reshape(1, -1)], axis=0)
                 predictions = torch.where(logits >= 0.5, 1, 0)
                 f1score = torch.concat([f1score, f1score_func(predictions, labels.long()).reshape(1, -1)], axis=0)
                 precision = torch.concat([precision, precision_func(predictions, labels.long()).reshape(1, -1)], axis=0)
@@ -182,15 +183,22 @@ def train_hybrid_model_on_binary_cross_entropy_loss(hybrid_link_predictor, optim
         writer.add_scalar("Train/Recall/NegativeMatch", torch.mean(recall, dim=0)[0], epoch)
         writer.add_scalar("Train/Recall/positiveMatch", torch.mean(recall, dim=0)[1], epoch)
 
-    return hybrid_link_predictor
+    return link_predictor_model
 
-def test_mrr_hits_k_hybrid_sim_based(
-    hybrid_model,
+def load_torch_tensor(tensor_dir_path, tensor_name):
+    
+        return torch.load(f"{tensor_dir_path}/{tensor_name}")
+
+
+def test_mrr_hits_k_double_cosine_sim(
+    link_predictor_model,
     test_pos_edge_index,
     obj_sem_embeddings,
     obj_syn_embeddings,
+    obj_graph_embeddings,
     be_sem_embeddings,
     be_syn_embeddings,
+    be_graph_embeddings,
     k=10,
     device=None
     ):
@@ -199,10 +207,12 @@ def test_mrr_hits_k_hybrid_sim_based(
     #print(all_entity_ids)
     obj_sem_embeddings = obj_sem_embeddings.to(device)
     obj_syn_embeddings = obj_syn_embeddings.to(device)
+    obj_graph_embeddings = obj_graph_embeddings.to(device)
     be_sem_embeddings = be_sem_embeddings.to(device)
     be_syn_embeddings = be_syn_embeddings.to(device)
+    be_graph_embeddings = be_graph_embeddings.to(device)
     
-    hybrid_model.eval()
+    link_predictor_model.eval()
 
     with torch.no_grad():
         
@@ -221,11 +231,13 @@ def test_mrr_hits_k_hybrid_sim_based(
             #print(f"src_to_entity: {src_to_entities_edge_index}")
             
             obj_sem_embed_i = obj_sem_embeddings[src_to_entities_edge_index[0]]
-            obj_syn_embed_i = obj_syn_embeddings[src_to_entities_edge_index[0]]    
+            obj_syn_embed_i = obj_syn_embeddings[src_to_entities_edge_index[0]]  
+            obj_graph_embed_i = obj_graph_embeddings[src_to_entities_edge_index[0]]
             be_sem_embed_i = be_sem_embeddings[src_to_entities_edge_index[1]]
             be_syn_embed_i = be_syn_embeddings[src_to_entities_edge_index[1]]
+            be_graph_embed_i = be_graph_embeddings[src_to_entities_edge_index[1]]
             
-            logits = hybrid_model.forward(obj_sem_embed_i, obj_syn_embed_i, be_sem_embed_i, be_syn_embed_i)#[:, 1]
+            logits = link_predictor_model.forward(obj_sem_embed_i, obj_syn_embed_i, obj_graph_embed_i, be_sem_embed_i, be_syn_embed_i, be_graph_embed_i)#[:, 1]
             #print(f"logits shape: {logits.shape}")
             #print(f"logits: {logits}")
             
@@ -258,7 +270,6 @@ def test_mrr_hits_k_hybrid_sim_based(
     return mrr, hit_at_k
 
 
-
 def save_metrics(metrics:dict, dataset_name, object_to_predict, random_state, metric_dir):
 
             if not os.path.exists(metric_dir):
@@ -279,6 +290,7 @@ def save_model(model, models_dir_path, trained_on_dataset, object_to_predict, tr
             torch.save(model.state_dict(), f"{model_dir}/{model_name}.pt")
 
 
+
 def main(args):
     
     logger = logging.getLogger(__name__)
@@ -288,12 +300,10 @@ def main(args):
     )
     
     logger.info("Load Arguments")
-
     dataset_name = args.dataset_name
     object_to_predict = args.object_to_predict
     random_state_index = args.random_state_index
 
-    
     parameters = {
         "batch_size":args.batch_size,
         "num_workers":args.num_workers,
@@ -306,20 +316,32 @@ def main(args):
 
     logger.info(args)
 
+    logger.info("Set device to 'cpu' or 'cuda'")
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')    
+    
     random_state = [42, 84, 13][random_state_index]
 
     logger.info("Load Semantic Embeddings")
     embeddings_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings"
     sem_embeddings = list(load_embeddings(embeddings_dir_path, dataset_name, 'semantic-based', random_state))
-    col_sem_embeddings = sem_embeddings[0]
-    ds_sem_embeddings = sem_embeddings[1]
-    be_sem_embeddings = sem_embeddings[2]
+    col_sem_embeddings = sem_embeddings[0].float()
+    ds_sem_embeddings = sem_embeddings[1].float()
+    be_sem_embeddings = sem_embeddings[2].float()
     
     logger.info("Load Syntactic Embeddings")
+    embeddings_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings"
     syn_embeddings = list(load_embeddings(embeddings_dir_path, dataset_name, 'syntactic-based', random_state))
     col_syn_embeddings = syn_embeddings[0].float()
     ds_syn_embeddings = syn_embeddings[1].float()
     be_syn_embeddings = syn_embeddings[2].float()
+
+    logger.info("load Graph Embeddings")
+    embeddings_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings"
+    graph_embeddings = list(load_embeddings(embeddings_dir_path, dataset_name, 'graph-based', random_state))
+    col_graph_embeddings = graph_embeddings[0].detach().cpu().float()
+    ds_graph_embeddings = graph_embeddings[1].detach().cpu().float()
+    be_graph_embeddings = graph_embeddings[2].detach().cpu().float()
+    
 
     logger.info("Load Edge Indexes")
     edge_indexes_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/edge_indexes/dataset_name={dataset_name}/object_to_predict={object_to_predict}/random_state={random_state}"
@@ -352,12 +374,14 @@ def main(args):
     
     logger.info("Datasets Creation")
     if object_to_predict == 'column':
-        train_pos_edge_dataset = train_pos_edge_dataset = LinkDataset(
+        train_pos_edge_dataset = LinkDataset(
                                         train_pos_col_edge_index,
                                         col_sem_embeddings,
                                         col_syn_embeddings,
+                                        col_graph_embeddings,
                                         be_sem_embeddings,
                                         be_syn_embeddings,
+                                        be_graph_embeddings,
                                         train_pos_col_labels
                                         )
         
@@ -365,18 +389,22 @@ def main(args):
                                         train_neg_col_edge_index,
                                         col_sem_embeddings,
                                         col_syn_embeddings,
+                                        col_graph_embeddings,
                                         be_sem_embeddings,
                                         be_syn_embeddings,
+                                        be_graph_embeddings,
                                         train_neg_col_labels
                                         )
         
     elif object_to_predict == 'dataset':
-        train_pos_edge_dataset = train_pos_edge_dataset = LinkDataset(
+        train_pos_edge_dataset = LinkDataset(
                                         train_pos_ds_edge_index,
                                         ds_sem_embeddings,
                                         ds_syn_embeddings,
+                                        ds_graph_embeddings,
                                         be_sem_embeddings,
                                         be_syn_embeddings,
+                                        be_graph_embeddings,
                                         train_pos_ds_labels
                                         )
         
@@ -384,35 +412,55 @@ def main(args):
                                         train_neg_ds_edge_index,
                                         ds_sem_embeddings,
                                         ds_syn_embeddings,
+                                        ds_graph_embeddings,
                                         be_sem_embeddings,
                                         be_syn_embeddings,
+                                        be_graph_embeddings,
                                         train_neg_ds_labels
                                         )
     else:
         print("Error in object_to_predict var")
 
-
+    
     logger.info("DataLoaders Creation")
     train_pos_edge_loader = torch.utils.data.DataLoader(train_pos_edge_dataset, collate_fn=collate_fn, shuffle=True, batch_size=parameters['batch_size'], num_workers=parameters['num_workers'])
     train_neg_edge_loader = torch.utils.data.DataLoader(train_neg_edge_dataset, collate_fn=collate_fn, shuffle=True, batch_size=parameters['batch_size'], num_workers=parameters['num_workers'])
 
+    next(iter(train_pos_edge_loader))
+    next(iter(train_neg_edge_loader))
 
-    logger.info("Set device to 'cpu' or 'cuda'")
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-    logger.info("Hybrid Model and Optimizer Instantiation")
     
-    hybrid_link_predictor = HybridSynSemSimLearn(
-        num_similarities=2,
+    logger.info("Cross Model and Optimizer Instantiation")
+    if object_to_predict == 'column':
+        assert col_sem_embeddings.shape[1] == be_sem_embeddings.shape[1]
+        assert col_syn_embeddings.shape[1] == be_syn_embeddings.shape[1]
+        assert col_graph_embeddings.shape[1] == be_graph_embeddings.shape[1]
+        
+        semantic_embeddings_dim = col_sem_embeddings.shape[1]
+        syntactic_embeddings_dim = col_syn_embeddings.shape[1]
+        graph_embeddings_dim = col_graph_embeddings.shape[1]
+
+    else:
+        assert ds_sem_embeddings.shape[1] == be_sem_embeddings.shape[1]
+        assert ds_syn_embeddings.shape[1] == be_syn_embeddings.shape[1]
+        assert ds_graph_embeddings.shape[1] == be_graph_embeddings.shape[1]
+        
+        semantic_embeddings_dim = ds_sem_embeddings.shape[1]
+        syntactic_embeddings_dim = ds_syn_embeddings.shape[1]
+        graph_embeddings_dim = ds_graph_embeddings.shape[1]
+
+    
+    link_predictor_model = CrossSynSemGraphSimLearn(
+        num_similarities=3,
         num_classes=parameters['num_classes']
         )
+    
+    model_class_name = link_predictor_model.__class__.__name__
 
-    model_class_name = hybrid_link_predictor.__class__.__name__
+    link_predictor_model = link_predictor_model.to(device)
     
-    hybrid_link_predictor = hybrid_link_predictor.to(device)
-    
-    optimizer = torch.optim.AdamW(hybrid_link_predictor.parameters(), lr=parameters['learning_rate'])
-    
+    optimizer = torch.optim.AdamW(link_predictor_model.parameters(), lr=parameters['learning_rate'])
+
     logger.info("Tensorboard SummaryWriter Instatiation")
     writer_log_dir = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/trainings/{model_class_name}/dataset_name={dataset_name}/random_state={random_state}/epochs={parameters['nb_epochs']}"
 
@@ -420,37 +468,42 @@ def main(args):
         os.makedirs(writer_log_dir)
     
     writer = SummaryWriter(writer_log_dir)
-    
-    logger.info("Hybrid Similarity Model Training. Training: Loss, F1Score, Precision, Recall")
-    hybrid_link_predictor = train_hybrid_model_on_binary_cross_entropy_loss(hybrid_link_predictor, optimizer, parameters, train_pos_edge_loader, train_neg_edge_loader, device, writer, logger)
+
+    logger.info("Cross Model Training. Training: Loss, F1Score, Precision, Recall")
+    hybrid_link_predictor = train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, parameters, train_pos_edge_loader, train_neg_edge_loader, device, writer, logger)
     writer.flush()
     writer.close()
 
-    logger.info("Test Hybrid Model. Testing: MRR, Hit@10")
+    logger.info("Test Cross Model. Testing: MRR, Hit@10")
 
     if object_to_predict == 'column':
-        mrr, hit_at_10 = test_mrr_hits_k_hybrid_sim_based(
+        mrr, hit_at_10 = test_mrr_hits_k_double_cosine_sim(
             hybrid_link_predictor,
             test_pos_col_edge_index, 
             col_sem_embeddings,
             col_syn_embeddings,
+            col_graph_embeddings,
             be_sem_embeddings,
             be_syn_embeddings,
+            be_graph_embeddings,
             k=parameters['top_k'],
             device=device
             )
     else:
-        mrr, hit_at_10 = test_mrr_hits_k_hybrid_sim_based(
+        mrr, hit_at_10 = test_mrr_hits_k_double_cosine_sim(
             hybrid_link_predictor,
             test_pos_ds_edge_index, 
             ds_sem_embeddings,
             ds_syn_embeddings,
+            ds_graph_embeddings,
             be_sem_embeddings,
             be_syn_embeddings,
+            be_graph_embeddings,
             k=parameters['top_k'],
             device=device
             )
         
+
     logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
 
     logger.info("Save metrics")
@@ -466,7 +519,7 @@ def main(args):
     
     save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
 
-    logger.info("Save Hybrid Similarity Model")
+    logger.info("Save Cross Model")
     models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
     
     save_model(hybrid_link_predictor, models_dir_path, dataset_name, object_to_predict, parameters['nb_epochs'], model_class_name, random_state)

@@ -51,7 +51,7 @@ def collate_fn(batch):
 
     return src_sem_embeddings, src_graph_embeddings, trg_sem_embeddings, trg_graph_embeddings, labels
 
-class HybridLinkPredictorSyntacticSemanticEmbedGen(torch.nn.Module):
+class HybridSynSemEmbedLearn(torch.nn.Module):
 
     def __init__(self, semantic_embedding_dim, syntactic_embedding_dim, hidden_layer_dim, num_classes):
         super().__init__()
@@ -270,8 +270,8 @@ def save_metrics(metrics:dict, dataset_name, object_to_predict, random_state, me
             metric_file.close()
 
 
-def save_model(model, models_dir_path, trained_on_dataset, trained_for_epochs, model_name, random_state):
-        model_dir = f"{models_dir_path}/trained_on={trained_on_dataset}/random_state={random_state}/epochs={trained_for_epochs}"
+def save_model(model, models_dir_path, trained_on_dataset, object_to_predict, trained_for_epochs, model_name, random_state):
+        model_dir = f"{models_dir_path}/model_name={model_name}/trained_on={trained_on_dataset}/object_to_predict={object_to_predict}/random_state={random_state}/epochs={trained_for_epochs}"
         
         if os.path.exists(model_dir):
             torch.save(model.state_dict(), f"{model_dir}/{model_name}.pt")
@@ -398,13 +398,7 @@ def main(args):
     train_pos_edge_loader = torch.utils.data.DataLoader(train_pos_edge_dataset, collate_fn=collate_fn, shuffle=True, batch_size=parameters['batch_size'], num_workers=parameters['num_workers'])
     train_neg_edge_loader = torch.utils.data.DataLoader(train_neg_edge_dataset, collate_fn=collate_fn, shuffle=True, batch_size=parameters['batch_size'], num_workers=parameters['num_workers'])
 
-    logger.info("Tensorboard SummaryWriter Instatiation")
-    writer_log_dir = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/trainings/hybrid_model_sem_syn_cosine_loss_trainings/dataset_name={dataset_name}/random_state={random_state}/epochs={parameters['nb_epochs']}"
-
-    if not os.path.exists(writer_log_dir):
-        os.makedirs(writer_log_dir)
     
-    writer = SummaryWriter(writer_log_dir)
 
     logger.info("Set device to 'cpu' or 'cuda'")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -425,7 +419,7 @@ def main(args):
         syntactic_embeddings_dim = ds_syn_embeddings.shape[1]
 
     
-    hybrid_link_predictor = HybridLinkPredictorSyntacticSemanticEmbedGen(
+    hybrid_link_predictor = HybridSynSemEmbedLearn(
         semantic_embedding_dim=semantic_embeddings_dim,
         syntactic_embedding_dim=syntactic_embeddings_dim,
         hidden_layer_dim=parameters['hidden_layer_dim'],
@@ -435,7 +429,16 @@ def main(args):
     hybrid_link_predictor = hybrid_link_predictor.to(device)
     
     optimizer = torch.optim.AdamW(hybrid_link_predictor.parameters(), lr=parameters['learning_rate'])
+    model_name = hybrid_link_predictor.__class__.__name__
+    
+    logger.info("Tensorboard SummaryWriter Instatiation")
+    writer_log_dir = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/trainings/{model_name}/dataset_name={dataset_name}/random_state={random_state}/epochs={parameters['nb_epochs']}"
 
+    if not os.path.exists(writer_log_dir):
+        os.makedirs(writer_log_dir)
+    
+    writer = SummaryWriter(writer_log_dir)
+    
     logger.info("Hybrid Model Training. Training: Loss, F1Score, Precision, Recall")
     hybrid_link_predictor = train_hybrid_model_on_double_cosine_loss(hybrid_link_predictor, optimizer, parameters, train_pos_edge_loader, train_neg_edge_loader, device, writer, logger)
     writer.flush()
@@ -471,7 +474,7 @@ def main(args):
 
     logger.info("Save metrics")
     
-    metric_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/HybridLinkPredictorSyntacticSemanticEmbedGen"
+    metric_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/{model_name}"
     metrics = {
         "MRR": round(mrr, 4),
         "Hit@10": round(hit_at_10, 4),
@@ -484,8 +487,7 @@ def main(args):
 
     logger.info("Save Hybrid Model")
     models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
-    model_name = "HybridLinkPredictorSyntacticSemanticEmbedGen"
     
-    save_model(hybrid_link_predictor, models_dir_path, dataset_name, parameters['nb_epochs'], model_name, random_state)
+    save_model(hybrid_link_predictor, models_dir_path, dataset_name, object_to_predict, parameters['nb_epochs'], model_name, random_state)
 
     
