@@ -1,4 +1,0 @@
-graph_model_args:
-    max_epochs: 100
-    graph_dim_embeddings: 512
-    learning_rate: 0.001

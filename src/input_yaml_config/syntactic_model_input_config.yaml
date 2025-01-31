@@ -1,3 +1,0 @@
-syntactic_model_args:
-    top_k: 10
-    nb_epochs: 0

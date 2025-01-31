@@ -1,2 +1,0 @@
-load_data_args:
-    neg_strategy: "random"
