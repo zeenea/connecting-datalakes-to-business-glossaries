@@ -599,7 +599,11 @@ def generate_tfidf_embeddings(col_df_file, ds_df_file, be_df_file, batch_size):
 
     return col_embeddings, ds_embeddings, be_embeddings
 
+def generate_semantic_embeddings(df, column_to_encode, model, stemmer, stop_words):
 
+    return encode_semantic_textual_data(df[column_to_encode].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
+
+"""
 def generate_semantic_embeddings(pos_col_alignments, pos_ds_alignments, business_glossary, model, stemmer, stop_words):
         
         col_embeddings = encode_semantic_textual_data(pos_col_alignments['column_name'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
@@ -607,6 +611,13 @@ def generate_semantic_embeddings(pos_col_alignments, pos_ds_alignments, business
         be_embeddings = encode_semantic_textual_data(business_glossary['be_name'].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
 
         return col_embeddings, ds_embeddings, be_embeddings
+"""
+
+def generate_textual_link(dataframe, source_name, target_name):
+    dataframe['text'] = dataframe[[source_name, target_name]].apply(lambda x: f"[CLS]{x[source_name]}[SEP]{x[target_name]}", axis=1)
+    dataframe = dataframe.reset_index(drop=True)
+    dataframe = dataframe.reset_index()
+    return dataframe[['index', 'text', 'is_matching']]
 
 
 def main(args):
@@ -627,6 +638,7 @@ def main(args):
     neg_strategy = args.neg_strategy
     generate_syntactic_embeddings_bool = args.generate_syntactic_embeddings
     generate_semantic_embeddings_bool = args.generate_semantic_embeddings
+    generate_semantic_textual_link_embeddings_bool = args.generate_semantic_textual_link_embeddings
 
     logger.info(args)
     
@@ -692,9 +704,8 @@ def main(args):
     store_dataframe(be_to_be, "be_to_be.parquet", dataset_name, object_to_predict, random_state)
 
 
-    if generate_semantic_embeddings_bool:
-        logger.info("Generate Semantic Embeddings")
-
+    if generate_semantic_embeddings_bool or generate_semantic_textual_link_embeddings_bool:
+        
         logger.info("Set Stopwords")
         stemmer = PorterStemmer()
         stop_words = set(stopwords.words('english'))
@@ -703,6 +714,10 @@ def main(args):
         model_name = 'all-MiniLM-L6-v2'
         model = SentenceTransformer(model_name).to(device)
 
+    if generate_semantic_embeddings_bool: 
+        logger.info("Generate Semantic Embeddings")
+
+        """
         semantic_embeddings = generate_semantic_embeddings(
             pos_col_alignments,
             pos_ds_alignments,
@@ -711,10 +726,11 @@ def main(args):
             stemmer,
             stop_words
         )
+        """
         
-        col_sem_embeddings = semantic_embeddings[0]
-        ds_sem_embeddings = semantic_embeddings[1]
-        be_sem_embeddings = semantic_embeddings[2]
+        col_sem_embeddings = generate_semantic_embeddings(pos_col_alignments, "column_name", model, stemmer, stop_words) #semantic_embeddings[0]
+        ds_sem_embeddings = generate_semantic_embeddings(pos_ds_col_alignments, "table_name", model, stemmer, stop_words) #semantic_embeddings[1]
+        be_sem_embeddings = generate_semantic_embeddings(business_glossary_items, 'be_name', model, stemmer, stop_words) #semantic_embeddings[2]
 
         logger.info("Save Semantic Embeddings")
         store_embeddings(col_sem_embeddings, ds_sem_embeddings, be_sem_embeddings, dataset_name, 'semantic-based', random_state)
@@ -748,5 +764,59 @@ def main(args):
     
         logger.info("Save Syntactic Embeddings")
         store_embeddings(col_syn_embeddings, ds_syn_embeddings, be_syn_embeddings, dataset_name, 'syntactic-based', random_state)
-    
+
+    if generate_semantic_textual_link_embeddings_bool:
+        logger.info("Generate Textual Links <[CLS]source_name[SEP]target_name[SEP]>")
+
+        
+        if object_to_predict == 'column':
+            column_name = "column_name"
+            be_name = "be_name"
+            be_id = "be_id"
+            
+            train_col_alignments = pd.merge(train_col_alignments, business_glossary_items[[be_id, be_name]], on=be_id, how='inner')
+            test_col_alignments = pd.merge(test_col_alignments, business_glossary_items[[be_id, be_name]], on=be_id, how='inner')
+            
+            train_textual_links = generate_textual_link(train_col_alignments, column_name, be_name) 
+            test_textual_links = generate_textual_link(test_col_alignments, column_name, be_name)
+
+
+        if object_to_predict == 'dataset':
+            table_name = "table_name"
+            be_name = "be_name"
+            be_id = 'be_id'
+
+            train_ds_alignments = pd.merge(train_ds_alignments, business_glossary_items[[be_id, be_name]], on=be_id, how='inner')
+            test_ds_alignments = pd.merge(test_ds_alignments, business_glossary_items[[be_id, be_name]], on=be_id, how='inner')
+            
+            train_textual_links = generate_textual_link(train_ds_alignments, table_name, be_name) 
+            test_textual_links = generate_textual_link(test_ds_alignments, table_name, be_name)
+
+        logger.info("Save Textual links")
+        store_dataframe(train_textual_links, "train_textual_links", dataset_name, object_to_predict, random_state)
+        store_dataframe(test_textual_links, "train_textual_links", dataset_name, object_to_predict, random_state)
+        
+        logger.info("Generate Textual Link Embeddings using a Semantic Model")
+        train_textual_link_embeddings = generate_semantic_embeddings(train_textual_links, "text", model, stemmer, stop_words)
+        test_textual_link_embeddings = generate_semantic_embeddings(test_textual_links, "text", model, stemmer, stop_words)
+
+        logger.info("Save Semantic Textual Link Embeddings")
+        
+        embeddings_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings/dataset_name={dataset_name}/model_type=semantic-based/random_state={random_state}/"
+        
+        if not os.path.exists(embeddings_path):
+            os.makedirs(embeddings_path)
+                         
+        train_textual_link_embeddings = torch.from_numpy(train_textual_link_embeddings)
+        test_textual_link_embeddings = torch.from_numpy(test_textual_link_embeddings)
+        
+        torch.save(train_textual_link_embeddings, f"{embeddings_path}/train_{object_to_predict}_be_textual_link_embeddings.pt")
+        torch.save(test_textual_link_embeddings, f"{embeddings_path}/test_{object_to_predict}_be_textual_link_embeddings.pt")
+
+
+
+
+
+
+
 

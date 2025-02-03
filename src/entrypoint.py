@@ -23,6 +23,7 @@ def starts_load_data():
         parser.add_argument('--neg_strategy', type=str, default=yaml_args.get('neg_strategy'))
         parser.add_argument('--generate_syntactic_embeddings', action='store_true', default=False)
         parser.add_argument('--generate_semantic_embeddings', action='store_true', default=False)
+        parser.add_argument('--generate_semantic_textual_link_embeddings', action='store_true', default=False)
         
         args, _ = parser.parse_known_args()
         load_data.main(args)
