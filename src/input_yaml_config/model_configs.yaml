@@ -35,6 +35,14 @@ hybrid_model_syn_sem_embed_learn_args:
     hidden_layer_dim: 384
     top_k: 10
 
+hybrid_model_syn_graph_embed_learn_args:
+    batch_size: 128
+    num_workers: 1
+    nb_epochs: 100
+    num_classes: 2
+    learning_rate: 0.001
+    hidden_layer_dim: 384
+    top_k: 10
 
 cross_model_syn_sem_graph_embed_learn_args:
     batch_size: 128
