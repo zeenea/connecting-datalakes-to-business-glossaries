@@ -760,12 +760,14 @@ def main(args):
         
         if object_to_predict == 'column':
             column_name = "column_name"
-            colum_id = "col_id"
+            column_id = "col_id"
             be_name = "be_name"
             be_id = "be_id"
             
             train_col_alignments = pd.merge(train_col_alignments, business_glossary_items[[be_id, be_name]], on=be_id, how='inner')
             test_col_alignments = pd.merge(test_col_alignments, business_glossary_items[[be_id, be_name]], on=be_id, how='inner')
+            print(train_col_alignments.columns)
+            print(test_col_alignments.columns)
             
             train_textual_links = generate_textual_link(train_col_alignments, column_id, column_name, be_id, be_name) 
             test_textual_links = generate_textual_link(test_col_alignments, column_id, column_name, be_id, be_name)

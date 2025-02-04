@@ -92,7 +92,7 @@ cross_model_syn_sem_graph_similarity_learning_args:
 binary_classifier_model_args:
     batch_size: 2
     num_workers: 0
-    max_epochs: 1
+    max_epochs: 100
     learning_rate: 0.001
     num_classes: 2
     top_k: 10

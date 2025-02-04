@@ -261,36 +261,36 @@ def test_mrr_hits_k(
             #be_syn_embed_i = be_syn_embeddings[src_to_entities_edge_index[1]]
             src_ids = batch[0].to(device)
             tgt_ids = batch[1].to(device)
-            true_tgt_id = batch[2].to(device)
+            true_tgt_ids = batch[2].to(device)
             input_ids = batch[3].to(device)
             input_ids = input_ids.view(-1, input_ids.shape[2])
             attention_mask = batch[4].to(device)
             attention_mask = attention_mask.view(-1, attention_mask.shape[2])
 
-            print(true_tgt_id)
-            print(src_ids)
-            print(tgt_ids)
+            #print(true_tgt_ids)
+            #print(src_ids)
+            #print(tgt_ids)
             
             
             logits = link_predictor.forward(input_ids=input_ids, attention_mask=attention_mask)
             logits = logits.view(src_ids.shape[0],-1)
-            print(f"logits shape: {logits.shape}")
-            print(f"logits: {logits}")
+            #print(f"logits shape: {logits.shape}")
+            #print(f"logits: {logits}")
             
             # Rank the scores (higher is better), and get the rank of the true edge
             #sorted_scores, sorted_indices = torch.sort(torch.flatten(logits), descending=True)
             sorted_scores, sorted_indices = torch.sort(logits, descending=True, axis=1)
-            print(f"sorted_scores: {sorted_scores}")
-            print(f"sorted_indices: {sorted_indices}")
+            #print(f"sorted_scores: {sorted_scores}")
+            #print(f"sorted_indices: {sorted_indices}")
             
             # get sorted entity ids by score
-            for sub_tgt_ids, sub_sorted_indices in zip(tgt_ids, sorted_indices, list_tgt):
+            for sub_tgt_ids, sub_sorted_indices, sub_true_tgt_ids in zip(tgt_ids, sorted_indices, true_tgt_ids):
                 
-                sorted_entity_ids = sub_tgt_ids[sub_sorted_indice]
-                print(f"sorted_entity_ids: {sorted_entity_ids}")
+                sorted_entity_ids = sub_tgt_ids[sub_sorted_indices]
+                #print(f"sorted_entity_ids: {sorted_entity_ids}")
     
                 # get rank of true target entity 
-                true_edge_rank = (sorted_entity_ids == tgt).nonzero(as_tuple=True)[0].item()
+                true_edge_rank = (sorted_entity_ids == true_tgt_ids[0]).nonzero(as_tuple=True)[0].item()
                 
                 # MRR Calculation: Reciprocal of the true edge's rank
                 mrrs.append(1.0 / (true_edge_rank+1))
@@ -302,8 +302,6 @@ def test_mrr_hits_k(
                     hits_at_k.append(0.0)  # 0 means miss
 
             
-            break
-
         # Compute average MRR and Hit@K across all test edges
         mrr = torch.tensor(mrrs).mean().item()
         hit_at_k = torch.tensor(hits_at_k).mean().item()
@@ -426,7 +424,7 @@ def main(args):
     writer = SummaryWriter(writer_log_dir)
     
     logger.info("Training. Train Loss, F1-score, Recall, Precision")
-    #link_predictor = train_model_on_binary_cross_entropy_loss(link_predictor, optimizer, parameters['num_classes'], parameters['max_epochs'], train_loader, writer, logger, device)    
+    link_predictor = train_model_on_binary_cross_entropy_loss(link_predictor, optimizer, parameters['num_classes'], parameters['max_epochs'], train_loader, writer, logger, device)    
     
     logger.info("Create Test Dataset and DataLoader")
 
@@ -452,15 +450,15 @@ def main(args):
 
     mrr, hit_at_k = test_mrr_hits_k(link_predictor, test_loader, parameters['top_k'], device)
 
-    logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
+    logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_k:.4f}")
 
     logger.info("Save metrics")
     
     metric_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/{model_class_name}"
     metrics = {
         "MRR": round(mrr, 4),
-        "Hit@10": round(hit_at_10, 4),
-        "epochs": parameters["nb_epochs"],
+        "Hit@10": round(hit_at_k, 4),
+        "epochs": parameters["max_epochs"],
         "random_state":random_state,
         "dataset_name": str(dataset_name)
     }
@@ -470,7 +468,7 @@ def main(args):
     logger.info("Save Binary Classifier Model")
     models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
     
-    save_model(link_predictor, models_dir_path, dataset_name, object_to_predict, parameters['nb_epochs'], model_class_name, random_state)
+    save_model(link_predictor, models_dir_path, dataset_name, object_to_predict, parameters['max_epochs'], model_class_name, random_state)
 
     
 
