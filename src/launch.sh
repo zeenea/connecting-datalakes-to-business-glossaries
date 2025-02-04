@@ -16,7 +16,7 @@ dataset_name='zeenea-open-ds'
 object_to_predict='dataset'
 
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0 --generate_semantic_textual_link_embeddings 
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0 --generate_semantic_textual_links --enable_binary_classifier_model 
 
 #python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1 --generate_syntactic_embeddings --enable_hybrid_model_syn_graph_embedding_learning
 

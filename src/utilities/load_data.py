@@ -295,6 +295,8 @@ def load_zeenea_open_ds_artifacts(train_on, random_state):
     neg_ds_alignments = neg_ds_alignments.rename(columns={'index':'ds_id'})
     neg_ds_alignments['is_matching'] = 0
 
+    neg_ds_alignments = neg_ds_alignments.rename(columns={'dataset_code':'table_name'})
+    
     if train_on == 'dataset':
         train_size = int(0.8 * len(pos_ds_alignments)) 
     else:
@@ -386,17 +388,21 @@ def load_turl_cta_artifacts(train_on, random_state):
     # pos and neg alignments
 
     pos_col_alignments = pd.concat([train_pos_col_alignments, dev_pos_col_alignments, test_pos_col_alignments], axis=0)
+    pos_col_alignments = pos_col_alignments[~pos_col_alignments['column_name'].isna()]
+    pos_col_alignments = pos_col_alignments.reset_index(drop=True)
     pos_col_alignments = pos_col_alignments.reset_index()
     pos_col_alignments = pos_col_alignments.rename(columns={'index':'col_id'})
     pos_col_alignments = pos_col_alignments.sample(frac=1, random_state=random_state)
 
     neg_col_alignments = pd.concat([train_neg_col_alignments, dev_neg_col_alignments, test_neg_col_alignments], axis=0)
+    neg_col_alignments = neg_col_alignments[~neg_col_alignments['column_name'].isna()]
+    neg_col_alignments = neg_col_alignments.reset_index(drop=True)
     neg_col_alignments = neg_col_alignments.reset_index()
     neg_col_alignments = neg_col_alignments.rename(columns={'index':'col_id'})
     neg_col_alignments = neg_col_alignments.sample(frac=1, random_state=random_state)
 
     assert pos_col_alignments.shape[0] == neg_col_alignments.shape[0]
-
+    
     # train and test sets
     if train_on == 'column':
         train_size = int(pos_col_alignments.shape[0] * 0.8)
@@ -425,11 +431,11 @@ def load_turl_cta_artifacts(train_on, random_state):
     be_code_bg = "business_entity_code"
 
     train_col_alignments = pd.merge(train_col_alignments, business_glossary_items[['be_id', be_code_bg]], left_on='target_uri', right_on=be_code_bg, how='inner')
-    train_col_alignments = train_col_alignments[['col_id', 'be_id', 'is_matching']]
+    train_col_alignments = train_col_alignments[['col_id', 'column_name', 'be_id', 'is_matching']]
 
     if train_on == 'column':
         test_col_alignments = pd.merge(test_col_alignments, business_glossary_items[['be_id', be_code_bg]], left_on='target_uri', right_on=be_code_bg, how='inner')
-        test_col_alignments = test_col_alignments[['col_id', 'be_id', 'is_matching']]
+        test_col_alignments = test_col_alignments[['col_id', 'column_name', 'be_id', 'is_matching']]
     
     # be_to_be
     be_to_be = business_glossary_items[['be_id', 'sub_class_of']]
@@ -494,6 +500,7 @@ def load_turl_cta_artifacts(train_on, random_state):
 
     
     pos_ds_alignments = pd.concat([train_pos_ds_alignments, dev_pos_ds_alignments, test_pos_ds_alignments], axis=0)
+    pos_ds_alignments = pos_ds_alignments[~pos_ds_alignments['table_title'].isna()]
     pos_ds_alignments = pos_ds_alignments.reset_index(drop=True)
     pos_ds_alignments = pos_ds_alignments.reset_index()
     pos_ds_alignments = pos_ds_alignments.rename(columns={'index':'ds_id'})
@@ -501,6 +508,7 @@ def load_turl_cta_artifacts(train_on, random_state):
     pos_ds_alignments = pos_ds_alignments.sample(frac=1, random_state=random_state)
 
     neg_ds_alignments = pd.concat([train_neg_ds_alignments, dev_neg_ds_alignments, test_neg_ds_alignments], axis=0)
+    neg_ds_alignments = neg_ds_alignments[~neg_ds_alignments['table_title'].isna()]
     neg_ds_alignments = neg_ds_alignments.reset_index(drop=True)
     neg_ds_alignments = neg_ds_alignments.reset_index()
     neg_ds_alignments = neg_ds_alignments.rename(columns={'index':'ds_id'})
@@ -526,6 +534,7 @@ def load_turl_cta_artifacts(train_on, random_state):
 
     business_glossary_items = business_glossary_items.rename(columns={'business_entity_name':'be_name'})
     pos_ds_alignments = pos_ds_alignments.rename(columns={'table_title':'table_name'})
+    neg_ds_alignments = neg_ds_alignments.rename(columns={'table_title':'table_name'})
     train_ds_alignments = train_ds_alignments.rename(columns={'table_title':'table_name'})
 
     
@@ -614,7 +623,7 @@ def generate_semantic_embeddings(pos_col_alignments, pos_ds_alignments, business
 """
 
 def generate_textual_link(dataframe, source_name, target_name):
-    dataframe['text'] = dataframe[[source_name, target_name]].apply(lambda x: f"[CLS]{x[source_name]}[SEP]{x[target_name]}", axis=1)
+    dataframe['text'] = dataframe[[source_name, target_name]].apply(lambda x: f"[CLS]{str(x[source_name])}[SEP]{str(x[target_name])}", axis=1)
     dataframe = dataframe.reset_index(drop=True)
     dataframe = dataframe.reset_index()
     return dataframe[['index', 'text', 'is_matching']]
@@ -638,7 +647,7 @@ def main(args):
     neg_strategy = args.neg_strategy
     generate_syntactic_embeddings_bool = args.generate_syntactic_embeddings
     generate_semantic_embeddings_bool = args.generate_semantic_embeddings
-    generate_semantic_textual_link_embeddings_bool = args.generate_semantic_textual_link_embeddings
+    generate_semantic_textual_links_bool = args.generate_semantic_textual_links
 
     logger.info(args)
     
@@ -704,7 +713,7 @@ def main(args):
     store_dataframe(be_to_be, "be_to_be.parquet", dataset_name, object_to_predict, random_state)
 
 
-    if generate_semantic_embeddings_bool or generate_semantic_textual_link_embeddings_bool:
+    if generate_semantic_embeddings_bool or generate_semantic_textual_links_bool:
         
         logger.info("Set Stopwords")
         stemmer = PorterStemmer()
@@ -716,21 +725,10 @@ def main(args):
 
     if generate_semantic_embeddings_bool: 
         logger.info("Generate Semantic Embeddings")
-
-        """
-        semantic_embeddings = generate_semantic_embeddings(
-            pos_col_alignments,
-            pos_ds_alignments,
-            business_glossary_items,
-            model,
-            stemmer,
-            stop_words
-        )
-        """
         
-        col_sem_embeddings = generate_semantic_embeddings(pos_col_alignments, "column_name", model, stemmer, stop_words) #semantic_embeddings[0]
-        ds_sem_embeddings = generate_semantic_embeddings(pos_ds_col_alignments, "table_name", model, stemmer, stop_words) #semantic_embeddings[1]
-        be_sem_embeddings = generate_semantic_embeddings(business_glossary_items, 'be_name', model, stemmer, stop_words) #semantic_embeddings[2]
+        col_sem_embeddings = generate_semantic_embeddings(pos_col_alignments, "column_name", model, stemmer, stop_words) 
+        ds_sem_embeddings = generate_semantic_embeddings(pos_ds_col_alignments, "table_name", model, stemmer, stop_words) 
+        be_sem_embeddings = generate_semantic_embeddings(business_glossary_items, 'be_name', model, stemmer, stop_words) 
 
         logger.info("Save Semantic Embeddings")
         store_embeddings(col_sem_embeddings, ds_sem_embeddings, be_sem_embeddings, dataset_name, 'semantic-based', random_state)
@@ -765,7 +763,7 @@ def main(args):
         logger.info("Save Syntactic Embeddings")
         store_embeddings(col_syn_embeddings, ds_syn_embeddings, be_syn_embeddings, dataset_name, 'syntactic-based', random_state)
 
-    if generate_semantic_textual_link_embeddings_bool:
+    if generate_semantic_textual_links_bool:
         logger.info("Generate Textual Links <[CLS]source_name[SEP]target_name[SEP]>")
 
         
@@ -780,7 +778,6 @@ def main(args):
             train_textual_links = generate_textual_link(train_col_alignments, column_name, be_name) 
             test_textual_links = generate_textual_link(test_col_alignments, column_name, be_name)
 
-
         if object_to_predict == 'dataset':
             table_name = "table_name"
             be_name = "be_name"
@@ -793,9 +790,10 @@ def main(args):
             test_textual_links = generate_textual_link(test_ds_alignments, table_name, be_name)
 
         logger.info("Save Textual links")
-        store_dataframe(train_textual_links, "train_textual_links", dataset_name, object_to_predict, random_state)
-        store_dataframe(test_textual_links, "train_textual_links", dataset_name, object_to_predict, random_state)
-        
+        store_dataframe(train_textual_links, "train_textual_links.parquet", dataset_name, object_to_predict, random_state)
+        store_dataframe(test_textual_links, "test_textual_links.parquet", dataset_name, object_to_predict, random_state)
+
+        """
         logger.info("Generate Textual Link Embeddings using a Semantic Model")
         train_textual_link_embeddings = generate_semantic_embeddings(train_textual_links, "text", model, stemmer, stop_words)
         test_textual_link_embeddings = generate_semantic_embeddings(test_textual_links, "text", model, stemmer, stop_words)
@@ -812,7 +810,7 @@ def main(args):
         
         torch.save(train_textual_link_embeddings, f"{embeddings_path}/train_{object_to_predict}_be_textual_link_embeddings.pt")
         torch.save(test_textual_link_embeddings, f"{embeddings_path}/test_{object_to_predict}_be_textual_link_embeddings.pt")
-
+        """
 
 
 
