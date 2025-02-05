@@ -16,11 +16,17 @@ dataset_name='turl-cta'
 object_to_predict='dataset'
 
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0 --generate_semantic_textual_links --enable_binary_classifier_model 
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0 --generate_syntactic_embeddings --enable_syntactic_model
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1 --generate_semantic_textual_links --enable_binary_classifier_model 
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1 --generate_syntactic_embeddings --enable_syntactic_model
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=2 --generate_semantic_textual_links --enable_binary_classifier_model 
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=2 --generate_syntactic_embeddings --enable_syntactic_model
+
+#python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0 --generate_semantic_textual_links --enable_binary_classifier_model 
+
+#python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1 --generate_semantic_textual_links --enable_binary_classifier_model 
+
+#python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=2 --generate_semantic_textual_links --enable_binary_classifier_model 
 
 #python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1 --generate_syntactic_embeddings --enable_hybrid_model_syn_graph_embedding_learning
 

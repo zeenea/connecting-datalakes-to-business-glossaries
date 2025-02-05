@@ -578,33 +578,41 @@ def update_vocabulary(df, object_name, batch_size, vocabulary):
 
 
 def get_embeddings(df, object_name, batch_size, vectorizer):
-        tfidf_matrices = []
         for batch in get_text_batches(df, object_name, batch_size):
-            tfidf_matrix  = vectorizer.fit_transform(batch).toarray()
-            tfidf_matrices.append(tfidf_matrix)
-    
-        return np.concatenate(tfidf_matrices, axis=0)
+            yield  vectorizer.fit_transform(batch).toarray() 
+            
 
+def generate_tfidf_embeddings(col_df_file, ds_df_file, be_df_file, batch_size, logger):
 
-def generate_tfidf_embeddings(col_df_file, ds_df_file, be_df_file, batch_size):
-
-    vocabulary = Counter()
+    vocabulary = Counter({})
 
     col_name = 'column_name'
     ds_name = 'table_name'
     be_name = 'be_name'
-    
+
+    logger.info("--Update vocabulary")
     vocabulary = update_vocabulary(col_df_file, col_name, batch_size, vocabulary)
     vocabulary = update_vocabulary(ds_df_file, ds_name, batch_size, vocabulary)
     vocabulary = update_vocabulary(be_df_file, be_name, batch_size, vocabulary)
 
-    unique_vocab = list(vocabulary.keys())
+    logger.info("Reduce Vocabulary Size")
+    max_df = 100000
+    max_features = 1000
 
-    vectorizer = TfidfVectorizer(vocabulary=unique_vocab, stop_words='english')
+    filtered_vocab = dict(filter(lambda item: item[1] <= max_df, dict(vocabulary).items()))
+    
+    top_tokens_vocab = dict(sorted(filtered_vocab.items(), key=lambda item: item[1], reverse=True)[:max_features])
 
-    col_embeddings = get_embeddings(col_df_file, col_name, batch_size, vectorizer)
-    ds_embeddings = get_embeddings(ds_df_file, ds_name, batch_size, vectorizer)
-    be_embeddings = get_embeddings(be_df_file, be_name, batch_size, vectorizer)
+    logger.info("--Create Vectorizer")
+    vectorizer = TfidfVectorizer(vocabulary=top_tokens_vocab.keys(), stop_words='english')#), max_features=500)#, max_df=0.8)
+
+    logger.info("--Generate TFIDF Embeddings")
+    logger.info("----Column Embeddings")
+    col_embeddings = np.concatenate(list(get_embeddings(col_df_file, col_name, batch_size, vectorizer)), axis=0)
+    logger.info("----Table Embeddings")
+    ds_embeddings = np.concatenate(list(get_embeddings(ds_df_file, ds_name, batch_size, vectorizer)), axis=0)
+    logger.info("----BE Embeddings")
+    be_embeddings = np.concatenate(list(get_embeddings(be_df_file, be_name, batch_size, vectorizer)), axis=0)
 
     return col_embeddings, ds_embeddings, be_embeddings
 
@@ -740,7 +748,8 @@ def main(args):
             pos_col_alignments,
             pos_ds_alignments,
             business_glossary_items,
-            batch_size=1000
+            batch_size=1000,
+            logger=logger
         )
         
         col_syn_embeddings = syntactic_embeddings[0]
