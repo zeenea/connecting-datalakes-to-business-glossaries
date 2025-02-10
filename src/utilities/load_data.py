@@ -726,7 +726,7 @@ def main(args):
         logger.info("Generate Semantic Embeddings")
         
         col_sem_embeddings = generate_semantic_embeddings(pos_col_alignments, "column_name", model, stemmer, stop_words) 
-        ds_sem_embeddings = generate_semantic_embeddings(pos_ds_col_alignments, "table_name", model, stemmer, stop_words) 
+        ds_sem_embeddings = generate_semantic_embeddings(pos_ds_alignments, "table_name", model, stemmer, stop_words) 
         be_sem_embeddings = generate_semantic_embeddings(business_glossary_items, 'be_name', model, stemmer, stop_words) 
 
         logger.info("Save Semantic Embeddings")
