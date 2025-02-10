@@ -24,11 +24,11 @@ The application is composed of 3 modules.
 `$bash link-prediction-local/src/launch.sh`
 
 ## where we execute the entrypoint.py file with some required arguments as:
-* dataset_name, of type str and takes value in ('t2dv2', 'zeenea-open-ds', 'turl-cta')
-* object_to_predict, of type str and takes value in ('column', 'dataset')
-* random_state_index, of type int and takes value in (0, 1, 2)
+* __dataset_name__, of type str and takes value in ('t2dv2', 'zeenea-open-ds', 'turl-cta')
+* __object_to_predict__, of type str and takes value in ('column', 'dataset')
+* __random_state_index__, of type int and takes value in (0, 1, 2)
 
-`python entrypoint --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=$random_state_index`
+`python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=$random_state_index`
 
 ## To generate semantic embeddings or syntactic embeddings use 
 
