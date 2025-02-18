@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/141224185036189286/f3df69a96f5d4794aa1f7e8b475a7c98/artifacts
+deleted_time: 1739892238010
+end_time: 1739891291499
+entry_point_name: ''
+experiment_id: '141224185036189286'
+lifecycle_stage: deleted
+run_id: f3df69a96f5d4794aa1f7e8b475a7c98
+run_name: monumental-owl-153
+run_uuid: f3df69a96f5d4794aa1f7e8b475a7c98
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739891291203
+status: 4
+tags: []
+user_id: aknouchea

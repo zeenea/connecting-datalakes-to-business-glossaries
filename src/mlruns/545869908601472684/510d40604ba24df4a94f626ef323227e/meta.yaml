@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/545869908601472684/510d40604ba24df4a94f626ef323227e/artifacts
+end_time: 1739895980081
+entry_point_name: ''
+experiment_id: '545869908601472684'
+lifecycle_stage: active
+run_id: 510d40604ba24df4a94f626ef323227e
+run_name: fortunate-shoat-256
+run_uuid: 510d40604ba24df4a94f626ef323227e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739895979440
+status: 3
+tags: []
+user_id: aknouchea

@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/141224185036189286/cbb808215eac46b99edc9916101f6b6c/artifacts
+deleted_time: 1739895375502
+end_time: 1739894855973
+entry_point_name: ''
+experiment_id: '141224185036189286'
+lifecycle_stage: deleted
+run_id: cbb808215eac46b99edc9916101f6b6c
+run_name: merciful-mole-563
+run_uuid: cbb808215eac46b99edc9916101f6b6c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739894854421
+status: 3
+tags: []
+user_id: aknouchea

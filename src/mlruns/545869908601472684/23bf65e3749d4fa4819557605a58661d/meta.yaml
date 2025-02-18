@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/545869908601472684/23bf65e3749d4fa4819557605a58661d/artifacts
+end_time: 1739895964295
+entry_point_name: ''
+experiment_id: '545869908601472684'
+lifecycle_stage: active
+run_id: 23bf65e3749d4fa4819557605a58661d
+run_name: wise-kit-345
+run_uuid: 23bf65e3749d4fa4819557605a58661d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739895963189
+status: 3
+tags: []
+user_id: aknouchea

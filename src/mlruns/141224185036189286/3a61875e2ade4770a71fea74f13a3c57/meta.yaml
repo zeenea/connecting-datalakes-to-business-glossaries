@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/141224185036189286/3a61875e2ade4770a71fea74f13a3c57/artifacts
+deleted_time: 1739893150104
+end_time: 1739892658382
+entry_point_name: ''
+experiment_id: '141224185036189286'
+lifecycle_stage: deleted
+run_id: 3a61875e2ade4770a71fea74f13a3c57
+run_name: thundering-mouse-356
+run_uuid: 3a61875e2ade4770a71fea74f13a3c57
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739892658189
+status: 3
+tags: []
+user_id: aknouchea

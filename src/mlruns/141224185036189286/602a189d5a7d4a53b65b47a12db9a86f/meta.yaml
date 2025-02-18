@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/141224185036189286/602a189d5a7d4a53b65b47a12db9a86f/artifacts
+deleted_time: 1739893150098
+end_time: 1739891430498
+entry_point_name: ''
+experiment_id: '141224185036189286'
+lifecycle_stage: deleted
+run_id: 602a189d5a7d4a53b65b47a12db9a86f
+run_name: legendary-pig-976
+run_uuid: 602a189d5a7d4a53b65b47a12db9a86f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739891430273
+status: 3
+tags: []
+user_id: aknouchea

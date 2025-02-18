@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/141224185036189286/c7561881bd4f4ee588157594e7b46af4/artifacts
+deleted_time: 1739893150099
+end_time: 1739891440567
+entry_point_name: ''
+experiment_id: '141224185036189286'
+lifecycle_stage: deleted
+run_id: c7561881bd4f4ee588157594e7b46af4
+run_name: righteous-kit-674
+run_uuid: c7561881bd4f4ee588157594e7b46af4
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739891440305
+status: 3
+tags: []
+user_id: aknouchea

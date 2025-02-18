@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/141224185036189286/e8809c9296694bbcbca26544e5dbb131/artifacts
+deleted_time: 1739895375509
+end_time: 1739895335676
+entry_point_name: ''
+experiment_id: '141224185036189286'
+lifecycle_stage: deleted
+run_id: e8809c9296694bbcbca26544e5dbb131
+run_name: fearless-owl-258
+run_uuid: e8809c9296694bbcbca26544e5dbb131
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739895334986
+status: 3
+tags: []
+user_id: aknouchea

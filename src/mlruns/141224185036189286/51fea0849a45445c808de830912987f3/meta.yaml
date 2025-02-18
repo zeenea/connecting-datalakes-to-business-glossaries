@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/141224185036189286/51fea0849a45445c808de830912987f3/artifacts
+end_time: 1739893330313
+entry_point_name: ''
+experiment_id: '141224185036189286'
+lifecycle_stage: active
+run_id: 51fea0849a45445c808de830912987f3
+run_name: worried-kite-738
+run_uuid: 51fea0849a45445c808de830912987f3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739893329762
+status: 3
+tags: []
+user_id: aknouchea

@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/141224185036189286/30b708cc5838450d9aaeb6b16c2a3eb7/artifacts
+deleted_time: 1739892238010
+end_time: 1739891337005
+entry_point_name: ''
+experiment_id: '141224185036189286'
+lifecycle_stage: deleted
+run_id: 30b708cc5838450d9aaeb6b16c2a3eb7
+run_name: capable-mare-885
+run_uuid: 30b708cc5838450d9aaeb6b16c2a3eb7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739891336743
+status: 3
+tags: []
+user_id: aknouchea

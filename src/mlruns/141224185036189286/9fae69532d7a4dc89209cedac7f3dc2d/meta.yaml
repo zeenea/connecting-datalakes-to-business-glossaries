@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/141224185036189286/9fae69532d7a4dc89209cedac7f3dc2d/artifacts
+deleted_time: 1739895395108
+end_time: 1739895362995
+entry_point_name: ''
+experiment_id: '141224185036189286'
+lifecycle_stage: deleted
+run_id: 9fae69532d7a4dc89209cedac7f3dc2d
+run_name: bald-ant-760
+run_uuid: 9fae69532d7a4dc89209cedac7f3dc2d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739895362489
+status: 3
+tags: []
+user_id: aknouchea

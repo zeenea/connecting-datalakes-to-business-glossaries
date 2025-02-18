@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/141224185036189286/b90ce3c75fee47bb91a834e6099077c1/artifacts
+end_time: 1739893321363
+entry_point_name: ''
+experiment_id: '141224185036189286'
+lifecycle_stage: active
+run_id: b90ce3c75fee47bb91a834e6099077c1
+run_name: colorful-moose-445
+run_uuid: b90ce3c75fee47bb91a834e6099077c1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739893320863
+status: 3
+tags: []
+user_id: aknouchea

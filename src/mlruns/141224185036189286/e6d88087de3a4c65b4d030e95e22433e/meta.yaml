@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/141224185036189286/e6d88087de3a4c65b4d030e95e22433e/artifacts
+end_time: 1739893166909
+entry_point_name: ''
+experiment_id: '141224185036189286'
+lifecycle_stage: active
+run_id: e6d88087de3a4c65b4d030e95e22433e
+run_name: painted-owl-355
+run_uuid: e6d88087de3a4c65b4d030e95e22433e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739893166162
+status: 3
+tags: []
+user_id: aknouchea

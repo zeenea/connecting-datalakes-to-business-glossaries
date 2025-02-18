@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/141224185036189286/0a405713d4a84f898942729ba8e96187/artifacts
+deleted_time: 1739895375502
+end_time: 1739894855970
+entry_point_name: ''
+experiment_id: '141224185036189286'
+lifecycle_stage: deleted
+run_id: 0a405713d4a84f898942729ba8e96187
+run_name: chill-lynx-868
+run_uuid: 0a405713d4a84f898942729ba8e96187
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739894854420
+status: 3
+tags: []
+user_id: aknouchea
