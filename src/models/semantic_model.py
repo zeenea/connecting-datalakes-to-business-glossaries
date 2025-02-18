@@ -3,6 +3,7 @@ import logging
 import argparse
 import os
 import pandas as pd
+import mlflow
 
 
 def load_embeddings(embeddings_dir_path, dataset_name, model_type, random_state):
@@ -133,8 +134,6 @@ def main(args):
         "top_k":args.top_k,
         "nb_epochs":0}
     
-    
-
     logger.info(args)
 
     random_state = [42, 84, 13][random_state_index]
@@ -147,7 +146,8 @@ def main(args):
     ds_sem_embeddings = embeddings_out[1]
     be_sem_embeddings = embeddings_out[2] 
 
-    
+    assert col_sem_embeddings.shape[1] == ds_sem_embeddings.shape[1]
+    assert col_sem_embeddings.shape[1] == be_sem_embeddings.shape[1]
         
     logger.info('Load processed data')
     data_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/raw_to_dataframes"
@@ -162,46 +162,63 @@ def main(args):
 
     logger.info("Set device to 'cpu' or 'cuda'")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    logger.info("MLFlow managing")
+    mlflow.set_experiment('semantic_model')
     
-    logger.info("Test Semantic Model. Testing: MRR, Hit@10")
-
-    if object_to_predict == 'column':
-
-        test_pos_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
-
-        mrr, hit_at_10 = test_mrr_hits_sem_model(
-            test_pos_col_edge_index, 
-            col_sem_embeddings,
-            be_sem_embeddings,
-            k=parameters["top_k"],
-            device=device
-            )
-    else:
-        test_pos_ds_edge_index =  torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
-
-        mrr, hit_at_10 = test_mrr_hits_sem_model(
-            test_pos_ds_edge_index, 
-            ds_sem_embeddings,
-            be_sem_embeddings,
-            k=parameters["top_k"],
-            device=device
-            )
+    with mlflow.start_run():
         
+        mlflow.set_tag("dataset_name", dataset_name)
+        mlflow.set_tag('object_to_predict', object_to_predict)
+        mlflow.log_params(parameters)
+        mlflow.log_param('dataset_split_random_state', random_state)
+        mlflow.log_param('language_model_name', 'all-MiniLM-L6-v2')
+        mlflow.log_param('embedding_dimension', col_sem_embeddings.shape[1])
 
-    logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
-
-    logger.info("Save metrics")
+        logger.info("Test Semantic Model. Testing: MRR, Hit@10")
     
-    metric_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/semantic-model"
-    metrics = {
-        "MRR": round(mrr, 4),
-        "Hit@10": round(hit_at_10, 4),
-        "epochs": parameters["nb_epochs"],
-        "random_state":random_state,
-        "dataset_name": str(dataset_name)
-    }
-
-    save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
-
+        if object_to_predict == 'column':
     
+            test_pos_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
     
+            mrr, hit_at_10 = test_mrr_hits_sem_model(
+                test_pos_col_edge_index, 
+                col_sem_embeddings,
+                be_sem_embeddings,
+                k=parameters["top_k"],
+                device=device
+                )
+        else:
+            test_pos_ds_edge_index =  torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
+    
+            mrr, hit_at_10 = test_mrr_hits_sem_model(
+                test_pos_ds_edge_index, 
+                ds_sem_embeddings,
+                be_sem_embeddings,
+                k=parameters["top_k"],
+                device=device
+                )
+            
+    
+        logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
+    
+        logger.info("Save metrics")
+        
+        metric_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/semantic-model"
+        metrics = {
+            "MRR": round(mrr, 4),
+            "Hit@10": round(hit_at_10, 4),
+            "epochs": parameters["nb_epochs"],
+            "random_state":random_state,
+            "dataset_name": str(dataset_name)
+        }
+    
+        save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
+    
+        
+        mlflow.log_metric('mrr', round(mrr, 4))
+        mlflow.log_metric('hit_at_10', round(hit_at_10, 4))
+        
+    
+        
+        

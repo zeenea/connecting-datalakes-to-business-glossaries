@@ -1,5 +1,5 @@
 artifact_uri: mlflow-artifacts:/545869908601472684/0b89811186cd4f3ea2de0aef0abe3cb0/artifacts
-end_time: null
+end_time: 1739896441477
 entry_point_name: ''
 experiment_id: '545869908601472684'
 lifecycle_stage: active
@@ -10,6 +10,6 @@ source_name: ''
 source_type: 4
 source_version: ''
 start_time: 1739896162244
-status: 1
+status: 3
 tags: []
 user_id: aknouchea
