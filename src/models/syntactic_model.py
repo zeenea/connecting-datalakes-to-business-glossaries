@@ -4,7 +4,7 @@ import argparse
 import os
 import pandas as pd
 import string
-
+import mlflow
 
 def encode_syntactic_textual_data(sequences_src, sequences_tgt, vectorizer):
     sequences = list(sequences_src) + list(sequences_tgt)
@@ -206,46 +206,57 @@ def main(args):
 
     logger.info("Set device to 'cpu' or 'cuda'")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    logger.info("MLFlow managing")
+    mlflow.set_experiment('syntactic_model')
     
-    logger.info("Test Syntactic Model. Testing: MRR, Hit@10")
-
-    if object_to_predict == 'column':
-
-        test_pos_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
-
-        mrr, hit_at_10 = test_mrr_hits_syntactic_model(
-            test_pos_col_edge_index, 
-            col_syn_embeddings,
-            be_syn_embeddings,
-            k=parameters["top_k"],
-            device=device
-            )
-    else:
-        test_pos_ds_edge_index =  torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
-
-        mrr, hit_at_10 = test_mrr_hits_syntactic_model(
-            test_pos_ds_edge_index,
-            ds_syn_embeddings,
-            be_syn_embeddings,
-            k=parameters["top_k"],
-            device=device
-            )
+    with mlflow.start_run():
         
-
-    logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
-
-    logger.info("Save metrics")
+        mlflow.set_tag("dataset_name", dataset_name)
+        mlflow.set_tag('object_to_predict', object_to_predict)
+        mlflow.log_params(parameters)
+        mlflow.log_param('dataset_split_random_state', random_state)
+        
+        logger.info("Test Syntactic Model. Testing: MRR, Hit@10")
+        if object_to_predict == 'column':
     
-    metric_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/syntactic-model"
-    metrics = {
-        "MRR": round(mrr, 4),
-        "Hit@10": round(hit_at_10, 4),
-        "epochs": parameters["nb_epochs"],
-        "random_state":random_state,
-        "dataset_name": str(dataset_name)
-    }
-    save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
+            test_pos_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
+    
+            mrr, hit_at_10 = test_mrr_hits_syntactic_model(
+                test_pos_col_edge_index, 
+                col_syn_embeddings,
+                be_syn_embeddings,
+                k=parameters["top_k"],
+                device=device
+                )
+        else:
+            test_pos_ds_edge_index =  torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
+    
+            mrr, hit_at_10 = test_mrr_hits_syntactic_model(
+                test_pos_ds_edge_index,
+                ds_syn_embeddings,
+                be_syn_embeddings,
+                k=parameters["top_k"],
+                device=device
+                )
+            
+    
+        logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
+    
+        logger.info("Save metrics")
+        
+        metric_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/syntactic-model"
+        metrics = {
+            "MRR": round(mrr, 4),
+            "Hit@10": round(hit_at_10, 4),
+            "epochs": parameters["nb_epochs"],
+            "random_state":random_state,
+            "dataset_name": str(dataset_name)
+        }
+        save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
+    
+        mlflow.log_metric('mrr', round(mrr, 4))
+        mlflow.log_metric('hit_at_10', round(hit_at_10, 4))
 
     
-
-    
+        

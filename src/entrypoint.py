@@ -5,6 +5,7 @@ import argparse
 import yaml
 import logging
 import os
+import mlflow
 
 def load_yaml(file_path):
     with open(file_path, 'r') as file:
@@ -28,7 +29,7 @@ def starts_load_data():
         args, _ = parser.parse_known_args()
         load_data.main(args)
 
-def starts_random_model():
+def starts_random_model():    
     yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("random_model_args", {})
@@ -286,6 +287,8 @@ def are_embeddings_generated(dataset_name, model_name, random_state_index):
         
 
 if __name__ == "__main__":
+
+    mlflow.set_tracking_uri("http://127.0.0.1:8080")
 
     logger = logging.getLogger(__name__)
     logging.basicConfig(

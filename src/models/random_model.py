@@ -4,6 +4,7 @@ import argparse
 import os
 import pandas as pd
 import yaml
+import mlflow
 
 def load_yaml(file_path):
     with open(file_path, 'r') as file:
@@ -112,7 +113,7 @@ def save_model(model, models_dir_path, trained_on_dataset, trained_for_epochs, m
 
 
 def main(args):
-
+    
     logger = logging.getLogger(__name__)
     logging.basicConfig(
         level=logging.INFO,
@@ -146,42 +147,58 @@ def main(args):
 
     logger.info("Set device to 'cpu' or 'cuda'")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    
-    logger.info("Test Random Model. Testing: MRR, Hit@10")
 
-    if object_to_predict == 'column':
+    logger.info("MLFlow managing")
+    mlflow.set_experiment('random_model')
 
-        test_pos_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
-
-        mrr, hit_at_10 = test_mrr_hits_random_model(
-            test_pos_col_edge_index, 
-            k=parameters["top_k"],
-            device=device
-            )
-    else:
-        test_pos_ds_edge_index =  torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
-
-        mrr, hit_at_10 = test_mrr_hits_random_model(
-            test_pos_ds_edge_index, 
-            k=parameters["top_k"],
-            device=device
-            )
+    with mlflow.start_run():
         
+        mlflow.set_tag("dataset_name", dataset_name)
+        mlflow.set_tag('object_to_predict', object_to_predict)
+        mlflow.log_params(parameters)
+        mlflow.log_param('dataset_split_random_state', random_state)
 
-    logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
-
-    logger.info("Save metrics")
+        logger.info("Test Random Model. Testing: MRR, Hit@10")
     
-    metric_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/random-model"
-    metrics = {
-        "MRR": round(mrr, 4),
-        "Hit@10": round(hit_at_10, 4),
-        "epochs": parameters["nb_epochs"],
-        "random_state":random_state,
-        "dataset_name": str(dataset_name)
-    }
+        if object_to_predict == 'column':
+    
+            test_pos_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
+    
+            mrr, hit_at_10 = test_mrr_hits_random_model(
+                test_pos_col_edge_index, 
+                k=parameters["top_k"],
+                device=device
+                )
+        else:
+            test_pos_ds_edge_index =  torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
+    
+            mrr, hit_at_10 = test_mrr_hits_random_model(
+                test_pos_ds_edge_index, 
+                k=parameters["top_k"],
+                device=device
+                )
+            
+    
+        logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
+    
+        logger.info("Save metrics")
+        
+        metric_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/random-model"
+        metrics = {
+            "MRR": round(mrr, 4),
+            "Hit@10": round(hit_at_10, 4),
+            "epochs": parameters["nb_epochs"],
+            "random_state":random_state,
+            "dataset_name": str(dataset_name)
+        }
+    
+        save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
 
-    save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
+        mlflow.log_metric('mrr', round(mrr, 4))
+        mlflow.log_metric('hit_at_10', round(hit_at_10, 4))
+
+        
+        
 
     
     

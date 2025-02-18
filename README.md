@@ -13,15 +13,13 @@ The application is composed of 3 modules.
 
 ## Parameters and Hyperparameters for training the algorithms are defined in Yaml files as input config files.
 
-`link-prediction-local/src/input_yaml_config/load_data_input_config.yaml`
+`link-prediction-local/src/input_yaml_config/model_configs.yaml`
 
-`link-prediction-local/src/input_yaml_config/graph_model_input_config.yaml`
-
-`link-prediction-local/src/input_yaml_config/hybrid_model_input_config.yaml`
 
 ## To run the application.
+`$ mlflow server --host 127.0.0.1 --port 8080`
 
-`$bash link-prediction-local/src/launch.sh`
+`$ bash link-prediction-local/src/launch.sh`
 
 ## where we execute the entrypoint.py file with some required arguments as:
 * __dataset_name__, of type str and takes value in ('t2dv2', 'zeenea-open-ds', 'turl-cta')
@@ -35,6 +33,8 @@ The application is composed of 3 modules.
 `--generate_syntactic_embeddings` or `--generate_semantic_embeddings`
 
 ## To enable some models 
+1. Starts random model: --enable_random_model
+2. Starts syntactic model: --generate_syntactic_embeddings --enable_syntactic_model
 
 
 
