@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/7216e58a60574a1f9647a03e1d9c0316/artifacts
+deleted_time: 1739985356203
+end_time: 1739984620145
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: deleted
+run_id: 7216e58a60574a1f9647a03e1d9c0316
+run_name: respected-quail-590
+run_uuid: 7216e58a60574a1f9647a03e1d9c0316
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739982828450
+status: 4
+tags: []
+user_id: aknouchea

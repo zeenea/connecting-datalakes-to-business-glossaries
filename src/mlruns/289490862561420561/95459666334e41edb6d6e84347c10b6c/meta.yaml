@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/95459666334e41edb6d6e84347c10b6c/artifacts
+deleted_time: 1739976514522
+end_time: 1739962741056
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: deleted
+run_id: 95459666334e41edb6d6e84347c10b6c
+run_name: traveling-stag-576
+run_uuid: 95459666334e41edb6d6e84347c10b6c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739962296528
+status: 3
+tags: []
+user_id: aknouchea

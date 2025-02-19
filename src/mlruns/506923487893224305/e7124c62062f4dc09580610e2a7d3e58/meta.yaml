@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/506923487893224305/e7124c62062f4dc09580610e2a7d3e58/artifacts
+end_time: 1739904933748
+entry_point_name: ''
+experiment_id: '506923487893224305'
+lifecycle_stage: active
+run_id: e7124c62062f4dc09580610e2a7d3e58
+run_name: delightful-crane-630
+run_uuid: e7124c62062f4dc09580610e2a7d3e58
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739904933223
+status: 3
+tags: []
+user_id: aknouchea

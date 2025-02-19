@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/984e3bd23bb24ef2aa09576dd5b2d6be/artifacts
+deleted_time: 1739989740544
+end_time: 1739987738901
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: deleted
+run_id: 984e3bd23bb24ef2aa09576dd5b2d6be
+run_name: dazzling-ant-608
+run_uuid: 984e3bd23bb24ef2aa09576dd5b2d6be
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739987564686
+status: 3
+tags: []
+user_id: aknouchea

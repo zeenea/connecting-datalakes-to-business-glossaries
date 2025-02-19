@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/65bfadaaad9c4050814c98d5bda89d5a/artifacts
+end_time: 1739990447631
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: active
+run_id: 65bfadaaad9c4050814c98d5bda89d5a
+run_name: righteous-grouse-91
+run_uuid: 65bfadaaad9c4050814c98d5bda89d5a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739990271977
+status: 4
+tags: []
+user_id: aknouchea

@@ -7,6 +7,7 @@ import argparse
 import yaml
 import logging
 import os
+import mlflow
 
 def load_yaml(file_path):
     with open(file_path, 'r') as file:
@@ -204,13 +205,16 @@ def train_model_on_binary_cross_entropy_loss(link_predictor, optimizer, num_clas
         logger.info(f"Epoch {epoch}, Training Loss: {loss_epoch}")
         logger.info(f"F1-Score: {torch.mean(f1score, dim=0)}, Precision: {torch.mean(precision, dim=0)}, Recall: {torch.mean(recall, dim=0)}")
         
-        writer.add_scalar("Train/Loss", loss_epoch, epoch)
-        writer.add_scalar("Train/F1Score/NegativeMatch", torch.mean(f1score, dim=0)[0], epoch)
-        writer.add_scalar("Train/F1Score/PositiveMatch", torch.mean(f1score, dim=0)[1], epoch)
-        writer.add_scalar("Train/Precision/NegativeMatch", torch.mean(precision, dim=0)[0], epoch)
-        writer.add_scalar("Train/Precision/PositiveMatch", torch.mean(precision, dim=0)[1], epoch)
-        writer.add_scalar("Train/Recall/NegativeMatch", torch.mean(recall, dim=0)[0], epoch)
-        writer.add_scalar("Train/Recall/positiveMatch", torch.mean(recall, dim=0)[1], epoch)
+        metrics = {
+            "Train/Loss": loss_epoch,
+            "Train/F1Score/NegativeMatch": torch.mean(f1score, dim=0)[0], 
+            "Train/F1Score/PositiveMatch": torch.mean(f1score, dim=0)[1], 
+            "Train/Precision/NegativeMatch": torch.mean(precision, dim=0)[0], 
+            "Train/Precision/PositiveMatch": torch.mean(precision, dim=0)[1], 
+            "Train/Recall/NegativeMatch": torch.mean(recall, dim=0)[0], 
+            "Train/Recall/positiveMatch": torch.mean(recall, dim=0)[1]
+        }
+        mlflow.log_metrics(metrics, epoch)
 
     return link_predictor
 
@@ -373,7 +377,7 @@ def main(args):
         "num_classes":args.num_classes,
         "learning_rate":args.learning_rate,
         "top_k":args.top_k,
-        "max_length": 64
+        "max_length": 128
     }
 
     logger.info(args)
@@ -382,7 +386,6 @@ def main(args):
 
     logger.info("Set device to 'cpu' or 'cuda'")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    #device = torch.device('cpu')
     
     logger.info("Load Semantic Textual Link Embeddings")
     textual_links = list(load_textual_links(dataset_name, object_to_predict, random_state))
@@ -415,19 +418,8 @@ def main(args):
     train_dataset = TextualLinkEmbeddingsDataset(train_textual_links['text'], train_textual_links['is_matching'], tokenizer, max_length=parameters['max_length'])
     train_loader = torch.utils.data.DataLoader(train_dataset, collate_fn=collate_fn, shuffle=True, batch_size=parameters['batch_size'], num_workers=parameters['num_workers'])
 
-    logger.info("Tensorboard SummaryWriter Instatiation")
-    writer_log_dir = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/trainings/{model_class_name}/dataset_name={dataset_name}/random_state={random_state}/epochs={parameters['max_epochs']}"
-
-    if not os.path.exists(writer_log_dir):
-        os.makedirs(writer_log_dir)
-    
-    writer = SummaryWriter(writer_log_dir)
-    
-    logger.info("Training. Train Loss, F1-score, Recall, Precision")
-    link_predictor = train_model_on_binary_cross_entropy_loss(link_predictor, optimizer, parameters['num_classes'], parameters['max_epochs'], train_loader, writer, logger, device)    
-    
     logger.info("Create Test Dataset and DataLoader")
-
+    
     name_id_target = test_textual_links[['be_id', 'be_name']].drop_duplicates(subset=['be_id']).reset_index(drop=True)
     if object_to_predict == 'column':
         source_name = "column_name"
@@ -446,30 +438,62 @@ def main(args):
         
     test_loader = torch.utils.data.DataLoader(test_dataset, collate_fn=collate_test_dataset_fn, shuffle=True, batch_size=parameters['batch_size'], num_workers=parameters['num_workers'])
 
-    logger.info("Testing. MRR and Hit@10")
+    logger.info("Tensorboard SummaryWriter Instatiation")
+    writer_log_dir = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/trainings/{model_class_name}/dataset_name={dataset_name}/random_state={random_state}/epochs={parameters['max_epochs']}"
 
-    mrr, hit_at_k = test_mrr_hits_k(link_predictor, test_loader, parameters['top_k'], device)
-
-    logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_k:.4f}")
-
-    logger.info("Save metrics")
+    if not os.path.exists(writer_log_dir):
+        os.makedirs(writer_log_dir)
     
-    metric_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/{model_class_name}"
-    metrics = {
-        "MRR": round(mrr, 4),
-        "Hit@10": round(hit_at_k, 4),
-        "epochs": parameters["max_epochs"],
-        "random_state":random_state,
-        "dataset_name": str(dataset_name)
-    }
+    writer = SummaryWriter(writer_log_dir)
     
-    save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
-
-    logger.info("Save Binary Classifier Model")
-    models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
+    logger.info("MLFlow managing")
+    mlflow.set_experiment('binary_classifier_model')
     
-    save_model(link_predictor, models_dir_path, dataset_name, object_to_predict, parameters['max_epochs'], model_class_name, random_state)
+    with mlflow.start_run():
+        
+        mlflow.set_tag("dataset_name", dataset_name)
+        mlflow.set_tag('object_to_predict', object_to_predict)
+        mlflow.log_params(parameters)
+        mlflow.log_param('dataset_split_random_state', random_state)
+        mlflow.log_param('loss_function', 'BCELoss')
+        mlflow.log_param('optimizer', 'AdamW')
+        mlflow.log_param('language_model_name', model_name)
+        mlflow.log_param('link_predictor_model', model_class_name)
 
+        logger.info("Training. Train Loss, F1-score, Recall, Precision")
+        link_predictor = train_model_on_binary_cross_entropy_loss(link_predictor, optimizer, parameters['num_classes'], parameters['max_epochs'], train_loader, writer, logger, device)
+        
+        logger.info("Testing. MRR and Hit@10")
     
+        mrr, hit_at_k = test_mrr_hits_k(link_predictor, test_loader, parameters['top_k'], device)
+    
+        logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_k:.4f}")
+    
+        logger.info("Save metrics")
+        
+        metric_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/{model_class_name}"
+        metrics = {
+            "MRR": round(mrr, 4),
+            "Hit@10": round(hit_at_k, 4),
+            "epochs": parameters["max_epochs"],
+            "random_state":random_state,
+            "dataset_name": str(dataset_name)
+        }
+        
+        save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
 
+        mlflow.log_metric('mrr', round(mrr, 4))
+        mlflow.log_metric('hit_at_10', round(hit_at_k, 4))
+    
+        logger.info("Save Binary Classifier Model")
+        models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
+        
+        save_model(link_predictor, models_dir_path, dataset_name, object_to_predict, parameters['max_epochs'], model_class_name, random_state)
 
+        registered_model_name = f"{dataset_name}-{object_to_predict}-{model_class_name}"
+        mlflow.pytorch.log_model(link_predictor, model_class_name, registered_model_name=registered_model_name)
+
+        
+    
+    
+    

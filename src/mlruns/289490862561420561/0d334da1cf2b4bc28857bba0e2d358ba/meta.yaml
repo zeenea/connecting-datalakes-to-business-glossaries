@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/0d334da1cf2b4bc28857bba0e2d358ba/artifacts
+deleted_time: 1739976514523
+end_time: 1739962754719
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: deleted
+run_id: 0d334da1cf2b4bc28857bba0e2d358ba
+run_name: big-fox-23
+run_uuid: 0d334da1cf2b4bc28857bba0e2d358ba
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739962750534
+status: 4
+tags: []
+user_id: aknouchea

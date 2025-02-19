@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/ed25a68a57314b1da5433875d3cc439b/artifacts
+deleted_time: 1739976514522
+end_time: 1739962264001
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: deleted
+run_id: ed25a68a57314b1da5433875d3cc439b
+run_name: gifted-mare-280
+run_uuid: ed25a68a57314b1da5433875d3cc439b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739962259740
+status: 4
+tags: []
+user_id: aknouchea

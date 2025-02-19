@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/545869908601472684/85093fecaf534a8da2b4cdcab86c8ced/artifacts
+end_time: 1739897062886
+entry_point_name: ''
+experiment_id: '545869908601472684'
+lifecycle_stage: active
+run_id: 85093fecaf534a8da2b4cdcab86c8ced
+run_name: casual-colt-610
+run_uuid: 85093fecaf534a8da2b4cdcab86c8ced
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739896783621
+status: 3
+tags: []
+user_id: aknouchea

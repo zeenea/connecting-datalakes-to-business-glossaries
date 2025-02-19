@@ -1,0 +1,6 @@
+artifact_location: mlflow-artifacts:/506923487893224305
+creation_time: 1739904765690
+experiment_id: '506923487893224305'
+last_update_time: 1739904765690
+lifecycle_stage: active
+name: semantic_model

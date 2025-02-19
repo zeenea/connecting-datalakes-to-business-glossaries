@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/506923487893224305/3b0e7366d64849bd9c5065b61913a11b/artifacts
+end_time: 1739904902617
+entry_point_name: ''
+experiment_id: '506923487893224305'
+lifecycle_stage: active
+run_id: 3b0e7366d64849bd9c5065b61913a11b
+run_name: trusting-grouse-317
+run_uuid: 3b0e7366d64849bd9c5065b61913a11b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739904902093
+status: 3
+tags: []
+user_id: aknouchea

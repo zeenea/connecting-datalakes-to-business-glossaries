@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1739990723331
+current_stage: None
+description: ''
+last_updated_timestamp: 1739990723331
+name: zeenea-open-ds-dataset-BinaryClassifierModel
+run_id: 4f8031b91e7b4a9987fd80d7edf9a8c8
+run_link: ''
+source: mlflow-artifacts:/289490862561420561/4f8031b91e7b4a9987fd80d7edf9a8c8/artifacts/BinaryClassifierModel
+status: READY
+status_message: null
+storage_location: mlflow-artifacts:/289490862561420561/4f8031b91e7b4a9987fd80d7edf9a8c8/artifacts/BinaryClassifierModel
+user_id: null
+version: 9

@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/8bc6de0b33d54c1ea4c2335bda6bfa96/artifacts
+end_time: 1739989617604
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: active
+run_id: 8bc6de0b33d54c1ea4c2335bda6bfa96
+run_name: zealous-bee-938
+run_uuid: 8bc6de0b33d54c1ea4c2335bda6bfa96
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739989568176
+status: 3
+tags: []
+user_id: aknouchea

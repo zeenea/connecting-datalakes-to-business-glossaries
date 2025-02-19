@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/141224185036189286/3c4a5d4fef7047f5afcbc7e53b55dc75/artifacts
+end_time: 1739957705359
+entry_point_name: ''
+experiment_id: '141224185036189286'
+lifecycle_stage: active
+run_id: 3c4a5d4fef7047f5afcbc7e53b55dc75
+run_name: serious-bee-330
+run_uuid: 3c4a5d4fef7047f5afcbc7e53b55dc75
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739957602293
+status: 3
+tags: []
+user_id: aknouchea

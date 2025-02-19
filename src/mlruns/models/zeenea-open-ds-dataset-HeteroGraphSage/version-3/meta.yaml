@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1739993385392
+current_stage: None
+description: ''
+last_updated_timestamp: 1739993385392
+name: zeenea-open-ds-dataset-HeteroGraphSage
+run_id: c2b1014ffb324b23a75c987ba2c58e6d
+run_link: ''
+source: mlflow-artifacts:/573596138507906400/c2b1014ffb324b23a75c987ba2c58e6d/artifacts/HeteroGraphSage
+status: READY
+status_message: null
+storage_location: mlflow-artifacts:/573596138507906400/c2b1014ffb324b23a75c987ba2c58e6d/artifacts/HeteroGraphSage
+user_id: null
+version: 3

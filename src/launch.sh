@@ -13,17 +13,16 @@ eval "$(conda shell.bash hook)"     # Initialisation du shell pour conda
 conda activate myenv                # Activation de votre environnement python
 
 dataset_name='turl-cta'
-object_to_predict='column'
+object_to_predict='dataset'
 
 
 mlflow server --host 127.0.0.1 --port 8080 &
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0  --enable_syntactic_model 
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0  --enable_graph_model
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1  --enable_syntactic_model 
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1  --enable_graph_model
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=2  --enable_syntactic_model
-
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=2  --enable_graph_model
 #python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0 --generate_semantic_textual_links --enable_binary_classifier_model 
 
 #python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1 --generate_semantic_textual_links --enable_binary_classifier_model 

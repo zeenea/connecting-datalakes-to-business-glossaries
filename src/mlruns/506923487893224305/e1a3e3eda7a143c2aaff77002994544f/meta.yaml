@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/506923487893224305/e1a3e3eda7a143c2aaff77002994544f/artifacts
+end_time: 1739904785819
+entry_point_name: ''
+experiment_id: '506923487893224305'
+lifecycle_stage: active
+run_id: e1a3e3eda7a143c2aaff77002994544f
+run_name: loud-stoat-238
+run_uuid: e1a3e3eda7a143c2aaff77002994544f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739904785196
+status: 3
+tags: []
+user_id: aknouchea

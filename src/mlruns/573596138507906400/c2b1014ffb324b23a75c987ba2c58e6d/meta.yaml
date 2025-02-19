@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/573596138507906400/c2b1014ffb324b23a75c987ba2c58e6d/artifacts
+end_time: 1739993385546
+entry_point_name: ''
+experiment_id: '573596138507906400'
+lifecycle_stage: active
+run_id: c2b1014ffb324b23a75c987ba2c58e6d
+run_name: awesome-hog-170
+run_uuid: c2b1014ffb324b23a75c987ba2c58e6d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739993373459
+status: 3
+tags: []
+user_id: aknouchea

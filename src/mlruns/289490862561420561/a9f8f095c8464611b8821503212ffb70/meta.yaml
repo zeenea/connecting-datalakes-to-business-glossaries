@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/a9f8f095c8464611b8821503212ffb70/artifacts
+deleted_time: 1739986378946
+end_time: 1739986263543
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: deleted
+run_id: a9f8f095c8464611b8821503212ffb70
+run_name: carefree-stoat-544
+run_uuid: a9f8f095c8464611b8821503212ffb70
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739986256444
+status: 4
+tags: []
+user_id: aknouchea

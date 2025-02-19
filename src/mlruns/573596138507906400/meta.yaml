@@ -1,0 +1,6 @@
+artifact_location: mlflow-artifacts:/573596138507906400
+creation_time: 1739993275080
+experiment_id: '573596138507906400'
+last_update_time: 1739993275080
+lifecycle_stage: active
+name: hetero_graph_model

@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/197c01e64b8c4deebe47488a2abe6022/artifacts
+deleted_time: 1739986378946
+end_time: 1739986247235
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: deleted
+run_id: 197c01e64b8c4deebe47488a2abe6022
+run_name: able-carp-567
+run_uuid: 197c01e64b8c4deebe47488a2abe6022
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739985836282
+status: 4
+tags: []
+user_id: aknouchea

@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/5486ff13bf7c4b86be386c139d8a5eee/artifacts
+deleted_time: 1739979293474
+end_time: 1739963792170
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: deleted
+run_id: 5486ff13bf7c4b86be386c139d8a5eee
+run_name: selective-squid-555
+run_uuid: 5486ff13bf7c4b86be386c139d8a5eee
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739963391055
+status: 3
+tags: []
+user_id: aknouchea

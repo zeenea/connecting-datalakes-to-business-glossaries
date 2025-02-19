@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/506923487893224305/fba8ae1fe56e4fa2b6b693b903f8d3bf/artifacts
+end_time: 1739904892986
+entry_point_name: ''
+experiment_id: '506923487893224305'
+lifecycle_stage: active
+run_id: fba8ae1fe56e4fa2b6b693b903f8d3bf
+run_name: auspicious-shad-907
+run_uuid: fba8ae1fe56e4fa2b6b693b903f8d3bf
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739904892442
+status: 3
+tags: []
+user_id: aknouchea

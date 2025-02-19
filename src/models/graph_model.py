@@ -7,6 +7,7 @@ from torch_geometric.nn import SAGEConv, HeteroConv, GAT
 from sklearn.metrics import roc_auc_score
 import logging
 import os
+import mlflow
 
 os.environ['CUDA_LAUNCH_BLOCKING']='1'
 os.environ['TORCH_USE_CUDA_DSA']='1'
@@ -597,6 +598,9 @@ def main(args):
     out_channels = graph_dim_embeddings
     
     hetero_model = HeteroGraphSage(in_channels=in_channels, out_channels=out_channels).to(device)
+
+    model_class_name = hetero_model.__class__.__name__
+    
     optimizer = torch.optim.Adam(hetero_model.parameters(), lr=lr)
 
     options = dict()
@@ -612,86 +616,113 @@ def main(args):
         options['be_to_be_pos_edge_index'] = None
 
     options['device'] = device
+
+    logger.info("MLFlow managing")
+    mlflow.set_experiment('hetero_graph_model')
     
-    logger.info("Training - Train Loss - Test Loss - Test AUC")
-    
-    for epoch in range(0, max_epochs):
-            
-        train_loss, train_pos_edge_index = train(hetero_model, optimizer, object_to_predict, hetero_dataset, train_pos_col_edge_index, train_neg_col_edge_index, train_pos_ds_edge_index, train_neg_ds_edge_index, **options)
-        test_loss, test_auc  = test(hetero_model, object_to_predict, hetero_dataset, test_pos_col_edge_index, test_neg_col_edge_index, test_pos_ds_edge_index, test_neg_ds_edge_index, **options)
-        logger.info(f'Epoch: {epoch}, Train Loss: {train_loss.item():.6f}, Test Loss: {test_loss:.4f}, Test AUC: {test_auc:.4f}')
+    with mlflow.start_run():
         
-    logger.info("Testing - Hit@10 - MRR")
-    if object_to_predict == 'column':
+        mlflow.set_tag("dataset_name", dataset_name)
+        mlflow.set_tag('object_to_predict', object_to_predict)
+        mlflow.log_param('max_epochs', max_epochs)
+        mlflow.log_param('learning_rate', lr)
+        mlflow.log_param('dataset_split_random_state', random_state)
+        mlflow.log_param('loss_function', 'binary_cross_entropy_with_logits')
+        mlflow.log_param('optimizer', 'AdamW')
+        mlflow.log_param('link_predictor_model', model_class_name)
+    
+        logger.info("Training - Train Loss - Test Loss - Test AUC")
+        
+        for epoch in range(0, max_epochs):
                 
-        mrr, hit_at_10 = test_mrr_hits_k(col_embeddings, ds_embeddings, be_embeddings, object_to_predict, hetero_dataset, hetero_model, train_pos_edge_index, test_pos_col_edge_index, k=10, device=device)
+            train_loss, train_pos_edge_index = train(hetero_model, optimizer, object_to_predict, hetero_dataset, train_pos_col_edge_index, train_neg_col_edge_index, train_pos_ds_edge_index, train_neg_ds_edge_index, **options)
+            test_loss, test_auc  = test(hetero_model, object_to_predict, hetero_dataset, test_pos_col_edge_index, test_neg_col_edge_index, test_pos_ds_edge_index, test_neg_ds_edge_index, **options)
+            logger.info(f'Epoch: {epoch}, Train Loss: {train_loss.item():.6f}, Test Loss: {test_loss:.4f}, Test AUC: {test_auc:.4f}')
+            
+            train_metrics = {
+                'train_loss': round(train_loss.item(), 4),
+                'test_loss': round(test_loss.item(), 4),
+                'test_auc': round(test_auc.item(), 4)
+            }
+            mlflow.log_metrics(train_metrics, epoch)
+            
+        logger.info("Testing - Hit@10 - MRR")
+        if object_to_predict == 'column':
+                    
+            mrr, hit_at_10 = test_mrr_hits_k(col_embeddings, ds_embeddings, be_embeddings, object_to_predict, hetero_dataset, hetero_model, train_pos_edge_index, test_pos_col_edge_index, k=10, device=device)
+            
+        elif object_to_predict == 'dataset':
+            
+            mrr, hit_at_10 = test_mrr_hits_k(col_embeddings, ds_embeddings, be_embeddings, object_to_predict, hetero_dataset, hetero_model, train_pos_edge_index, test_pos_ds_edge_index, k=10, device=device) 
+    
         
-    elif object_to_predict == 'dataset':
+        logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
+    
+        logger.info("Save metrics")
         
-        mrr, hit_at_10 = test_mrr_hits_k(col_embeddings, ds_embeddings, be_embeddings, object_to_predict, hetero_dataset, hetero_model, train_pos_edge_index, test_pos_ds_edge_index, k=10, device=device) 
-
-    
-    logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
-
-    logger.info("Save metrics")
-    
-    metric_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/hetero-graph-model"
-    
-    metrics = {
-        "MRR": round(mrr, 4),
-        "Hit@10": round(hit_at_10, 4),
-        "epochs": max_epochs,
-        "random_state":random_state,
-        "dataset_name": str(dataset_name)
-    }
-    
-    save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
-
-    logger.info("Save HeteroGraph Model")
-    models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
-    model_name = "heteroGraphSage"
-    
-    save_model(hetero_model, models_dir_path, dataset_name, max_epochs, model_name, random_state)
-
-    logger.info("Save Graph Embeddings")
-
-    x_dict = {}
-
-    x_dict['column'] = col_embeddings.to(device)
-    x_dict['dataset'] = ds_embeddings.to(device)
-    x_dict['business_entity'] = be_embeddings.to(device)
-       
-    graph_embeddings = hetero_model.encode(x_dict, train_pos_edge_index)
-
-    col_graph_embeddings = graph_embeddings['column']
-    ds_graph_embeddings = graph_embeddings['dataset']
-    be_graph_embeddings = graph_embeddings['business_entity']
-
-    graph_embeddings_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings/dataset_name={dataset_name}/model_type=graph-based/random_state={random_state}"
-
-    if not os.path.exists(graph_embeddings_dir_path):
-            os.makedirs(graph_embeddings_dir_path)
+        metric_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/hetero-graph-model"
         
-    save_torch_tensor(col_graph_embeddings, graph_embeddings_dir_path, 'col_embeddings.pt')
-    save_torch_tensor(ds_graph_embeddings, graph_embeddings_dir_path, 'ds_embeddings.pt')
-    save_torch_tensor(be_graph_embeddings, graph_embeddings_dir_path, 'be_embeddings.pt')
-    
-    logger.info("Save edge indexes")
-    edge_indexes_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/edge_indexes/dataset_name={dataset_name}/object_to_predict={object_to_predict}/random_state={random_state}"
-
-    if not os.path.exists(edge_indexes_dir_path):
-            os.makedirs(edge_indexes_dir_path)
-
-    save_torch_tensor(train_pos_col_edge_index, edge_indexes_dir_path, 'train_pos_col_edge_index.pt')
-    save_torch_tensor(train_neg_col_edge_index, edge_indexes_dir_path, 'train_neg_col_edge_index.pt')
-    save_torch_tensor(test_pos_col_edge_index, edge_indexes_dir_path, 'test_pos_col_edge_index.pt')
-    save_torch_tensor(test_neg_col_edge_index, edge_indexes_dir_path, 'test_neg_col_edge_index.pt')
-    save_torch_tensor(train_pos_ds_edge_index, edge_indexes_dir_path, 'train_pos_ds_edge_index.pt')
-    save_torch_tensor(train_neg_ds_edge_index, edge_indexes_dir_path, 'train_neg_ds_edge_index.pt')
-    save_torch_tensor(test_pos_ds_edge_index, edge_indexes_dir_path, 'test_pos_ds_edge_index.pt')
-    save_torch_tensor(test_neg_ds_edge_index, edge_indexes_dir_path, 'test_neg_ds_edge_index.pt')
-    save_torch_tensor(ds_to_col_pos_edge_index, edge_indexes_dir_path, 'ds_to_col_pos_edge_index.pt')
-    save_torch_tensor(be_to_be_pos_edge_index, edge_indexes_dir_path, 'be_to_be_pos_edge_index.pt')
+        metrics = {
+            "MRR": round(mrr, 4),
+            "Hit@10": round(hit_at_10, 4),
+            "epochs": max_epochs,
+            "random_state":random_state,
+            "dataset_name": str(dataset_name)
+        }
         
+        save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
 
+        mlflow.log_metric('mrr', round(mrr, 4))
+        mlflow.log_metric('hit_at_10', round(hit_at_10, 4))
+    
+        logger.info("Save HeteroGraph Model")
+        models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
+        model_name = "heteroGraphSage"
+        
+        save_model(hetero_model, models_dir_path, dataset_name, max_epochs, model_name, random_state)
 
+        registered_model_name = f"{dataset_name}-{object_to_predict}-{model_class_name}"
+        mlflow.pytorch.log_model(hetero_model, model_class_name, registered_model_name=registered_model_name)
+
+        logger.info("Save Graph Embeddings")
+    
+        x_dict = {}
+    
+        x_dict['column'] = col_embeddings.to(device)
+        x_dict['dataset'] = ds_embeddings.to(device)
+        x_dict['business_entity'] = be_embeddings.to(device)
+           
+        graph_embeddings = hetero_model.encode(x_dict, train_pos_edge_index)
+    
+        col_graph_embeddings = graph_embeddings['column']
+        ds_graph_embeddings = graph_embeddings['dataset']
+        be_graph_embeddings = graph_embeddings['business_entity']
+    
+        graph_embeddings_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings/dataset_name={dataset_name}/model_type=graph-based/random_state={random_state}"
+    
+        if not os.path.exists(graph_embeddings_dir_path):
+                os.makedirs(graph_embeddings_dir_path)
+            
+        save_torch_tensor(col_graph_embeddings, graph_embeddings_dir_path, 'col_embeddings.pt')
+        save_torch_tensor(ds_graph_embeddings, graph_embeddings_dir_path, 'ds_embeddings.pt')
+        save_torch_tensor(be_graph_embeddings, graph_embeddings_dir_path, 'be_embeddings.pt')
+        
+        logger.info("Save edge indexes")
+        edge_indexes_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/edge_indexes/dataset_name={dataset_name}/object_to_predict={object_to_predict}/random_state={random_state}"
+    
+        if not os.path.exists(edge_indexes_dir_path):
+                os.makedirs(edge_indexes_dir_path)
+    
+        save_torch_tensor(train_pos_col_edge_index, edge_indexes_dir_path, 'train_pos_col_edge_index.pt')
+        save_torch_tensor(train_neg_col_edge_index, edge_indexes_dir_path, 'train_neg_col_edge_index.pt')
+        save_torch_tensor(test_pos_col_edge_index, edge_indexes_dir_path, 'test_pos_col_edge_index.pt')
+        save_torch_tensor(test_neg_col_edge_index, edge_indexes_dir_path, 'test_neg_col_edge_index.pt')
+        save_torch_tensor(train_pos_ds_edge_index, edge_indexes_dir_path, 'train_pos_ds_edge_index.pt')
+        save_torch_tensor(train_neg_ds_edge_index, edge_indexes_dir_path, 'train_neg_ds_edge_index.pt')
+        save_torch_tensor(test_pos_ds_edge_index, edge_indexes_dir_path, 'test_pos_ds_edge_index.pt')
+        save_torch_tensor(test_neg_ds_edge_index, edge_indexes_dir_path, 'test_neg_ds_edge_index.pt')
+        save_torch_tensor(ds_to_col_pos_edge_index, edge_indexes_dir_path, 'ds_to_col_pos_edge_index.pt')
+        save_torch_tensor(be_to_be_pos_edge_index, edge_indexes_dir_path, 'be_to_be_pos_edge_index.pt')
+            
+    
+    

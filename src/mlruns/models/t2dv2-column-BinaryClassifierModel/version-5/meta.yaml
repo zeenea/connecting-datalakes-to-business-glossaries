@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1739992468747
+current_stage: None
+description: ''
+last_updated_timestamp: 1739992468747
+name: t2dv2-column-BinaryClassifierModel
+run_id: 6866bf9da6414b76b211d1640452953c
+run_link: ''
+source: mlflow-artifacts:/289490862561420561/6866bf9da6414b76b211d1640452953c/artifacts/BinaryClassifierModel
+status: READY
+status_message: null
+storage_location: mlflow-artifacts:/289490862561420561/6866bf9da6414b76b211d1640452953c/artifacts/BinaryClassifierModel
+user_id: null
+version: 5

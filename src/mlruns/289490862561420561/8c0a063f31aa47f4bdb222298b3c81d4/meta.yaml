@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/8c0a063f31aa47f4bdb222298b3c81d4/artifacts
+end_time: 1739991405351
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: active
+run_id: 8c0a063f31aa47f4bdb222298b3c81d4
+run_name: smiling-stork-483
+run_uuid: 8c0a063f31aa47f4bdb222298b3c81d4
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739991166516
+status: 3
+tags: []
+user_id: aknouchea

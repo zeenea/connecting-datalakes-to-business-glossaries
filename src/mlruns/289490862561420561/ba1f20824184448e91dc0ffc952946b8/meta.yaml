@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/ba1f20824184448e91dc0ffc952946b8/artifacts
+deleted_time: 1739976514527
+end_time: 1739962250604
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: deleted
+run_id: ba1f20824184448e91dc0ffc952946b8
+run_name: nimble-gnat-612
+run_uuid: ba1f20824184448e91dc0ffc952946b8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739962246358
+status: 4
+tags: []
+user_id: aknouchea

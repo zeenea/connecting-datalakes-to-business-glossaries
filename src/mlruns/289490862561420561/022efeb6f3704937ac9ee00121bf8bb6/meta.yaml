@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/022efeb6f3704937ac9ee00121bf8bb6/artifacts
+deleted_time: 1739985356207
+end_time: 1739979986002
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: deleted
+run_id: 022efeb6f3704937ac9ee00121bf8bb6
+run_name: exultant-grub-275
+run_uuid: 022efeb6f3704937ac9ee00121bf8bb6
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739979592903
+status: 4
+tags: []
+user_id: aknouchea

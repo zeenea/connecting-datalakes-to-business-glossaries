@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/fad7559177f74e819a6931f3f5ce4286/artifacts
+end_time: 1739990071266
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: active
+run_id: fad7559177f74e819a6931f3f5ce4286
+run_name: enthused-moose-938
+run_uuid: fad7559177f74e819a6931f3f5ce4286
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739989895883
+status: 4
+tags: []
+user_id: aknouchea

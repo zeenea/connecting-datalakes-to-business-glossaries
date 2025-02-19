@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/506923487893224305/deb7c2d17ee94e08abb043628be7896b/artifacts
+end_time: 1739904953462
+entry_point_name: ''
+experiment_id: '506923487893224305'
+lifecycle_stage: active
+run_id: deb7c2d17ee94e08abb043628be7896b
+run_name: shivering-newt-499
+run_uuid: deb7c2d17ee94e08abb043628be7896b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739904952938
+status: 3
+tags: []
+user_id: aknouchea

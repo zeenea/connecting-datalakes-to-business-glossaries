@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/289490862561420561/914418af6a0d440089145c236ae58f80/artifacts
+deleted_time: 1739989740541
+end_time: 1739986448107
+entry_point_name: ''
+experiment_id: '289490862561420561'
+lifecycle_stage: deleted
+run_id: 914418af6a0d440089145c236ae58f80
+run_name: intrigued-horse-620
+run_uuid: 914418af6a0d440089145c236ae58f80
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1739986410825
+status: 3
+tags: []
+user_id: aknouchea
