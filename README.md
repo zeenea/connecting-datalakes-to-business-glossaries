@@ -36,10 +36,13 @@ The application is composed of 3 modules.
 1. Starts random model: --enable_random_model
 2. Starts syntactic model: --generate_syntactic_embeddings --enable_syntactic_model
 3. Starts semantic model: --generate_semantic_embeddings --enable_semantic_model
-4. Starts binary_classifier model: --generate_semantic_textual_links --enable_binary_classifier_model
+4. Starts binary classifier model: --generate_semantic_textual_links --enable_binary_classifier_model
 5. Starts graph model: --enable_graph_model
-6. 
-7. 
+6. Starts cross semantic and syntactic similarity learning model: --enable_cross_model_syn_sem_similiarity_learning
+7. Starts cross semantic and graph similarity learning model: --enable_cross_model_sem_graph_similarity_learning
+8. Starts cross syntactic and graph similarity learning model: --enable_cross_model_syn_graph_similarity_learning
+9. 
+10. 
 
 
 

@@ -12,17 +12,17 @@ module purge                        # Nettoyage de l'environnement
 eval "$(conda shell.bash hook)"     # Initialisation du shell pour conda
 conda activate myenv                # Activation de votre environnement python
 
-dataset_name='turl-cta'
+dataset_name='zeenea-open-ds'
 object_to_predict='dataset'
 
 
 mlflow server --host 127.0.0.1 --port 8080 &
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0  --enable_cross_model_sem_graph_similarity_learning
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0  --enable_hybrid_model_sem_graph_embedding_learning
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1  --enable_cross_model_sem_graph_similarity_learning
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1  --enable_hybrid_model_sem_graph_embedding_learning
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=2  --enable_cross_model_sem_graph_similarity_learning
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=2  --enable_hybrid_model_sem_graph_embedding_learning
 
 #python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0 --generate_semantic_textual_links --enable_binary_classifier_model 
 

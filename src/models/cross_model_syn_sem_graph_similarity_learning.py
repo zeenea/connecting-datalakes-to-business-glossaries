@@ -3,6 +3,7 @@ import logging
 from torch.utils.tensorboard import SummaryWriter
 import os
 from torchmetrics.classification import MulticlassPrecision, MulticlassRecall, MulticlassF1Score
+import mlflow
 
 os.environ['TOKENIZERS_PARALLELISM']='true'
 os.environ['TORCH_USE_CUDA_DSA']='1'
@@ -175,13 +176,16 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
         logger.info(f"Epoch {epoch}, Training Loss: {loss_epoch}")
         logger.info(f"F1-Score: {torch.mean(f1score, dim=0)}, Precision: {torch.mean(precision, dim=0)}, Recall: {torch.mean(recall, dim=0)}")
         
-        writer.add_scalar("Train/Loss", loss_epoch, epoch)
-        writer.add_scalar("Train/F1Score/NegativeMatch", torch.mean(f1score, dim=0)[0], epoch)
-        writer.add_scalar("Train/F1Score/PositiveMatch", torch.mean(f1score, dim=0)[1], epoch)
-        writer.add_scalar("Train/Precision/NegativeMatch", torch.mean(precision, dim=0)[0], epoch)
-        writer.add_scalar("Train/Precision/PositiveMatch", torch.mean(precision, dim=0)[1], epoch)
-        writer.add_scalar("Train/Recall/NegativeMatch", torch.mean(recall, dim=0)[0], epoch)
-        writer.add_scalar("Train/Recall/positiveMatch", torch.mean(recall, dim=0)[1], epoch)
+        metrics = {
+            "Train/Loss": loss_epoch,
+            "Train/F1Score/NegativeMatch": torch.mean(f1score, dim=0)[0], 
+            "Train/F1Score/PositiveMatch": torch.mean(f1score, dim=0)[1], 
+            "Train/Precision/NegativeMatch": torch.mean(precision, dim=0)[0], 
+            "Train/Precision/PositiveMatch": torch.mean(precision, dim=0)[1], 
+            "Train/Recall/NegativeMatch": torch.mean(recall, dim=0)[0], 
+            "Train/Recall/positiveMatch": torch.mean(recall, dim=0)[1]
+        }
+        mlflow.log_metrics(metrics)
 
     return link_predictor_model
 
@@ -469,59 +473,78 @@ def main(args):
     
     writer = SummaryWriter(writer_log_dir)
 
-    logger.info("Cross Model Training. Training: Loss, F1Score, Precision, Recall")
-    hybrid_link_predictor = train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, parameters, train_pos_edge_loader, train_neg_edge_loader, device, writer, logger)
-    writer.flush()
-    writer.close()
-
-    logger.info("Test Cross Model. Testing: MRR, Hit@10")
-
-    if object_to_predict == 'column':
-        mrr, hit_at_10 = test_mrr_hits_k_double_cosine_sim(
-            hybrid_link_predictor,
-            test_pos_col_edge_index, 
-            col_sem_embeddings,
-            col_syn_embeddings,
-            col_graph_embeddings,
-            be_sem_embeddings,
-            be_syn_embeddings,
-            be_graph_embeddings,
-            k=parameters['top_k'],
-            device=device
-            )
-    else:
-        mrr, hit_at_10 = test_mrr_hits_k_double_cosine_sim(
-            hybrid_link_predictor,
-            test_pos_ds_edge_index, 
-            ds_sem_embeddings,
-            ds_syn_embeddings,
-            ds_graph_embeddings,
-            be_sem_embeddings,
-            be_syn_embeddings,
-            be_graph_embeddings,
-            k=parameters['top_k'],
-            device=device
-            )
+    logger.info("MLFlow managing")
+    mlflow.set_experiment('cross_syntactic_semantic_graph_similarity_model')
+    
+    with mlflow.start_run():
         
+        mlflow.set_tag("dataset_name", dataset_name)
+        mlflow.set_tag('object_to_predict', object_to_predict)
+        mlflow.log_param('dataset_split_random_state', random_state)
+        mlflow.log_param('loss_function', 'BCELoss')
+        mlflow.log_param('optimizer', 'AdamW')
+        mlflow.log_param('link_predictor_model', model_class_name)    
+        mlflow.log_params(parameters)
 
-    logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
+        logger.info("Cross Model Training. Training: Loss, F1Score, Precision, Recall")
+        hybrid_link_predictor = train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, parameters, train_pos_edge_loader, train_neg_edge_loader, device, writer, logger)
+        writer.flush()
+        writer.close()
+    
+        logger.info("Test Cross Model. Testing: MRR, Hit@10")
+    
+        if object_to_predict == 'column':
+            mrr, hit_at_10 = test_mrr_hits_k_double_cosine_sim(
+                hybrid_link_predictor,
+                test_pos_col_edge_index, 
+                col_sem_embeddings,
+                col_syn_embeddings,
+                col_graph_embeddings,
+                be_sem_embeddings,
+                be_syn_embeddings,
+                be_graph_embeddings,
+                k=parameters['top_k'],
+                device=device
+                )
+        else:
+            mrr, hit_at_10 = test_mrr_hits_k_double_cosine_sim(
+                hybrid_link_predictor,
+                test_pos_ds_edge_index, 
+                ds_sem_embeddings,
+                ds_syn_embeddings,
+                ds_graph_embeddings,
+                be_sem_embeddings,
+                be_syn_embeddings,
+                be_graph_embeddings,
+                k=parameters['top_k'],
+                device=device
+                )
+            
+    
+        logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
+    
+        logger.info("Save metrics")
+        
+        metric_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/{model_class_name}"
+        metrics = {
+            "MRR": round(mrr, 4),
+            "Hit@10": round(hit_at_10, 4),
+            "epochs": parameters["nb_epochs"],
+            "random_state":random_state,
+            "dataset_name": str(dataset_name)
+        }
+        
+        save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
+        
+        mlflow.log_metric('mrr', round(mrr, 4))
+        mlflow.log_metric('hit_at_10', round(hit_at_10, 4))
+        
+        logger.info("Save Cross Model")
+        models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
+        
+        save_model(hybrid_link_predictor, models_dir_path, dataset_name, object_to_predict, parameters['nb_epochs'], model_class_name, random_state)
 
-    logger.info("Save metrics")
-    
-    metric_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/{model_class_name}"
-    metrics = {
-        "MRR": round(mrr, 4),
-        "Hit@10": round(hit_at_10, 4),
-        "epochs": parameters["nb_epochs"],
-        "random_state":random_state,
-        "dataset_name": str(dataset_name)
-    }
-    
-    save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
+        registered_model_name = f"{dataset_name}-{object_to_predict}-{model_class_name}"
+        mlflow.pytorch.log_model(hybrid_link_predictor, model_class_name, registered_model_name=registered_model_name)
 
-    logger.info("Save Cross Model")
-    models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
-    
-    save_model(hybrid_link_predictor, models_dir_path, dataset_name, object_to_predict, parameters['nb_epochs'], model_class_name, random_state)
-
-    
+        

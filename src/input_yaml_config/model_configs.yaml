@@ -71,7 +71,7 @@ cross_model_syn_sem_similarity_learning_args:
     hidden_layer_dim: 384
     top_k: 10
 
-hybrid_model_syn_graph_similarity_learning_args:
+cross_model_syn_graph_similarity_learning_args:
     batch_size: 128
     num_workers: 0
     nb_epochs: 100
