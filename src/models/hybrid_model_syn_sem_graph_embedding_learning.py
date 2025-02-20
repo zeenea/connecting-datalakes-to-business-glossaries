@@ -3,6 +3,7 @@ import logging
 from torch.utils.tensorboard import SummaryWriter
 import os
 from torchmetrics.classification import MulticlassPrecision, MulticlassRecall, MulticlassF1Score
+import mlflow
 
 os.environ['TOKENIZERS_PARALLELISM']='true'
 os.environ['TORCH_USE_CUDA_DSA']='1'
@@ -64,7 +65,7 @@ def collate_fn(batch):
 
     return src_sem_embeddings, src_syn_embeddings, src_graph_embeddings, trg_sem_embeddings, trg_syn_embeddings, trg_graph_embeddings, labels
 
-class CrossSynSemGraphEmbedLearn(torch.nn.Module):
+class HybridSynSemGraphEmbedLearn(torch.nn.Module):
 
     def __init__(self, semantic_embedding_dim, syntactic_embedding_dim, graph_embedding_dim, hidden_layer_dim, num_classes):
         super().__init__()
@@ -488,7 +489,7 @@ def main(args):
     next(iter(train_neg_edge_loader))
 
     
-    logger.info("Cross Model and Optimizer Instantiation")
+    logger.info("Hybrid Model and Optimizer Instantiation")
     if object_to_predict == 'column':
         assert col_sem_embeddings.shape[1] == be_sem_embeddings.shape[1]
         assert col_syn_embeddings.shape[1] == be_syn_embeddings.shape[1]
@@ -508,7 +509,7 @@ def main(args):
         graph_embeddings_dim = ds_graph_embeddings.shape[1]
 
     
-    hybrid_link_predictor = HybridSynSemGraphEmbed(
+    hybrid_link_predictor = HybridSynSemGraphEmbedLearn(
         semantic_embedding_dim=semantic_embeddings_dim,
         syntactic_embedding_dim=syntactic_embeddings_dim,
         graph_embedding_dim=graph_embeddings_dim,
@@ -530,59 +531,78 @@ def main(args):
     
     writer = SummaryWriter(writer_log_dir)
 
-    logger.info("Cross Model Training. Training: Loss, F1Score, Precision, Recall")
-    hybrid_link_predictor = train_hybrid_model_on_double_cosine_loss(hybrid_link_predictor, optimizer, parameters, train_pos_edge_loader, train_neg_edge_loader, device, writer, logger)
-    writer.flush()
-    writer.close()
-
-    logger.info("Test Cross Model. Testing: MRR, Hit@10")
-
-    if object_to_predict == 'column':
-        mrr, hit_at_10 = test_mrr_hits_k_hybrid_double_cosine_sim(
-            hybrid_link_predictor,
-            test_pos_col_edge_index, 
-            col_sem_embeddings,
-            col_syn_embeddings,
-            col_graph_embeddings,
-            be_sem_embeddings,
-            be_syn_embeddings,
-            be_graph_embeddings,
-            k=parameters['top_k'],
-            device=device
-            )
-    else:
-        mrr, hit_at_10 = test_mrr_hits_k_hybrid_double_cosine_sim(
-            hybrid_link_predictor,
-            test_pos_ds_edge_index, 
-            ds_sem_embeddings,
-            ds_syn_embeddings,
-            ds_graph_embeddings,
-            be_sem_embeddings,
-            be_syn_embeddings,
-            be_graph_embeddings,
-            k=parameters['top_k'],
-            device=device
-            )
+    logger.info("MLFlow managing")
+    mlflow.set_experiment('hybrid_syntactic_semantic_graph_embedding_model')
+    
+    with mlflow.start_run():
         
-
-    logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
-
-    logger.info("Save metrics")
+        mlflow.set_tag("dataset_name", dataset_name)
+        mlflow.set_tag('object_to_predict', object_to_predict)
+        mlflow.log_param('dataset_split_random_state', random_state)
+        mlflow.log_param('loss_function', 'CosineLoss')
+        mlflow.log_param('optimizer', 'AdamW')
+        mlflow.log_param('link_predictor_model', model_name)    
+        mlflow.log_params(parameters)
+        
+        logger.info("Hybrid Model Training. Training: Loss, F1Score, Precision, Recall")
+        hybrid_link_predictor = train_hybrid_model_on_double_cosine_loss(hybrid_link_predictor, optimizer, parameters, train_pos_edge_loader, train_neg_edge_loader, device, writer, logger)
+        writer.flush()
+        writer.close()
     
-    metric_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/{model_name}"
-    metrics = {
-        "MRR": round(mrr, 4),
-        "Hit@10": round(hit_at_10, 4),
-        "epochs": parameters["nb_epochs"],
-        "random_state":random_state,
-        "dataset_name": str(dataset_name)
-    }
+        logger.info("Test Hybrid Model. Testing: MRR, Hit@10")
     
-    save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
+        if object_to_predict == 'column':
+            mrr, hit_at_10 = test_mrr_hits_k_hybrid_double_cosine_sim(
+                hybrid_link_predictor,
+                test_pos_col_edge_index, 
+                col_sem_embeddings,
+                col_syn_embeddings,
+                col_graph_embeddings,
+                be_sem_embeddings,
+                be_syn_embeddings,
+                be_graph_embeddings,
+                k=parameters['top_k'],
+                device=device
+                )
+        else:
+            mrr, hit_at_10 = test_mrr_hits_k_hybrid_double_cosine_sim(
+                hybrid_link_predictor,
+                test_pos_ds_edge_index, 
+                ds_sem_embeddings,
+                ds_syn_embeddings,
+                ds_graph_embeddings,
+                be_sem_embeddings,
+                be_syn_embeddings,
+                be_graph_embeddings,
+                k=parameters['top_k'],
+                device=device
+                )
+            
+    
+        logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
+    
+        logger.info("Save metrics")
+        
+        metric_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/{model_name}"
+        metrics = {
+            "MRR": round(mrr, 4),
+            "Hit@10": round(hit_at_10, 4),
+            "epochs": parameters["nb_epochs"],
+            "random_state":random_state,
+            "dataset_name": str(dataset_name)
+        }
+        
+        save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
 
-    logger.info("Save Cross Model")
-    models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
-    
-    save_model(hybrid_link_predictor, models_dir_path, dataset_name, parameters['nb_epochs'], model_name, random_state)
+        mlflow.log_metric('mrr', round(mrr, 4))
+        mlflow.log_metric('hit_at_10', round(hit_at_10, 4))
+        
+        logger.info("Save Hybrid Model")
+        models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
+        
+        save_model(hybrid_link_predictor, models_dir_path, dataset_name, parameters['nb_epochs'], model_name, random_state)
 
-    
+        registered_model_name = f"{dataset_name}-{object_to_predict}-{model_name}"
+        mlflow.pytorch.log_model(hybrid_link_predictor, model_name, registered_model_name=registered_model_name)
+
+        
