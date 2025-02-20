@@ -1,5 +1,5 @@
 from utilities import load_data
-from models import semantic_model, syntactic_model, random_model, graph_model, hybrid_model_sem_graph_embedding_learning, hybrid_model_syn_sem_embedding_learning, cross_model_syn_sem_graph_embedding_learning, hybrid_model_sem_graph_similarity_learning, hybrid_model_syn_graph_similarity_learning, cross_model_syn_sem_similarity_learning, hybrid_model_syn_graph_embedding_learning, cross_model_syn_sem_graph_similarity_learning, binary_classifier_model
+from models import semantic_model, syntactic_model, random_model, graph_model, hybrid_model_sem_graph_embedding_learning, hybrid_model_syn_sem_embedding_learning, cross_model_syn_sem_graph_embedding_learning, cross_model_sem_graph_similarity_learning, hybrid_model_syn_graph_similarity_learning, cross_model_syn_sem_similarity_learning, hybrid_model_syn_graph_embedding_learning, cross_model_syn_sem_graph_similarity_learning, binary_classifier_model
 
 import argparse
 import yaml
@@ -173,12 +173,12 @@ def starts_cross_model_syn_sem_graph_embedding_learning():
     args, _ = parser.parse_known_args()
     cross_model_syn_sem_graph_embedding_learning.main(args)
 
-def starts_hybrid_model_sem_graph_similarity_learning():
+def starts_cross_model_sem_graph_similarity_learning():
     yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
-    yaml_args = yaml_file.get("hybrid_model_sem_graph_similarity_learning_args", {})
+    yaml_args = yaml_file.get("cross_model_sem_graph_similarity_learning_args", {})
 
-    parser = argparse.ArgumentParser("Hybrid Sem Graph Similarity Model Parser")
+    parser = argparse.ArgumentParser("Cross Sem Graph Similarity Model Parser")
     parser.add_argument('--dataset_name', type=str)
     parser.add_argument('--object_to_predict', type=str)
     parser.add_argument('--random_state_index', type=int)
@@ -192,7 +192,7 @@ def starts_hybrid_model_sem_graph_similarity_learning():
 
 
     parser_args, _ = parser.parse_known_args()
-    hybrid_model_sem_graph_similarity_learning.main(parser_args)
+    cross_model_sem_graph_similarity_learning.main(parser_args)
 
 def starts_cross_model_syn_sem_similarity_learning():
     yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
@@ -309,7 +309,7 @@ if __name__ == "__main__":
     choice_module_parser.add_argument('--enable_hybrid_model_syn_graph_embedding_learning', action='store_true', default=False)
     choice_module_parser.add_argument('--enable_cross_model_syn_sem_graph_embedding_learning', action='store_true', default=False)
     
-    choice_module_parser.add_argument('--enable_hybrid_model_sem_graph_similarity_learning', action='store_true', default=False)
+    choice_module_parser.add_argument('--enable_cross_model_sem_graph_similarity_learning', action='store_true', default=False)
     choice_module_parser.add_argument('--enable_cross_model_syn_sem_similarity_learning', action='store_true', default=False)
     choice_module_parser.add_argument('--enable_hybrid_model_syn_graph_similarity_learning', action='store_true', default=False)
     choice_module_parser.add_argument('--enable_cross_model_syn_sem_graph_similarity_learning', action='store_true', default=False)
@@ -383,16 +383,16 @@ if __name__ == "__main__":
     
 
     
-    if choice_module_parser_args.enable_hybrid_model_sem_graph_similarity_learning:
+    if choice_module_parser_args.enable_cross_model_sem_graph_similarity_learning:
         if are_embeddings_generated(dataset_name, 'graph-based', random_state_index ) and are_embeddings_generated(dataset_name, 'semantic-based', random_state_index):
-            logger.info("----------------------- Starts hybrid_model_sem_graph_similarity_learning.py Module --------------------------")
-            starts_hybrid_model_sem_graph_similarity_learning()
+            logger.info("----------------------- Starts cross_model_sem_graph_similarity_learning.py Module --------------------------")
+            starts_cross_model_sem_graph_similarity_learning()
         else:
             logger.info("--------------------- Starts graph_model.py Module ---------------------------------")
             starts_graph_model()
             
-            logger.info("----------------------- Starts hybrid_model_sem_graph_similarity_learning.py Module --------------------------")
-            starts_hybrid_model_sem_graph_similarity_learning()
+            logger.info("----------------------- Starts cross_model_sem_graph_similarity_learning.py Module --------------------------")
+            starts_cross_model_sem_graph_similarity_learning()
 
     if choice_module_parser_args.enable_cross_model_syn_sem_similarity_learning:
         if are_embeddings_generated(dataset_name, 'syntactic-based', random_state_index) and are_embeddings_generated(dataset_name, 'semantic-based', random_state_index):
