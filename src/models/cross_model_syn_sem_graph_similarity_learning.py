@@ -85,13 +85,46 @@ class CrossSynSemGraphSimLearn(torch.nn.Module):
 
         # cosine similarity on graph embeddings
         cosine_sim_graph = torch.nn.functional.cosine_similarity(src_graph_embed, tgt_graph_embed)
-        cosine_sim_graph = cosine_sim_graph.reshape(-1, 1)
+        cosine_sim_graph = cosine_sim_graph.reshape(-1, 1)        
         
         # matrix of cosine similarities with a size of (batch_size x 2)
         cosine_sim_matrix = torch.concat([cosine_sim_sem, cosine_sim_syn, cosine_sim_graph], dim=1)
 
         # dense representation embeddings with a size of (batch_size x hidden_layer_dim)
         logits = self.sigmoid(self.fc_layer_1(cosine_sim_matrix))
+
+        return logits
+
+class LogisticRegressionCrossSynSemGraphSimLearn(torch.nn.Module):
+
+    def __init__(self, num_similarities, num_classes):
+        super().__init__()
+        
+        self.fc_layer_1 = torch.nn.Linear(in_features=num_similarities, out_features=2)
+        self.sigmoid = torch.nn.Sigmoid()
+        self.log_softmax = torch.nn.LogSoftmax(dim=1)
+
+    def forward(self, src_sem_embed, src_syn_embed, src_graph_embed, tgt_sem_embed, tgt_syn_embed, tgt_graph_embed):
+
+        # cosine similarity on semantic embeddings
+        cosine_sim_sem = torch.nn.functional.cosine_similarity(src_sem_embed, tgt_sem_embed)
+        cosine_sim_sem = cosine_sim_sem.reshape(-1, 1)
+        
+        # cosine similarity on syntactic embeddings
+        cosine_sim_syn = torch.nn.functional.cosine_similarity(src_syn_embed, tgt_syn_embed)
+        cosine_sim_syn = cosine_sim_syn.reshape(-1, 1)
+
+        # cosine similarity on graph embeddings
+        cosine_sim_graph = torch.nn.functional.cosine_similarity(src_graph_embed, tgt_graph_embed)
+        cosine_sim_graph = cosine_sim_graph.reshape(-1, 1)        
+        
+        # matrix of cosine similarities with a size of (batch_size x 2)
+        cosine_sim_matrix = torch.concat([cosine_sim_sem, cosine_sim_syn, cosine_sim_graph], dim=1)
+
+        # dense representation embeddings with a size of (batch_size x hidden_layer_dim)
+        #logits = self.sigmoid(self.fc_layer_1(cosine_sim_matrix))
+        dense_embeddings = self.fc_layer_1(cosine_sim_matrix)
+        logits = self.log_softmax(dense_embeddings)
 
         return logits
 
@@ -106,7 +139,13 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
     f1score_func = MulticlassF1Score( num_classes=num_classes, average=None).to(device)
 
     loss_criterion = torch.nn.BCELoss()
+    #loss_criterion = torch.nn.CrossEntropyLoss()
 
+    # early stopping params
+    best_loss = float('inf')
+    patience = 20
+    min_delta = 1e-4
+    patience_counter = 0
     
     for epoch in range(parameters['nb_epochs']):
 
@@ -153,7 +192,6 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
 
             logits = link_predictor_model.forward(src_sem_embed, src_syn_embed, src_graph_embed, trg_sem_embed, trg_syn_embed, trg_graph_embed)
 
-            #loss = torch.nn.functional.binary_cross_entropy(logits, labels)
             loss = loss_criterion(logits, labels)
             
             loss.backward()
@@ -166,7 +204,7 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
             # compute precision recall f1 score on training
             with torch.no_grad():
                 
-                predictions = torch.where(logits >= 0.5, 1, 0)
+                predictions = torch.where(logits >= 0.5, 1, 0)#.float()
                 f1score = torch.concat([f1score, f1score_func(predictions, labels.long()).reshape(1, -1)], axis=0)
                 precision = torch.concat([precision, precision_func(predictions, labels.long()).reshape(1, -1)], axis=0)
                 recall = torch.concat([recall, recall_func(predictions, labels.long()).reshape(1, -1)], axis=0)
@@ -187,7 +225,20 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
         }
         mlflow.log_metrics(metrics)
 
+        if loss.item() < best_loss - min_delta:
+            best_loss = loss.item()
+            patience_counter = 0
+            best_model_state = link_predictor_model.state_dict()
+        else:
+            patience_counter +=1
+
+        if patience_counter >= patience:
+            logger.info("Early stopping triggered")
+            break
+
+    link_predictor_model.load_state_dict(best_model_state)
     return link_predictor_model
+
 
 def load_torch_tensor(tensor_dir_path, tensor_name):
     
