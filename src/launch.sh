@@ -8,21 +8,22 @@
 #SBATCH --error=logs/%x-%j.err
 
 module purge                        # Nettoyage de l'environnement
-#module load ~/anaconda3             # Chargement du module anaconda3
-eval "$(conda shell.bash hook)"     # Initialisation du shell pour conda
+module load ~/anaconda3             # Chargement du module anaconda3
+#eval "$(conda shell.bash hook)"     # Initialisation du shell pour conda
+conda init
 conda activate myenv                # Activation de votre environnement python
 
-dataset_name='turl-cta'
-object_to_predict='dataset'
+dataset_name='t2dv2'
+object_to_predict='column'
 
 
 mlflow server --host 127.0.0.1 --port 8080 &
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0  --enable_random_forest_classifier_model_syn_sem_graph_similarity_learning
+python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0  --enable_cross_model_syn_sem_graph_similarity_learning
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1  --enable_random_forest_classifier_model_syn_sem_graph_similarity_learning
+#python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=1  --enable_xgboost_classifier_model_syn_sem_graph_similarity_learning
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=2  --enable_random_forest_classifier_model_syn_sem_graph_similarity_learning
+#python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=2  --enable_xgboost_classifier_model_syn_sem_graph_similarity_learning
 
 #python entrypoint.py --dataset_name=$dataset_name --object_to_predict=$object_to_predict --random_state_index=0 --generate_semantic_textual_links --enable_binary_classifier_model 
 

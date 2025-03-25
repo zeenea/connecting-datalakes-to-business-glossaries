@@ -4,10 +4,26 @@ from torch.utils.tensorboard import SummaryWriter
 import os
 from torchmetrics.classification import MulticlassPrecision, MulticlassRecall, MulticlassF1Score
 import mlflow
+import yaml
+import argparse
+
+import sklearn
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.model_selection import GridSearchCV
+
+import xgboost as xgb
+from xgboost import XGBClassifier
+from sklearn.svm import SVC
+
 
 os.environ['TOKENIZERS_PARALLELISM']='true'
 os.environ['TORCH_USE_CUDA_DSA']='1'
 
+def load_yaml(file_path):
+    with open(file_path, 'r') as file:
+        return yaml.safe_load(file)
+        
 def load_embeddings(embeddings_dir_path, dataset_name, model_type, random_state):
 
     files_dir_path = f"{embeddings_dir_path}/dataset_name={dataset_name}/model_type={model_type}/random_state={random_state}"
@@ -128,43 +144,6 @@ class LogisticRegressionCrossSynSemGraphSimLearn(torch.nn.Module):
 
         return logits
 
-class CrossSynSemGraphSimLearnV2(torch.nn.Module):
-
-    def __init__(self, num_similarities, num_classes):
-        super().__init__()
-        
-        self.fc_layer_1 = torch.nn.Linear(in_features=num_similarities, out_features=2)
-        #self.fc_layer_2 = torch.nn.Linear(in_features=100, out_features=2)
-        self.tanh = torch.nn.Tanh()
-        self.sigmoid = torch.nn.Sigmoid()
-        self.log_softmax = torch.nn.LogSoftmax(dim=1)
-
-    def forward(self, src_sem_embed, src_syn_embed, src_graph_embed, tgt_sem_embed, tgt_syn_embed, tgt_graph_embed):
-
-        # cosine similarity on semantic embeddings
-        cosine_sim_sem = torch.nn.functional.cosine_similarity(src_sem_embed, tgt_sem_embed)
-        cosine_sim_sem = cosine_sim_sem.reshape(-1, 1)
-        
-        # cosine similarity on syntactic embeddings
-        cosine_sim_syn = torch.nn.functional.cosine_similarity(src_syn_embed, tgt_syn_embed)
-        cosine_sim_syn = cosine_sim_syn.reshape(-1, 1)
-
-        # cosine similarity on graph embeddings
-        cosine_sim_graph = torch.nn.functional.cosine_similarity(src_graph_embed, tgt_graph_embed)
-        cosine_sim_graph = cosine_sim_graph.reshape(-1, 1)        
-        
-        # matrix of cosine similarities with a size of (batch_size x 2)
-        cosine_sim_matrix = torch.concat([cosine_sim_sem, cosine_sim_syn, cosine_sim_graph], dim=1)
-
-        # dense representation embeddings with a size of (batch_size x hidden_layer_dim)
-        res_dense = self.fc_layer_1(cosine_sim_matrix)
-        #res_dense = self.tanh(res_dense)
-        #res_dense = self.fc_layer_2(res_dense)
-        #logits = somme_produit / self.fc_layer_1.weight.sum()
-        logits = self.log_softmax(res_dense)
-
-        return logits
-        
 def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, parameters, positive_edge_loader, negative_edge_loader, device, writer, logger):
     
     link_predictor_model.train()
@@ -181,7 +160,7 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
     # early stopping params
     best_loss = float('inf')
     patience = 20
-    min_delta = 1e-6
+    min_delta = 1e-4
     patience_counter = 0
     
     for epoch in range(parameters['nb_epochs']):
@@ -222,13 +201,14 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
             trg_graph_embed = torch.concat([pos_trg_graph_embed, neg_trg_graph_embed], dim=0)[rand_index].to(device)
             labels = torch.concat([pos_labels, neg_labels], dim=0)[rand_index].long()
             labels = torch.flatten(labels).to(device)
-            #labels = labels.reshape(-1, 1).float()
+            labels = labels.reshape(-1, 1).float()
 
     
             optimizer.zero_grad()
 
             logits = link_predictor_model.forward(src_sem_embed, src_syn_embed, src_graph_embed, trg_sem_embed, trg_syn_embed, trg_graph_embed)
 
+            #loss = torch.nn.functional.binary_cross_entropy(logits, labels)
             loss = loss_criterion(logits, labels)
             
             loss.backward()
@@ -241,7 +221,7 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
             # compute precision recall f1 score on training
             with torch.no_grad():
                 
-                predictions = torch.where(logits >= 0.5, 1, 0).float()
+                predictions = torch.where(logits >= 0.5, 1, 0)
                 f1score = torch.concat([f1score, f1score_func(predictions, labels.long()).reshape(1, -1)], axis=0)
                 precision = torch.concat([precision, precision_func(predictions, labels.long()).reshape(1, -1)], axis=0)
                 recall = torch.concat([recall, recall_func(predictions, labels.long()).reshape(1, -1)], axis=0)
@@ -276,13 +256,186 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
     link_predictor_model.load_state_dict(best_model_state)
     return link_predictor_model
 
+def train_xgboost_model(grid_search, positive_edge_loader, negative_edge_loader, device, logger):
+    
+
+    all_cosine_sim = torch.tensor([]).to(device)
+    all_labels = torch.tensor([]).to(device)
+
+    
+    for pos_batch, neg_batch in zip(positive_edge_loader, negative_edge_loader):
+
+        pos_src_sem_embed = pos_batch[0]
+        pos_src_syn_embed = pos_batch[1]
+        pos_src_graph_embed = pos_batch[2]
+        pos_tgt_sem_embed = pos_batch[3]
+        pos_tgt_syn_embed = pos_batch[4]
+        pos_tgt_graph_embed = pos_batch[5]
+        pos_labels = pos_batch[6]
+
+        neg_src_sem_embed = neg_batch[0]
+        neg_src_syn_embed = neg_batch[1]
+        neg_src_graph_embed = neg_batch[2]
+        neg_tgt_sem_embed = neg_batch[3]
+        neg_tgt_syn_embed = neg_batch[4]
+        neg_tgt_graph_embed = neg_batch[5]
+        neg_labels = neg_batch[6]
+
+        len_batchs = pos_labels.shape[0] + neg_labels.shape[0]
+        rand_index = torch.randperm(len_batchs)
+
+        src_sem_embed = torch.concat([pos_src_sem_embed, neg_src_sem_embed], dim=0)[rand_index].to(device)
+        src_syn_embed = torch.concat([pos_src_syn_embed, neg_src_syn_embed], dim=0)[rand_index].to(device)
+        src_graph_embed = torch.concat([pos_src_graph_embed, neg_src_graph_embed], dim=0)[rand_index].to(device)
+        
+        tgt_sem_embed = torch.concat([pos_tgt_sem_embed, neg_tgt_sem_embed], dim=0)[rand_index].to(device)
+        tgt_syn_embed = torch.concat([pos_tgt_syn_embed, neg_tgt_syn_embed], dim=0)[rand_index].to(device)
+        tgt_graph_embed = torch.concat([pos_tgt_graph_embed, neg_tgt_graph_embed], dim=0)[rand_index].to(device)
+
+        cosine_sim_sem = torch.nn.functional.cosine_similarity(src_sem_embed, tgt_sem_embed)
+        cosine_sim_sem = cosine_sim_sem.reshape(-1, 1)
+        
+        # cosine similarity on syntactic embeddings
+        cosine_sim_syn = torch.nn.functional.cosine_similarity(src_syn_embed, tgt_syn_embed)
+        cosine_sim_syn = cosine_sim_syn.reshape(-1, 1)
+
+        # cosine similarity on graph embeddings
+        cosine_sim_graph = torch.nn.functional.cosine_similarity(src_graph_embed, tgt_graph_embed)
+        cosine_sim_graph = cosine_sim_graph.reshape(-1, 1)        
+        
+        # matrix of cosine similarities with a size of (batch_size x 2)
+        cosine_sim_matrix = torch.concat([cosine_sim_sem, cosine_sim_syn, cosine_sim_graph], dim=1)
+
+        
+        labels = torch.concat([pos_labels, neg_labels], dim=0)[rand_index].long()
+        labels = torch.flatten(labels).to(device)
+        labels = labels.reshape(-1, 1).float()
+
+        all_cosine_sim = torch.concat([all_cosine_sim, cosine_sim_matrix], dim=0)
+        all_labels = torch.concat([all_labels, labels], dim=0)
+
+    all_cosine_sim = all_cosine_sim.detach().cpu()
+    all_labels = all_labels.detach().cpu()
+
+    # grid search cv to get best estimator
+    grid_search.fit(all_cosine_sim, all_labels)
+    link_predictor_model = grid_search.best_estimator_
+    #link_predictor_model.fit(all_cosine_sim, all_labels)
+
+    logger.info(f"Best Parameters: {grid_search.best_params_}")
+    
+    # compute accuracy, precision, recall, and f1-score
+    predictions = link_predictor_model.predict(all_cosine_sim)
+    
+    accuracy = accuracy_score(predictions, all_labels)
+    f1score = f1_score(predictions, all_labels, average=None)
+    precision = precision_score(predictions, all_labels, average=None)
+    recall = recall_score(predictions, all_labels, average=None)
+            
+    logger.info(f"Train Accuracy: {accuracy}")
+    logger.info(f"F1-Score: {f1score}, Precision: {precision}, Recall: {recall}")
+    
+    metrics = {
+        "Train/Accuracy": accuracy,
+        "Train/F1Score/NegativeMatch": f1score[0], 
+        "Train/F1Score/PositiveMatch":f1score[1], 
+        "Train/Precision/NegativeMatch": precision[0], 
+        "Train/Precision/PositiveMatch": precision[1], 
+        "Train/Recall/NegativeMatch": recall[0], 
+        "Train/Recall/positiveMatch": recall[1]
+    }
+    mlflow.log_metrics(metrics)
+
+    return link_predictor_model
+
+def test_xgboost_model(link_predictor_model, positive_edge_loader, negative_edge_loader, device, logger):
+    
+    all_cosine_sim = torch.tensor([]).to(device)
+    all_labels = torch.tensor([]).to(device)
+
+    
+    for pos_batch, neg_batch in zip(positive_edge_loader, negative_edge_loader):
+
+        pos_src_sem_embed = pos_batch[0]
+        pos_src_syn_embed = pos_batch[1]
+        pos_src_graph_embed = pos_batch[2]
+        pos_tgt_sem_embed = pos_batch[3]
+        pos_tgt_syn_embed = pos_batch[4]
+        pos_tgt_graph_embed = pos_batch[5]
+        pos_labels = pos_batch[6]
+
+        neg_src_sem_embed = neg_batch[0]
+        neg_src_syn_embed = neg_batch[1]
+        neg_src_graph_embed = neg_batch[2]
+        neg_tgt_sem_embed = neg_batch[3]
+        neg_tgt_syn_embed = neg_batch[4]
+        neg_tgt_graph_embed = neg_batch[5]
+        neg_labels = neg_batch[6]
+
+        len_batchs = pos_labels.shape[0] + neg_labels.shape[0]
+        rand_index = torch.randperm(len_batchs)
+
+        src_sem_embed = torch.concat([pos_src_sem_embed, neg_src_sem_embed], dim=0)[rand_index].to(device)
+        src_syn_embed = torch.concat([pos_src_syn_embed, neg_src_syn_embed], dim=0)[rand_index].to(device)
+        src_graph_embed = torch.concat([pos_src_graph_embed, neg_src_graph_embed], dim=0)[rand_index].to(device)
+        
+        tgt_sem_embed = torch.concat([pos_tgt_sem_embed, neg_tgt_sem_embed], dim=0)[rand_index].to(device)
+        tgt_syn_embed = torch.concat([pos_tgt_syn_embed, neg_tgt_syn_embed], dim=0)[rand_index].to(device)
+        tgt_graph_embed = torch.concat([pos_tgt_graph_embed, neg_tgt_graph_embed], dim=0)[rand_index].to(device)
+
+        cosine_sim_sem = torch.nn.functional.cosine_similarity(src_sem_embed, tgt_sem_embed)
+        cosine_sim_sem = cosine_sim_sem.reshape(-1, 1)
+        
+        # cosine similarity on syntactic embeddings
+        cosine_sim_syn = torch.nn.functional.cosine_similarity(src_syn_embed, tgt_syn_embed)
+        cosine_sim_syn = cosine_sim_syn.reshape(-1, 1)
+
+        # cosine similarity on graph embeddings
+        cosine_sim_graph = torch.nn.functional.cosine_similarity(src_graph_embed, tgt_graph_embed)
+        cosine_sim_graph = cosine_sim_graph.reshape(-1, 1)        
+        
+        # matrix of cosine similarities with a size of (batch_size x 2)
+        cosine_sim_matrix = torch.concat([cosine_sim_sem, cosine_sim_syn, cosine_sim_graph], dim=1)
+
+        
+        labels = torch.concat([pos_labels, neg_labels], dim=0)[rand_index].long()
+        labels = torch.flatten(labels).to(device)
+        labels = labels.reshape(-1, 1).float()
+
+        all_cosine_sim = torch.concat([all_cosine_sim, cosine_sim_matrix], dim=0)
+        all_labels = torch.concat([all_labels, labels], dim=0)
+
+    all_cosine_sim = all_cosine_sim.detach().cpu()
+    all_labels = all_labels.detach().cpu()
+
+    # compute accuracy, precision, recall, and f1-score
+    predictions = link_predictor_model.predict(all_cosine_sim)
+    accuracy = accuracy_score(predictions, all_labels)
+    f1score = f1_score(predictions, all_labels, average=None)
+    precision = precision_score(predictions, all_labels, average=None)
+    recall = recall_score(predictions, all_labels, average=None)
+            
+    logger.info(f"Test Accuracy: {accuracy}")
+    logger.info(f"F1-Score: {f1score}, Precision: {precision}, Recall: {recall}")
+    
+    metrics = {
+        "Test/Accuracy": accuracy,
+        "Test/F1Score/NegativeMatch": f1score[0], 
+        "Test/F1Score/PositiveMatch":f1score[1], 
+        "Test/Precision/NegativeMatch": precision[0], 
+        "Test/Precision/PositiveMatch": precision[1], 
+        "Test/Recall/NegativeMatch": recall[0], 
+        "Test/Recall/positiveMatch": recall[1]
+    }
+    mlflow.log_metrics(metrics)
+    
 
 def load_torch_tensor(tensor_dir_path, tensor_name):
     
         return torch.load(f"{tensor_dir_path}/{tensor_name}")
 
 
-def test_mrr_hits_k_double_cosine_sim(
+def test_mrr_hits_k(
     link_predictor_model,
     test_pos_edge_index,
     obj_sem_embeddings,
@@ -296,7 +449,7 @@ def test_mrr_hits_k_double_cosine_sim(
     ):
     
     all_entity_ids = test_pos_edge_index[1,:].unique() # get the right test data, and load the right data
-    #print(all_entity_ids)
+
     obj_sem_embeddings = obj_sem_embeddings.to(device)
     obj_syn_embeddings = obj_syn_embeddings.to(device)
     obj_graph_embeddings = obj_graph_embeddings.to(device)
@@ -304,7 +457,7 @@ def test_mrr_hits_k_double_cosine_sim(
     be_syn_embeddings = be_syn_embeddings.to(device)
     be_graph_embeddings = be_graph_embeddings.to(device)
     
-    link_predictor_model.eval()
+    #link_predictor_model.eval()
 
     with torch.no_grad():
         
@@ -315,32 +468,42 @@ def test_mrr_hits_k_double_cosine_sim(
 
             # Get the source and target nodes of the positive test edge
             src, tgt = test_pos_edge_index[0, i], test_pos_edge_index[1, i]
-            #print(src)
-            #print(tgt)
-
+        
             # Compute the score for all possible links from src to all target entities
             src_to_entities_edge_index = torch.stack([src.repeat(all_entity_ids.size(0)), all_entity_ids], dim=0).to(device)
-            #print(f"src_to_entity: {src_to_entities_edge_index}")
             
-            obj_sem_embed_i = obj_sem_embeddings[src_to_entities_edge_index[0]]
-            obj_syn_embed_i = obj_syn_embeddings[src_to_entities_edge_index[0]]  
-            obj_graph_embed_i = obj_graph_embeddings[src_to_entities_edge_index[0]]
-            be_sem_embed_i = be_sem_embeddings[src_to_entities_edge_index[1]]
-            be_syn_embed_i = be_syn_embeddings[src_to_entities_edge_index[1]]
-            be_graph_embed_i = be_graph_embeddings[src_to_entities_edge_index[1]]
+            src_sem_embed = obj_sem_embeddings[src_to_entities_edge_index[0]]
+            src_syn_embed = obj_syn_embeddings[src_to_entities_edge_index[0]]  
+            src_graph_embed = obj_graph_embeddings[src_to_entities_edge_index[0]]
             
-            logits = link_predictor_model.forward(obj_sem_embed_i, obj_syn_embed_i, obj_graph_embed_i, be_sem_embed_i, be_syn_embed_i, be_graph_embed_i)[:, 1]
-            #print(f"logits shape: {logits.shape}")
-            #print(f"logits: {logits}")
+            tgt_sem_embed = be_sem_embeddings[src_to_entities_edge_index[1]]
+            tgt_syn_embed = be_syn_embeddings[src_to_entities_edge_index[1]]
+            tgt_graph_embed = be_graph_embeddings[src_to_entities_edge_index[1]]
+        
+            cosine_sim_sem = torch.nn.functional.cosine_similarity(src_sem_embed, tgt_sem_embed)
+            cosine_sim_sem = cosine_sim_sem.reshape(-1, 1)
             
+            # cosine similarity on syntactic embeddings
+            cosine_sim_syn = torch.nn.functional.cosine_similarity(src_syn_embed, tgt_syn_embed)
+            cosine_sim_syn = cosine_sim_syn.reshape(-1, 1)
+        
+            # cosine similarity on graph embeddings
+            cosine_sim_graph = torch.nn.functional.cosine_similarity(src_graph_embed, tgt_graph_embed)
+            cosine_sim_graph = cosine_sim_graph.reshape(-1, 1)        
+            
+            # matrix of cosine similarities with a size of (batch_size x 2)
+            cosine_sim_matrix = torch.concat([cosine_sim_sem, cosine_sim_syn, cosine_sim_graph], dim=1)
+            cosine_sim_matrix = cosine_sim_matrix.detach().cpu()
+            
+            preds_proba = link_predictor_model.predict_proba(cosine_sim_matrix)
+            preds_proba = preds_proba[:, 1]
+            preds_proba = torch.tensor(preds_proba)
+
             # Rank the scores (higher is better), and get the rank of the true edge
-            sorted_scores, sorted_indices = torch.sort(torch.flatten(logits), descending=True)
-            #print(f"sorted_scores: {sorted_scores}")
-            #print(f"sorted_indices: {sorted_indices}")
+            sorted_scores, sorted_indices = torch.sort(torch.flatten(preds_proba), descending=True)
             
             # get sorted entity ids by score
             sorted_entity_indices = src_to_entities_edge_index[1][sorted_indices]
-            #print(f"sorted_entity_indices: {sorted_entity_indices}")
 
             # get rank of true target entity 
             true_edge_rank = (sorted_entity_indices == tgt).nonzero(as_tuple=True)[0].item()
@@ -360,7 +523,7 @@ def test_mrr_hits_k_double_cosine_sim(
         hit_at_k = torch.tensor(hits_at_k).mean().item()
 
     return mrr, hit_at_k
-
+    
 
 def save_metrics(metrics:dict, dataset_name, object_to_predict, random_state, metric_dir):
 
@@ -396,16 +559,16 @@ def main(args):
     object_to_predict = args.object_to_predict
     random_state_index = args.random_state_index
 
+    
     parameters = {
         "batch_size":args.batch_size,
-        "num_workers":args.num_workers,
         "nb_epochs":args.nb_epochs,
+        "num_workers":args.num_workers,
         "num_classes":args.num_classes,
-        "learning_rate":args.learning_rate,
-        'hidden_layer_dim':args.hidden_layer_dim,
         "top_k":args.top_k
     }
-
+    
+    
     logger.info(args)
 
     logger.info("Set device to 'cpu' or 'cuda'")
@@ -442,11 +605,13 @@ def main(args):
         train_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_col_edge_index.pt')
         train_neg_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_neg_col_edge_index.pt')
         test_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_col_edge_index.pt')
+        test_neg_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_neg_col_edge_index.pt')
 
     elif object_to_predict == 'dataset':
         train_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_ds_edge_index.pt')
         train_neg_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_neg_ds_edge_index.pt')
         test_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_ds_edge_index.pt')
+        test_neg_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_neg_ds_edge_index.pt')
         
     else:
         print("Error in object_to_predict var")
@@ -454,11 +619,19 @@ def main(args):
     logger.info("Creates Pos and Neg Labels")
     if object_to_predict == 'column':
         train_pos_col_labels = torch.ones((train_pos_col_edge_index.shape[1], 1))
-        train_neg_col_labels = torch.ones((train_neg_col_edge_index.shape[1], 1))
+        train_neg_col_labels = torch.zeros((train_neg_col_edge_index.shape[1], 1))
+
+        test_pos_col_labels = torch.ones((test_pos_col_edge_index.shape[1], 1))
+        test_neg_col_labels = torch.zeros((test_neg_col_edge_index.shape[1], 1))
+
 
     elif object_to_predict == 'dataset':
         train_pos_ds_labels = torch.ones((train_pos_ds_edge_index.shape[1], 1))
-        train_neg_ds_labels = torch.ones((train_neg_ds_edge_index.shape[1], 1))
+        train_neg_ds_labels = torch.zeros((train_neg_ds_edge_index.shape[1], 1))
+
+        test_pos_ds_labels = torch.ones((test_pos_ds_edge_index.shape[1], 1))
+        test_neg_ds_labels = torch.zeros((test_neg_ds_edge_index.shape[1], 1))
+
 
     else:
         print("Error in object_to_predict var")
@@ -487,6 +660,27 @@ def main(args):
                                         be_graph_embeddings,
                                         train_neg_col_labels
                                         )
+        test_pos_edge_dataset = LinkDataset(
+                                        test_pos_col_edge_index,
+                                        col_sem_embeddings,
+                                        col_syn_embeddings,
+                                        col_graph_embeddings,
+                                        be_sem_embeddings,
+                                        be_syn_embeddings,
+                                        be_graph_embeddings,
+                                        test_pos_col_labels
+                                        )
+        
+        test_neg_edge_dataset = LinkDataset(
+                                        test_neg_col_edge_index,
+                                        col_sem_embeddings,
+                                        col_syn_embeddings,
+                                        col_graph_embeddings,
+                                        be_sem_embeddings,
+                                        be_syn_embeddings,
+                                        be_graph_embeddings,
+                                        test_neg_col_labels
+                                        )
         
     elif object_to_predict == 'dataset':
         train_pos_edge_dataset = LinkDataset(
@@ -510,6 +704,28 @@ def main(args):
                                         be_graph_embeddings,
                                         train_neg_ds_labels
                                         )
+
+        test_pos_edge_dataset = LinkDataset(
+                                        test_pos_ds_edge_index,
+                                        ds_sem_embeddings,
+                                        ds_syn_embeddings,
+                                        ds_graph_embeddings,
+                                        be_sem_embeddings,
+                                        be_syn_embeddings,
+                                        be_graph_embeddings,
+                                        test_pos_ds_labels
+                                        )
+        
+        test_neg_edge_dataset = LinkDataset(
+                                        test_neg_ds_edge_index,
+                                        ds_sem_embeddings,
+                                        ds_syn_embeddings,
+                                        ds_graph_embeddings,
+                                        be_sem_embeddings,
+                                        be_syn_embeddings,
+                                        be_graph_embeddings,
+                                        test_neg_ds_labels
+                                        )
     else:
         print("Error in object_to_predict var")
 
@@ -518,10 +734,10 @@ def main(args):
     train_pos_edge_loader = torch.utils.data.DataLoader(train_pos_edge_dataset, collate_fn=collate_fn, shuffle=True, batch_size=parameters['batch_size'], num_workers=parameters['num_workers'])
     train_neg_edge_loader = torch.utils.data.DataLoader(train_neg_edge_dataset, collate_fn=collate_fn, shuffle=True, batch_size=parameters['batch_size'], num_workers=parameters['num_workers'])
 
-    next(iter(train_pos_edge_loader))
-    next(iter(train_neg_edge_loader))
+    test_pos_edge_loader = torch.utils.data.DataLoader(test_pos_edge_dataset, collate_fn=collate_fn, shuffle=True, batch_size=parameters['batch_size'], num_workers=parameters['num_workers'])
+    test_neg_edge_loader = torch.utils.data.DataLoader(test_neg_edge_dataset, collate_fn=collate_fn, shuffle=True, batch_size=parameters['batch_size'], num_workers=parameters['num_workers'])
 
-    
+
     logger.info("Cross Model and Optimizer Instantiation")
     if object_to_predict == 'column':
         assert col_sem_embeddings.shape[1] == be_sem_embeddings.shape[1]
@@ -541,49 +757,48 @@ def main(args):
         syntactic_embeddings_dim = ds_syn_embeddings.shape[1]
         graph_embeddings_dim = ds_graph_embeddings.shape[1]
 
+    link_predictor_model = SVC(probability=True)
+    model_class_name = "SVC"
     
-    link_predictor_model = CrossSynSemGraphSimLearnV2(
-        num_similarities=3,
-        num_classes=parameters['num_classes']
-        )
-    
-    model_class_name = link_predictor_model.__class__.__name__
+    param_grid = {
+            'kernel':['linear', 'poly', 'sigmoid'],
+            'degree':[2, 3, 4, 5, 10]
+            }
 
-    link_predictor_model = link_predictor_model.to(device)
+    grid_search = GridSearchCV(
+        estimator=link_predictor_model,
+        param_grid=param_grid,
+        cv=5,
+        n_jobs=-1,
+        verbose=3,
+        scoring='balanced_accuracy',
+        refit = True
+    )
     
-    optimizer = torch.optim.AdamW(link_predictor_model.parameters(), lr=parameters['learning_rate'])
-
-    logger.info("Tensorboard SummaryWriter Instatiation")
-    writer_log_dir = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/trainings/{model_class_name}/dataset_name={dataset_name}/random_state={random_state}/epochs={parameters['nb_epochs']}"
-
-    if not os.path.exists(writer_log_dir):
-        os.makedirs(writer_log_dir)
-    
-    writer = SummaryWriter(writer_log_dir)
 
     logger.info("MLFlow managing")
-    mlflow.set_experiment('cross_syntactic_semantic_graph_similarity_model')
+    mlflow.set_experiment('sv_classifier_syntactic_semantic_graph_similarity_model')
     
     with mlflow.start_run():
         
         mlflow.set_tag("dataset_name", dataset_name)
         mlflow.set_tag('object_to_predict', object_to_predict)
         mlflow.log_param('dataset_split_random_state', random_state)
-        mlflow.log_param('loss_function', 'BCELoss')
-        mlflow.log_param('optimizer', 'AdamW')
         mlflow.log_param('link_predictor_model', model_class_name)    
         mlflow.log_params(parameters)
 
-        logger.info("Cross Model Training. Training: Loss, F1Score, Precision, Recall")
-        hybrid_link_predictor = train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, parameters, train_pos_edge_loader, train_neg_edge_loader, device, writer, logger)
-        writer.flush()
-        writer.close()
-    
-        logger.info("Test Cross Model. Testing: MRR, Hit@10")
-    
+        logger.info("SVC. Training: Accuracy, F1Score, Precision, Recall")
+        
+        link_predictor_model = train_xgboost_model(grid_search, train_pos_edge_loader, train_neg_edge_loader, device, logger)
+
+        logger.info("Testing: Accuracy, F1Score, Precision, Recall")
+        test_xgboost_model(link_predictor_model, test_pos_edge_loader, test_neg_edge_loader, device, logger)
+
+        logger.info("Testing: MRR, Hit@10")
+
         if object_to_predict == 'column':
-            mrr, hit_at_10 = test_mrr_hits_k_double_cosine_sim(
-                hybrid_link_predictor,
+            mrr, hit_at_10 = test_mrr_hits_k(
+                link_predictor_model,
                 test_pos_col_edge_index, 
                 col_sem_embeddings,
                 col_syn_embeddings,
@@ -595,8 +810,8 @@ def main(args):
                 device=device
                 )
         else:
-            mrr, hit_at_10 = test_mrr_hits_k_double_cosine_sim(
-                hybrid_link_predictor,
+            mrr, hit_at_10 = test_mrr_hits_k(
+                link_predictor_model,
                 test_pos_ds_edge_index, 
                 ds_sem_embeddings,
                 ds_syn_embeddings,
@@ -608,31 +823,46 @@ def main(args):
                 device=device
                 )
             
-    
+        
         logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
-    
+        
+            
         logger.info("Save metrics")
         
         metric_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/{model_class_name}"
         metrics = {
             "MRR": round(mrr, 4),
             "Hit@10": round(hit_at_10, 4),
-            "epochs": parameters["nb_epochs"],
+            "epochs": 0,
             "random_state":random_state,
             "dataset_name": str(dataset_name)
         }
         
         save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
-        
         mlflow.log_metric('mrr', round(mrr, 4))
         mlflow.log_metric('hit_at_10', round(hit_at_10, 4))
         
         logger.info("Save Cross Model")
-        models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
-        
-        save_model(hybrid_link_predictor, models_dir_path, dataset_name, object_to_predict, parameters['nb_epochs'], model_class_name, random_state)
-
         registered_model_name = f"{dataset_name}-{object_to_predict}-{model_class_name}"
-        mlflow.pytorch.log_model(hybrid_link_predictor, model_class_name, registered_model_name=registered_model_name)
+        mlflow.sklearn.log_model(link_predictor_model, model_class_name, registered_model_name=registered_model_name)
+    
 
-        
+if __name__ == '__main__':
+
+    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file = load_yaml(yaml_file_path)
+    yaml_args = yaml_file.get("sv_classifier_model_syn_sem_graph_similarity_learning_args", {})
+
+    parser = argparse.ArgumentParser("SVClassifier Model Parser")
+    parser.add_argument('--dataset_name', type=str)
+    parser.add_argument('--object_to_predict', type=str)
+    parser.add_argument('--random_state_index', type=int)
+    parser.add_argument('--batch_size', type=int, default=yaml_args.get('batch_size'))
+    parser.add_argument('--num_workers', type=int, default=yaml_args.get('num_workers'))
+    parser.add_argument('--nb_epochs', type=int, default=yaml_args.get('max_epochs'))
+    parser.add_argument('--num_classes', type=int, default=yaml_args.get('num_classes'))
+    parser.add_argument('--top_k', type=int, default=yaml_args.get('top_k'))
+    
+    args, _ = parser.parse_known_args()
+    main(args)
+            
