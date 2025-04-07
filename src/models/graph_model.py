@@ -648,6 +648,7 @@ def main(args):
             
         logger.info("Testing - Hit@10 - MRR")
         if object_to_predict == 'column':
+
                     
             mrr, hit_at_10 = test_mrr_hits_k(col_embeddings, ds_embeddings, be_embeddings, object_to_predict, hetero_dataset, hetero_model, train_pos_edge_index, test_pos_col_edge_index, k=10, device=device)
             
