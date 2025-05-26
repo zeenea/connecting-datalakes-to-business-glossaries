@@ -1,11 +1,20 @@
-# Link Prediction for Datasets and Fields with Business Glossary Items
+# Data Asset Annotation In Enterprise Knowledge Graphs
 
-The application is composed of 3 modules.
+Data Asset Annotation consiste of annotating data object (in our case, tables and columns) with business concepts in an Enterprise Knowledge Graph (EKG) environment.
 
-1. Data Loading and Semantic Embeddings Generation
-2. Hetero-Graph Link Prediction and Graph Embeddings Generation
-3. Hybrid Link Prediction using Semantic and Graph Embeddings
+This application permits to:
+1. Load Tabular Data ('t2dv2', 'zeenea-open-ds', 'turl-cta')
+2. Create Syntactic (TF-IDF), Semantic (LM), and Graph Embeddings
+3. Annotation Approaches:
+    1. Random model
+    2. Syntactic model
+    3. Semantic model
+    4. Binary classifier model
+    5. Graph model
+    6. Cross-similarity models (syntactic and/or semantic and/or graph similarities)
+    7. Hybrid-embedding models (syntactic and/or semantic and/or graph embeddings)
 
+The experimentations are tracked using MLFlow server.
 
 ## Quick Start
 ### Step 1: Requirements
