@@ -69,10 +69,6 @@ class CrossSemGraphSimLearn(torch.nn.Module):
         super().__init__()
         
         self.fc_layer_1 = torch.nn.Linear(in_features=num_similarities, out_features=1)
-        #self.fc_layer_2 = torch.nn.Linear(in_features=hidden_layer_dim, out_features=num_classes)
-        
-        #self.relu = torch.nn.ReLU()
-        #self.tanh = torch.nn.Tanh()
         self.sigmoid = torch.nn.Sigmoid()
 
     def forward(self, src_sem_embed, src_graph_embed, tgt_sem_embed, tgt_graph_embed):
@@ -90,46 +86,23 @@ class CrossSemGraphSimLearn(torch.nn.Module):
 
         # dense representation embeddings with a size of (batch_size x hidden_layer_dim)
         logits = self.sigmoid(self.fc_layer_1(cosine_sim_matrix))
-
-        # logits representation with a size of (batch_size x num_classes )
-        #logits = self.sigmoid(self.fc_layer_2(dense_sim_embeddings))
-        
-        return logits
-
-class HybridSimBasedLinkPredictorV2(torch.nn.Module):
-
-    def __init__(self, num_similarities, hidden_layer_dim, num_classes):
-        super().__init__()
-        
-        self.fc_layer_1 = torch.nn.Linear(in_features=num_similarities, out_features=hidden_layer_dim)
-        #self.fc_layer_2 = torch.nn.Linear(in_features=hidden_layer_dim, out_features=num_classes)
-        
-        #self.relu = torch.nn.ReLU()
-        #self.tanh = torch.nn.Tanh()
-        self.sigmoid = torch.nn.Sigmoid()
-
-    def forward(self, src_sem_embed, src_graph_embed, tgt_sem_embed, tgt_graph_embed):
-
-        # cosine similarity on semantic embeddings
-        cosine_sim_sem = torch.nn.functional.cosine_similarity(src_sem_embed, tgt_sem_embed)
-        cosine_sim_sem = cosine_sim_sem.reshape(-1, 1)
-        
-        # cosine similarity on graph embeddings
-        cosine_sim_graph = torch.nn.functional.cosine_similarity(src_graph_embed, tgt_graph_embed)
-        cosine_sim_graph = cosine_sim_graph.reshape(-1, 1)
-        
-        # matrix of cosine similarities with a size of (batch_size x 2)
-        cosine_sim_matrix = torch.concat([cosine_sim_sem, cosine_sim_graph], dim=1)
-
-        # dense representation embeddings with a size of (batch_size x hidden_layer_dim)
-        logits = self.sigmoid(self.fc_layer_1(cosine_sim_matrix))
-
-        # logits representation with a size of (batch_size x num_classes )
-        #logits = self.sigmoid(self.fc_layer_2(dense_sim_embeddings))
         
         return logits
 
 
+def log_gradients(model, step):
+    """Log gradients using mlflow"""
+    
+    for name, param in model.named_parameters():
+        if param.requires_grad:
+
+            if 'weight' in name:
+                param = param.flatten()
+                for i in range(len(param)):
+                    mlflow.log_metric(f"grad/{name}-{i}", param[i].item(), step=step)
+            else:
+                mlflow.log_metric(f"grad/{name}", param.item(), step=step)
+                
 def train_hybrid_model_on_binary_cross_entropy_loss(hybrid_link_predictor, optimizer, parameters, positive_edge_loader, negative_edge_loader, device, writer, logger):
     hybrid_link_predictor.train()
 
@@ -141,6 +114,8 @@ def train_hybrid_model_on_binary_cross_entropy_loss(hybrid_link_predictor, optim
 
     loss_criterion = torch.nn.BCELoss()
 
+    # log gradients
+    log_gradients(hybrid_link_predictor, 0)
     
     for epoch in range(parameters['nb_epochs']):
 
@@ -208,7 +183,9 @@ def train_hybrid_model_on_binary_cross_entropy_loss(hybrid_link_predictor, optim
                 precision = torch.concat([precision, precision_func(predictions, labels.long()).reshape(1, -1)], axis=0)
                 recall = torch.concat([recall, recall_func(predictions, labels.long()).reshape(1, -1)], axis=0)
 
-                
+        # log gradients
+        log_gradients(hybrid_link_predictor, epoch + 1)
+       
         loss_epoch = sum(loss_batch) / len(loss_batch)
         logger.info(f"Epoch {epoch}, Training Loss: {loss_epoch}")
         logger.info(f"F1-Score: {torch.mean(f1score, dim=0)}, Precision: {torch.mean(precision, dim=0)}, Recall: {torch.mean(recall, dim=0)}")
@@ -395,7 +372,7 @@ def main(args):
     
     logger.info("Datasets Creation")
     if object_to_predict == 'column':
-        train_pos_edge_dataset = train_pos_edge_dataset = LinkDataset(
+        train_pos_edge_dataset = LinkDataset(
                                         train_pos_col_edge_index,
                                         col_sem_embeddings,
                                         col_graph_embeddings,
@@ -414,7 +391,7 @@ def main(args):
                                         )
         
     elif object_to_predict == 'dataset':
-        train_pos_edge_dataset = train_pos_edge_dataset = LinkDataset(
+        train_pos_edge_dataset = LinkDataset(
                                         train_pos_ds_edge_index,
                                         ds_sem_embeddings,
                                         ds_graph_embeddings,

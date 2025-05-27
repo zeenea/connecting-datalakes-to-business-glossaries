@@ -25,9 +25,9 @@ def load_embeddings(embeddings_dir_path, dataset_name, model_type, random_state)
             print(f'File not found: {file_path}')
 
 
-def load_processed_data(data_dir_path, dataset_name, object_to_predict, random_state):
+def load_processed_data(data_dir_path, dataset_name, object_to_annotate, random_state):
 
-    files_dir_path = f"{data_dir_path}/dataset_name={dataset_name}/object_to_predict={object_to_predict}/random_state={random_state}"
+    files_dir_path = f"{data_dir_path}/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
 
     list_file_names = [
         'train_col_alignments.parquet',
@@ -92,12 +92,12 @@ def test_mrr_hits_random_model(
 
     return mrr, hit_at_k
 
-def save_metrics(metrics:dict, dataset_name, object_to_predict, random_state, metric_dir):
+def save_metrics(metrics:dict, dataset_name, object_to_annotate, random_state, metric_dir):
 
             if not os.path.exists(metric_dir):
                 os.makedirs(metric_dir)
                 
-            metric_file = open(f"{metric_dir}/link_prediction_{dataset_name}_{object_to_predict}_{random_state}.txt", "w")
+            metric_file = open(f"{metric_dir}/link_prediction_{dataset_name}_{object_to_annotate}_{random_state}.txt", "w")
             metric_file.write(str(metrics))
             metric_file.close()
 
@@ -123,7 +123,7 @@ def main(args):
     logger.info("Load Arguments")
     
     dataset_name = args.dataset_name
-    object_to_predict = args.object_to_predict
+    object_to_annotate = args.object_to_annotate
     random_state_index = args.random_state_index
     parameters = {
         "top_k":args.top_k,
@@ -135,8 +135,8 @@ def main(args):
 
         
     logger.info('Load processed data')
-    data_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/raw_to_dataframes"
-    data_out = list(load_processed_data(data_dir_path, dataset_name, object_to_predict, random_state))
+    data_dir_path = "../gold_data/raw_to_dataframes"
+    data_out = list(load_processed_data(data_dir_path, dataset_name, object_to_annotate, random_state))
     train_col_alignments = data_out[0]
     test_col_alignments = data_out[1]
     train_ds_alignments = data_out[2]
@@ -154,13 +154,13 @@ def main(args):
     with mlflow.start_run():
         
         mlflow.set_tag("dataset_name", dataset_name)
-        mlflow.set_tag('object_to_predict', object_to_predict)
+        mlflow.set_tag('object_to_annotate', object_to_annotate)
         mlflow.log_params(parameters)
         mlflow.log_param('dataset_split_random_state', random_state)
 
         logger.info("Test Random Model. Testing: MRR, Hit@10")
     
-        if object_to_predict == 'column':
+        if object_to_annotate == 'column':
     
             test_pos_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
     
@@ -183,7 +183,7 @@ def main(args):
     
         logger.info("Save metrics")
         
-        metric_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/random-model"
+        metric_dir_path = "../gold_data/metrics/random-model"
         metrics = {
             "MRR": round(mrr, 4),
             "Hit@10": round(hit_at_10, 4),
@@ -192,7 +192,7 @@ def main(args):
             "dataset_name": str(dataset_name)
         }
     
-        save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
+        save_metrics(metrics, dataset_name, object_to_annotate, random_state, metric_dir_path)
 
         mlflow.log_metric('mrr', round(mrr, 4))
         mlflow.log_metric('hit_at_10', round(hit_at_10, 4))

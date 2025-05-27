@@ -135,8 +135,8 @@ class CrossSynSemGraphSimLearnV2(torch.nn.Module):
         
         self.fc_layer_1 = torch.nn.Linear(in_features=num_similarities, out_features=2)
         #self.fc_layer_2 = torch.nn.Linear(in_features=100, out_features=2)
-        self.tanh = torch.nn.Tanh()
-        self.sigmoid = torch.nn.Sigmoid()
+        #self.tanh = torch.nn.Tanh()
+        #self.sigmoid = torch.nn.Sigmoid()
         self.log_softmax = torch.nn.LogSoftmax(dim=1)
 
     def forward(self, src_sem_embed, src_syn_embed, src_graph_embed, tgt_sem_embed, tgt_syn_embed, tgt_graph_embed):
@@ -164,7 +164,21 @@ class CrossSynSemGraphSimLearnV2(torch.nn.Module):
         logits = self.log_softmax(res_dense)
 
         return logits
-        
+
+def log_gradients(model, step):
+    """Log gradients using mlflow"""
+    
+    for name, param in model.named_parameters():
+        if param.requires_grad:
+
+            if 'weight' in name:
+                param = param.flatten()
+                for i in range(len(param)):
+                    mlflow.log_metric(f"grad/{name}-{i}", param[i].item(), step=step)
+            else:
+                mlflow.log_metric(f"grad/{name}", param.item(), step=step)
+
+
 def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, parameters, positive_edge_loader, negative_edge_loader, device, writer, logger):
     
     link_predictor_model.train()
@@ -175,8 +189,8 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
     recall_func = MulticlassRecall(num_classes=num_classes, average=None).to(device)
     f1score_func = MulticlassF1Score( num_classes=num_classes, average=None).to(device)
 
-    #loss_criterion = torch.nn.BCELoss()
-    loss_criterion = torch.nn.CrossEntropyLoss()
+    loss_criterion = torch.nn.BCELoss()
+    #loss_criterion = torch.nn.CrossEntropyLoss()
 
     # early stopping params
     best_loss = float('inf')
@@ -184,7 +198,12 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
     min_delta = 1e-6
     patience_counter = 0
     
+    # log gradients using mlflow
+    log_gradients(link_predictor_model, 0)
+    
+    
     for epoch in range(parameters['nb_epochs']):
+
 
         loss_epoch = 0
         loss_batch  = []
@@ -222,7 +241,7 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
             trg_graph_embed = torch.concat([pos_trg_graph_embed, neg_trg_graph_embed], dim=0)[rand_index].to(device)
             labels = torch.concat([pos_labels, neg_labels], dim=0)[rand_index].long()
             labels = torch.flatten(labels).to(device)
-            #labels = labels.reshape(-1, 1).float()
+            labels = labels.reshape(-1, 1).float()
 
     
             optimizer.zero_grad()
@@ -233,6 +252,9 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
             
             loss.backward()
             optimizer.step()
+
+            # log gradients using mlflow
+            log_gradients(link_predictor_model, epoch+1)
 
             loss_batch.append(loss.item())
             # todo: implement early stoping
@@ -246,7 +268,9 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
                 precision = torch.concat([precision, precision_func(predictions, labels.long()).reshape(1, -1)], axis=0)
                 recall = torch.concat([recall, recall_func(predictions, labels.long()).reshape(1, -1)], axis=0)
 
-                
+        # log gradients using mlflow
+        log_gradients(link_predictor_model, epoch+1)
+       
         loss_epoch = sum(loss_batch) / len(loss_batch)
         logger.info(f"Epoch {epoch}, Training Loss: {loss_epoch}")
         logger.info(f"F1-Score: {torch.mean(f1score, dim=0)}, Precision: {torch.mean(precision, dim=0)}, Recall: {torch.mean(recall, dim=0)}")
@@ -272,6 +296,7 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
         if patience_counter >= patience:
             logger.info("Early stopping triggered")
             break
+
 
     link_predictor_model.load_state_dict(best_model_state)
     return link_predictor_model
@@ -329,7 +354,7 @@ def test_mrr_hits_k_double_cosine_sim(
             be_syn_embed_i = be_syn_embeddings[src_to_entities_edge_index[1]]
             be_graph_embed_i = be_graph_embeddings[src_to_entities_edge_index[1]]
             
-            logits = link_predictor_model.forward(obj_sem_embed_i, obj_syn_embed_i, obj_graph_embed_i, be_sem_embed_i, be_syn_embed_i, be_graph_embed_i)[:, 1]
+            logits = link_predictor_model.forward(obj_sem_embed_i, obj_syn_embed_i, obj_graph_embed_i, be_sem_embed_i, be_syn_embed_i, be_graph_embed_i)#[:, 1]
             #print(f"logits shape: {logits.shape}")
             #print(f"logits: {logits}")
             
@@ -542,7 +567,7 @@ def main(args):
         graph_embeddings_dim = ds_graph_embeddings.shape[1]
 
     
-    link_predictor_model = CrossSynSemGraphSimLearnV2(
+    link_predictor_model = CrossSynSemGraphSimLearn(
         num_similarities=3,
         num_classes=parameters['num_classes']
         )

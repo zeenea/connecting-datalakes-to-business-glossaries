@@ -77,9 +77,9 @@ def store_embeddings(col_embeddings, ds_embeddings, be_embeddings, dataset_name,
         obj = torch.from_numpy(obj)
         torch.save(obj, f"{obj_path}/{obj_name}")
 
-def store_dataframe(data, data_save_name, dataset_name, object_to_predict, random_state):
+def store_dataframe(data, data_save_name, dataset_name, object_to_annotate, random_state):
     
-    obj_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/raw_to_dataframes/dataset_name={dataset_name}/object_to_predict={object_to_predict}/random_state={random_state}"
+    obj_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/raw_to_dataframes/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
     
     if not os.path.exists(obj_path):
         os.makedirs(obj_path)
@@ -641,7 +641,7 @@ def main(args):
     logger.info("Load Arguments")
     
     dataset_name = args.dataset_name
-    object_to_predict = args.object_to_predict
+    object_to_annotate = args.object_to_annotate
     random_state_index = args.random_state_index
     neg_strategy = args.neg_strategy
     generate_syntactic_embeddings_bool = args.generate_syntactic_embeddings
@@ -672,7 +672,7 @@ def main(args):
 
     if dataset_name == "zeenea-open-ds":
     
-        results = load_zeenea_open_ds_artifacts(object_to_predict, random_state)
+        results = load_zeenea_open_ds_artifacts(object_to_annotate, random_state)
         train_col_alignments = results[0]
         test_col_alignments = results[1]
         train_ds_alignments = results[2]
@@ -686,7 +686,7 @@ def main(args):
 
     if dataset_name == "turl-cta":
         
-        results = load_turl_cta_artifacts(object_to_predict, random_state)
+        results = load_turl_cta_artifacts(object_to_annotate, random_state)
         train_col_alignments = results[0]
         test_col_alignments = results[1]
         train_ds_alignments = results[2]
@@ -699,17 +699,17 @@ def main(args):
 
     
     logger.info("Save Data Artefacts")
-    store_dataframe(train_col_alignments, "train_col_alignments.parquet", dataset_name, object_to_predict, random_state)
-    if object_to_predict == 'column':
-        store_dataframe(test_col_alignments, "test_col_alignments.parquet", dataset_name, object_to_predict, random_state)
+    store_dataframe(train_col_alignments, "train_col_alignments.parquet", dataset_name, object_to_annotate, random_state)
+    if object_to_annotate == 'column':
+        store_dataframe(test_col_alignments, "test_col_alignments.parquet", dataset_name, object_to_annotate, random_state)
     
-    store_dataframe(train_ds_alignments, "train_ds_alignments.parquet", dataset_name, object_to_predict, random_state)
-    if object_to_predict == 'dataset':
-        store_dataframe(train_ds_alignments, "test_ds_alignments.parquet", dataset_name, object_to_predict, random_state)
+    store_dataframe(train_ds_alignments, "train_ds_alignments.parquet", dataset_name, object_to_annotate, random_state)
+    if object_to_annotate == 'dataset':
+        store_dataframe(train_ds_alignments, "test_ds_alignments.parquet", dataset_name, object_to_annotate, random_state)
     
-    store_dataframe(business_glossary_items, "business_glossary_items.parquet", dataset_name, object_to_predict, random_state)
-    store_dataframe(ds_to_col, "ds_to_col.parquet", dataset_name, object_to_predict, random_state)
-    store_dataframe(be_to_be, "be_to_be.parquet", dataset_name, object_to_predict, random_state)
+    store_dataframe(business_glossary_items, "business_glossary_items.parquet", dataset_name, object_to_annotate, random_state)
+    store_dataframe(ds_to_col, "ds_to_col.parquet", dataset_name, object_to_annotate, random_state)
+    store_dataframe(be_to_be, "be_to_be.parquet", dataset_name, object_to_annotate, random_state)
 
 
     if generate_semantic_embeddings_bool or generate_semantic_textual_links_bool:
@@ -767,7 +767,7 @@ def main(args):
         logger.info("Generate Textual Links <[CLS]source_name[SEP]target_name[SEP]>")
 
         
-        if object_to_predict == 'column':
+        if object_to_annotate == 'column':
             column_name = "column_name"
             column_id = "col_id"
             be_name = "be_name"
@@ -781,7 +781,7 @@ def main(args):
             train_textual_links = generate_textual_link(train_col_alignments, column_id, column_name, be_id, be_name) 
             test_textual_links = generate_textual_link(test_col_alignments, column_id, column_name, be_id, be_name)
 
-        if object_to_predict == 'dataset':
+        if object_to_annotate == 'dataset':
             table_name = "table_name"
             table_id = "ds_id"
             be_name = "be_name"
@@ -795,8 +795,8 @@ def main(args):
             test_textual_links = generate_textual_link(test_ds_alignments, table_id, table_name, be_id, be_name)
 
         logger.info("Save Textual links")
-        store_dataframe(train_textual_links, "train_textual_links.parquet", dataset_name, object_to_predict, random_state)
-        store_dataframe(test_textual_links, "test_textual_links.parquet", dataset_name, object_to_predict, random_state)
+        store_dataframe(train_textual_links, "train_textual_links.parquet", dataset_name, object_to_annotate, random_state)
+        store_dataframe(test_textual_links, "test_textual_links.parquet", dataset_name, object_to_annotate, random_state)
 
         
 
