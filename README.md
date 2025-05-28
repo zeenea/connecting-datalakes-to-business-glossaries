@@ -4,8 +4,9 @@ Data Asset Annotation consiste of annotating data object (in our case, tables an
 
 This application permits to:
 1. Load Tabular Data ('t2dv2', 'zeenea-open-ds', 'turl-cta')
-2. Create Syntactic (TF-IDF), Semantic (LM), and Graph Embeddings
-3. Annotation Approaches:
+2. Create textual links and Graph links
+3. Create Syntactic (TF-IDF), Semantic (LM), and Graph Embeddings
+4. Annotation Approaches:
     1. Random model
     2. Syntactic model
     3. Semantic model
