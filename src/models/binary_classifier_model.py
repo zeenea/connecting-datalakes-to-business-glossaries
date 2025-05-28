@@ -14,11 +14,11 @@ def load_yaml(file_path):
         return yaml.safe_load(file)
 
 
-def load_semantic_textual_link_embeddings(dataset_name, object_to_predict, random_state):
+def load_semantic_textual_link_embeddings(dataset_name, object_to_annotate, random_state):
 
     embeddings_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings/dataset_name={dataset_name}/model_type=semantic-based/random_state={random_state}/"
 
-    embedding_file_names = [f"train_{object_to_predict}_be_textual_link_embeddings.pt", f"test_{object_to_predict}_be_textual_link_embeddings.pt"]
+    embedding_file_names = [f"train_{object_to_annotate}_be_textual_link_embeddings.pt", f"test_{object_to_annotate}_be_textual_link_embeddings.pt"]
 
     for file_name in embedding_file_names:
         file_path = f"{embeddings_path}/{file_name}"
@@ -26,8 +26,8 @@ def load_semantic_textual_link_embeddings(dataset_name, object_to_predict, rando
             yield torch.load(file_path)
 
 
-def load_textual_links(dataset_name, object_to_predict, random_state):
-    obj_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/raw_to_dataframes/dataset_name={dataset_name}/object_to_predict={object_to_predict}/random_state={random_state}"
+def load_textual_links(dataset_name, object_to_annotate, random_state):
+    obj_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/raw_to_dataframes/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
 
     file_names = ['train_textual_links.parquet', 'test_textual_links.parquet']
     
@@ -161,6 +161,12 @@ def train_model_on_binary_cross_entropy_loss(link_predictor, optimizer, num_clas
 
     loss_criterion = torch.nn.BCELoss()
 
+    # early stopping params
+    best_loss = float('inf')
+    patience = 5
+    min_delta = 1e-5
+    patience_counter = 0
+
     for epoch in range(max_epochs):
 
         loss_epoch = 0
@@ -215,6 +221,19 @@ def train_model_on_binary_cross_entropy_loss(link_predictor, optimizer, num_clas
             "Train/Recall/positiveMatch": torch.mean(recall, dim=0)[1]
         }
         mlflow.log_metrics(metrics, epoch)
+
+        if loss_epoch < best_loss - min_delta:
+            best_loss = loss_epoch
+            patience_counter = 0
+            best_model_state = link_predictor.state_dict()
+        else:
+            patience_counter +=1
+        
+        if patience_counter >= patience:
+            logger.info("Early stopping triggered")
+            break
+    
+    link_predictor.load_state_dict(best_model_state)
 
     return link_predictor
 
@@ -314,18 +333,18 @@ def test_mrr_hits_k(
 
 
 
-def save_metrics(metrics:dict, dataset_name, object_to_predict, random_state, metric_dir):
+def save_metrics(metrics:dict, dataset_name, object_to_annotate, random_state, metric_dir):
 
     if not os.path.exists(metric_dir):
         os.makedirs(metric_dir)
         
-    metric_file = open(f"{metric_dir}/link_prediction_{dataset_name}_{object_to_predict}_{random_state}.txt", "w")
+    metric_file = open(f"{metric_dir}/link_prediction_{dataset_name}_{object_to_annotate}_{random_state}.txt", "w")
     metric_file.write(str(metrics))
     metric_file.close()
 
 
-def save_model(model, models_dir_path, trained_on_dataset, object_to_predict, trained_for_epochs, model_name, random_state):
-    model_dir = f"{models_dir_path}/model_name={model_name}/trained_on={trained_on_dataset}/object_to_predict={object_to_predict}/random_state={random_state}/epochs={trained_for_epochs}"
+def save_model(model, models_dir_path, trained_on_dataset, object_to_annotate, trained_for_epochs, model_name, random_state):
+    model_dir = f"{models_dir_path}/model_name={model_name}/trained_on={trained_on_dataset}/object_to_annotate={object_to_annotate}/random_state={random_state}/epochs={trained_for_epochs}"
     
     if os.path.exists(model_dir):
         torch.save(model.state_dict(), f"{model_dir}/{model_name}.pt")
@@ -334,9 +353,9 @@ def save_model(model, models_dir_path, trained_on_dataset, object_to_predict, tr
         torch.save(model.state_dict(), f"{model_dir}/{model_name}.pt")
 
 
-def load_processed_data(data_dir_path, dataset_name, object_to_predict, random_state):
+def load_processed_data(data_dir_path, dataset_name, object_to_annotate, random_state):
 
-    files_dir_path = f"{data_dir_path}/dataset_name={dataset_name}/object_to_predict={object_to_predict}/random_state={random_state}"
+    files_dir_path = f"{data_dir_path}/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
 
     list_file_names = [
         'train_col_alignments.parquet',
@@ -367,7 +386,7 @@ def main(args):
     
     logger.info("Load Arguments")
     dataset_name = args.dataset_name
-    object_to_predict = args.object_to_predict
+    object_to_annotate = args.object_to_annotate
     random_state_index = args.random_state_index
 
     parameters = {
@@ -388,7 +407,7 @@ def main(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     logger.info("Load Semantic Textual Link Embeddings")
-    textual_links = list(load_textual_links(dataset_name, object_to_predict, random_state))
+    textual_links = list(load_textual_links(dataset_name, object_to_annotate, random_state))
 
     train_textual_links = textual_links[0]
     test_textual_links = textual_links[1]
@@ -421,7 +440,7 @@ def main(args):
     logger.info("Create Test Dataset and DataLoader")
     
     name_id_target = test_textual_links[['be_id', 'be_name']].drop_duplicates(subset=['be_id']).reset_index(drop=True)
-    if object_to_predict == 'column':
+    if object_to_annotate == 'column':
         source_name = "column_name"
         source_id = "col_id"
         target_id = 'be_id'
@@ -452,7 +471,7 @@ def main(args):
     with mlflow.start_run():
         
         mlflow.set_tag("dataset_name", dataset_name)
-        mlflow.set_tag('object_to_predict', object_to_predict)
+        mlflow.set_tag('object_to_annotate', object_to_annotate)
         mlflow.log_params(parameters)
         mlflow.log_param('dataset_split_random_state', random_state)
         mlflow.log_param('loss_function', 'BCELoss')
@@ -480,7 +499,7 @@ def main(args):
             "dataset_name": str(dataset_name)
         }
         
-        save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
+        save_metrics(metrics, dataset_name, object_to_annotate, random_state, metric_dir_path)
 
         mlflow.log_metric('mrr', round(mrr, 4))
         mlflow.log_metric('hit_at_10', round(hit_at_k, 4))
@@ -488,9 +507,9 @@ def main(args):
         logger.info("Save Binary Classifier Model")
         models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
         
-        save_model(link_predictor, models_dir_path, dataset_name, object_to_predict, parameters['max_epochs'], model_class_name, random_state)
+        save_model(link_predictor, models_dir_path, dataset_name, object_to_annotate, parameters['max_epochs'], model_class_name, random_state)
 
-        registered_model_name = f"{dataset_name}-{object_to_predict}-{model_class_name}"
+        registered_model_name = f"{dataset_name}-{object_to_annotate}-{model_class_name}"
         mlflow.pytorch.log_model(link_predictor, model_class_name, registered_model_name=registered_model_name)
 
         

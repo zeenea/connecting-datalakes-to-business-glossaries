@@ -17,9 +17,12 @@ This application permits to:
 The experimentations are tracked using MLFlow server.
 
 ## Quick Start
-### Step 1: Requirements
+### Step 1: Create a Virtual Evironnement and install Requirements
 ```
-pip install -r link-prediction-local/requirements.txt
+python3 -m venv my-venv
+source my-env/bin/activate
+ 
+pip install -r requirements.txt
 ```
 
 
@@ -98,6 +101,23 @@ python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_t
 ###### 3.4. To run Hybrid Syntactic, Semantic and Graph Similarity model:
 ```
 python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=$random_state_index  --enable_hybrid_model_syn_sem_graph_embedding_learning
+```
+##### 5. Additiona ML Classifier models using Synatcic, Semantic and Graph similarities:
+###### 5.1. To run Decision Tree model on Syntactic, Semantic and Graph similarities:
+```
+python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=0 --enable_decision_tree_classifier_model_syn_sem_graph_similarity_learning
+```
+###### 5.2. To run Random Forest Classifier on Syntactic, Semantic and Graph similarities:
+```
+python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=0 --enable_random_forest_classifier_model_syn_sem_graph_similarity_learning
+```
+###### 5.3. To run SVM Classifier on Syntactic, Semantic and Graph similarities:
+```
+python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=0 --enable_svm_classifier_model_syn_sem_graph_similarity_learning
+```
+###### 5.4. To run XGBoostClassifier on Syntactic, Semantic and Graph Similarities:
+```
+python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=0 --enable_xgboost_classifier_model_syn_sem_graph_similarity_learning
 ```
 
 

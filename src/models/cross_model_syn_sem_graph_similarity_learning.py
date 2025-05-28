@@ -194,13 +194,12 @@ def train_model_on_binary_cross_entropy_loss(link_predictor_model, optimizer, pa
 
     # early stopping params
     best_loss = float('inf')
-    patience = 20
-    min_delta = 1e-6
+    patience = 5
+    min_delta = 1e-5
     patience_counter = 0
     
     # log gradients using mlflow
     log_gradients(link_predictor_model, 0)
-    
     
     for epoch in range(parameters['nb_epochs']):
 
@@ -387,18 +386,18 @@ def test_mrr_hits_k_double_cosine_sim(
     return mrr, hit_at_k
 
 
-def save_metrics(metrics:dict, dataset_name, object_to_predict, random_state, metric_dir):
+def save_metrics(metrics:dict, dataset_name, object_to_annotate, random_state, metric_dir):
 
             if not os.path.exists(metric_dir):
                 os.makedirs(metric_dir)
                 
-            metric_file = open(f"{metric_dir}/link_prediction_{dataset_name}_{object_to_predict}_{random_state}.txt", "w")
+            metric_file = open(f"{metric_dir}/link_prediction_{dataset_name}_{object_to_annotate}_{random_state}.txt", "w")
             metric_file.write(str(metrics))
             metric_file.close()
 
 
-def save_model(model, models_dir_path, trained_on_dataset, object_to_predict, trained_for_epochs, model_name, random_state):
-        model_dir = f"{models_dir_path}/model_name={model_name}/trained_on={trained_on_dataset}/object_to_predict={object_to_predict}/random_state={random_state}/epochs={trained_for_epochs}"
+def save_model(model, models_dir_path, trained_on_dataset, object_to_annotate, trained_for_epochs, model_name, random_state):
+        model_dir = f"{models_dir_path}/model_name={model_name}/trained_on={trained_on_dataset}/object_to_annotate={object_to_annotate}/random_state={random_state}/epochs={trained_for_epochs}"
         
         if os.path.exists(model_dir):
             torch.save(model.state_dict(), f"{model_dir}/{model_name}.pt")
@@ -418,7 +417,7 @@ def main(args):
     
     logger.info("Load Arguments")
     dataset_name = args.dataset_name
-    object_to_predict = args.object_to_predict
+    object_to_annotate = args.object_to_annotate
     random_state_index = args.random_state_index
 
     parameters = {
@@ -439,21 +438,21 @@ def main(args):
     random_state = [42, 84, 13][random_state_index]
 
     logger.info("Load Semantic Embeddings")
-    embeddings_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings"
+    embeddings_dir_path = "../gold_data/embeddings"
     sem_embeddings = list(load_embeddings(embeddings_dir_path, dataset_name, 'semantic-based', random_state))
     col_sem_embeddings = sem_embeddings[0].float()
     ds_sem_embeddings = sem_embeddings[1].float()
     be_sem_embeddings = sem_embeddings[2].float()
     
     logger.info("Load Syntactic Embeddings")
-    embeddings_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings"
+    embeddings_dir_path = "../gold_data/embeddings"
     syn_embeddings = list(load_embeddings(embeddings_dir_path, dataset_name, 'syntactic-based', random_state))
     col_syn_embeddings = syn_embeddings[0].float()
     ds_syn_embeddings = syn_embeddings[1].float()
     be_syn_embeddings = syn_embeddings[2].float()
 
     logger.info("load Graph Embeddings")
-    embeddings_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings"
+    embeddings_dir_path = "../gold_data/embeddings"
     graph_embeddings = list(load_embeddings(embeddings_dir_path, dataset_name, 'graph-based', random_state))
     col_graph_embeddings = graph_embeddings[0].detach().cpu().float()
     ds_graph_embeddings = graph_embeddings[1].detach().cpu().float()
@@ -461,36 +460,36 @@ def main(args):
     
 
     logger.info("Load Edge Indexes")
-    edge_indexes_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/edge_indexes/dataset_name={dataset_name}/object_to_predict={object_to_predict}/random_state={random_state}"
+    edge_indexes_dir_path = f"../gold_data/edge_indexes/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
     
-    if object_to_predict == 'column':
+    if object_to_annotate == 'column':
         train_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_col_edge_index.pt')
         train_neg_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_neg_col_edge_index.pt')
         test_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_col_edge_index.pt')
 
-    elif object_to_predict == 'dataset':
+    elif object_to_annotate == 'dataset':
         train_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_ds_edge_index.pt')
         train_neg_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_neg_ds_edge_index.pt')
         test_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_ds_edge_index.pt')
         
     else:
-        print("Error in object_to_predict var")
+        print("Error in object_to_annotate var")
 
     logger.info("Creates Pos and Neg Labels")
-    if object_to_predict == 'column':
+    if object_to_annotate == 'column':
         train_pos_col_labels = torch.ones((train_pos_col_edge_index.shape[1], 1))
         train_neg_col_labels = torch.ones((train_neg_col_edge_index.shape[1], 1))
 
-    elif object_to_predict == 'dataset':
+    elif object_to_annotate == 'dataset':
         train_pos_ds_labels = torch.ones((train_pos_ds_edge_index.shape[1], 1))
         train_neg_ds_labels = torch.ones((train_neg_ds_edge_index.shape[1], 1))
 
     else:
-        print("Error in object_to_predict var")
+        print("Error in object_to_annotate var")
 
     
     logger.info("Datasets Creation")
-    if object_to_predict == 'column':
+    if object_to_annotate == 'column':
         train_pos_edge_dataset = LinkDataset(
                                         train_pos_col_edge_index,
                                         col_sem_embeddings,
@@ -513,7 +512,7 @@ def main(args):
                                         train_neg_col_labels
                                         )
         
-    elif object_to_predict == 'dataset':
+    elif object_to_annotate == 'dataset':
         train_pos_edge_dataset = LinkDataset(
                                         train_pos_ds_edge_index,
                                         ds_sem_embeddings,
@@ -536,7 +535,7 @@ def main(args):
                                         train_neg_ds_labels
                                         )
     else:
-        print("Error in object_to_predict var")
+        print("Error in object_to_annotate var")
 
     
     logger.info("DataLoaders Creation")
@@ -548,7 +547,7 @@ def main(args):
 
     
     logger.info("Cross Model and Optimizer Instantiation")
-    if object_to_predict == 'column':
+    if object_to_annotate == 'column':
         assert col_sem_embeddings.shape[1] == be_sem_embeddings.shape[1]
         assert col_syn_embeddings.shape[1] == be_syn_embeddings.shape[1]
         assert col_graph_embeddings.shape[1] == be_graph_embeddings.shape[1]
@@ -579,7 +578,7 @@ def main(args):
     optimizer = torch.optim.AdamW(link_predictor_model.parameters(), lr=parameters['learning_rate'])
 
     logger.info("Tensorboard SummaryWriter Instatiation")
-    writer_log_dir = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/trainings/{model_class_name}/dataset_name={dataset_name}/random_state={random_state}/epochs={parameters['nb_epochs']}"
+    writer_log_dir = f"../gold_data/trainings/{model_class_name}/dataset_name={dataset_name}/random_state={random_state}/epochs={parameters['nb_epochs']}"
 
     if not os.path.exists(writer_log_dir):
         os.makedirs(writer_log_dir)
@@ -592,7 +591,7 @@ def main(args):
     with mlflow.start_run():
         
         mlflow.set_tag("dataset_name", dataset_name)
-        mlflow.set_tag('object_to_predict', object_to_predict)
+        mlflow.set_tag('object_to_annotate', object_to_annotate)
         mlflow.log_param('dataset_split_random_state', random_state)
         mlflow.log_param('loss_function', 'BCELoss')
         mlflow.log_param('optimizer', 'AdamW')
@@ -606,7 +605,7 @@ def main(args):
     
         logger.info("Test Cross Model. Testing: MRR, Hit@10")
     
-        if object_to_predict == 'column':
+        if object_to_annotate == 'column':
             mrr, hit_at_10 = test_mrr_hits_k_double_cosine_sim(
                 hybrid_link_predictor,
                 test_pos_col_edge_index, 
@@ -638,7 +637,7 @@ def main(args):
     
         logger.info("Save metrics")
         
-        metric_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/{model_class_name}"
+        metric_dir_path = f"../gold_data/metrics/{model_class_name}"
         metrics = {
             "MRR": round(mrr, 4),
             "Hit@10": round(hit_at_10, 4),
@@ -647,17 +646,17 @@ def main(args):
             "dataset_name": str(dataset_name)
         }
         
-        save_metrics(metrics, dataset_name, object_to_predict, random_state, metric_dir_path)
+        save_metrics(metrics, dataset_name, object_to_annotate, random_state, metric_dir_path)
         
         mlflow.log_metric('mrr', round(mrr, 4))
         mlflow.log_metric('hit_at_10', round(hit_at_10, 4))
         
         logger.info("Save Cross Model")
-        models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
+        models_dir_path = "../gold_data/models"
         
-        save_model(hybrid_link_predictor, models_dir_path, dataset_name, object_to_predict, parameters['nb_epochs'], model_class_name, random_state)
+        save_model(hybrid_link_predictor, models_dir_path, dataset_name, object_to_annotate, parameters['nb_epochs'], model_class_name, random_state)
 
-        registered_model_name = f"{dataset_name}-{object_to_predict}-{model_class_name}"
+        registered_model_name = f"{dataset_name}-{object_to_annotate}-{model_class_name}"
         mlflow.pytorch.log_model(hybrid_link_predictor, model_class_name, registered_model_name=registered_model_name)
 
         

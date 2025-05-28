@@ -632,9 +632,14 @@ def main(args):
         mlflow.log_param('link_predictor_model', model_class_name)
     
         logger.info("Training - Train Loss - Test Loss - Test AUC")
+        # early stopping params
+        best_loss = float('inf')
+        patience = 5
+        min_delta = 1e-5
+        patience_counter = 0
         
         for epoch in range(0, max_epochs):
-                
+
             train_loss, train_pos_edge_index = train(hetero_model, optimizer, object_to_annotate, hetero_dataset, train_pos_col_edge_index, train_neg_col_edge_index, train_pos_ds_edge_index, train_neg_ds_edge_index, **options)
             test_loss, test_auc  = test(hetero_model, object_to_annotate, hetero_dataset, test_pos_col_edge_index, test_neg_col_edge_index, test_pos_ds_edge_index, test_neg_ds_edge_index, **options)
             logger.info(f'Epoch: {epoch}, Train Loss: {train_loss.item():.6f}, Test Loss: {test_loss:.4f}, Test AUC: {test_auc:.4f}')
@@ -646,17 +651,24 @@ def main(args):
             }
             mlflow.log_metrics(train_metrics, epoch)
 
-            #todo: early stoping
-        
+            if train_loss.item() < best_loss - min_delta:
+                best_loss = train_loss.item()
+                patience_counter = 0
+                best_model_state = hetero_model.state_dict()
+            else:
+                patience_counter +=1
             
+            if patience_counter >= patience:
+                logger.info("Early stopping triggered")
+                break
+        
+        hetero_model.load_state_dict(best_model_state)
+
         logger.info("Testing - Hit@10 - MRR")
         if object_to_annotate == 'column':
-
-                    
             mrr, hit_at_10 = test_mrr_hits_k(col_embeddings, ds_embeddings, be_embeddings, object_to_annotate, hetero_dataset, hetero_model, train_pos_edge_index, test_pos_col_edge_index, k=10, device=device)
             
         elif object_to_annotate == 'dataset':
-            
             mrr, hit_at_10 = test_mrr_hits_k(col_embeddings, ds_embeddings, be_embeddings, object_to_annotate, hetero_dataset, hetero_model, train_pos_edge_index, test_pos_ds_edge_index, k=10, device=device) 
     
         

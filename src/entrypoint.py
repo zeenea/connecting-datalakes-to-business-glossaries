@@ -1,5 +1,5 @@
 from utilities import load_data
-from models import semantic_model, syntactic_model, random_model, graph_model, hybrid_model_sem_graph_embedding_learning, hybrid_model_syn_sem_embedding_learning, hybrid_model_syn_sem_graph_embedding_learning, cross_model_sem_graph_similarity_learning, cross_model_syn_graph_similarity_learning, cross_model_syn_sem_similarity_learning, hybrid_model_syn_graph_embedding_learning, cross_model_syn_sem_graph_similarity_learning, binary_classifier_model, decision_tree_classifier_model_syn_sem_graph_similarity_learning, random_forest_classifier_model_syn_sem_graph_similarity_learning, xgboost_classifier_model_syn_sem_graph_similarity_learning
+from models import semantic_model, syntactic_model, random_model, graph_model, hybrid_model_sem_graph_embedding_learning, hybrid_model_syn_sem_embedding_learning, hybrid_model_syn_sem_graph_embedding_learning, cross_model_sem_graph_similarity_learning, cross_model_syn_graph_similarity_learning, cross_model_syn_sem_similarity_learning, hybrid_model_syn_graph_embedding_learning, cross_model_syn_sem_graph_similarity_learning, binary_classifier_model, decision_tree_classifier_model_syn_sem_graph_similarity_learning, random_forest_classifier_model_syn_sem_graph_similarity_learning, svm_classifier_model_syn_sem_graph_similarity_learning, xgboost_classifier_model_syn_sem_graph_similarity_learning
 
 import argparse
 import yaml
@@ -13,7 +13,7 @@ def load_yaml(file_path):
 
 
 def starts_load_data():
-        yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+        yaml_file_path = "./input_yaml_config/model_configs.yaml"
         yaml_file = load_yaml(yaml_file_path)
         yaml_args = yaml_file.get("load_data_args", {})
         
@@ -30,7 +30,7 @@ def starts_load_data():
         load_data.main(args)
 
 def starts_random_model():    
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("random_model_args", {})
 
@@ -45,7 +45,7 @@ def starts_random_model():
 
 def starts_syntactic_model():
 
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("syntactic_model_args", {})
 
@@ -61,7 +61,7 @@ def starts_syntactic_model():
 
 
 def starts_semantic_model():
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("semantic_model_args", {})
 
@@ -77,7 +77,7 @@ def starts_semantic_model():
 
 
 def starts_graph_model():
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("graph_model_args", {})
 
@@ -94,7 +94,7 @@ def starts_graph_model():
 
 
 def starts_hybrid_model_sem_graph_embedding_learning():
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("hybrid_model_sem_graph_embed_learn_args", {})
 
@@ -114,7 +114,7 @@ def starts_hybrid_model_sem_graph_embedding_learning():
     hybrid_model_sem_graph_embedding_learning.main(args)
 
 def starts_hybrid_model_syn_sem_embedding_learning():
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml = load_yaml(yaml_file_path)
     yaml_args = yaml.get("hybrid_model_syn_sem_embed_learn_args", {})
 
@@ -134,7 +134,7 @@ def starts_hybrid_model_syn_sem_embedding_learning():
     hybrid_model_syn_sem_embedding_learning.main(args)
 
 def starts_hybrid_model_syn_graph_embedding_learning():
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml = load_yaml(yaml_file_path)
     yaml_args = yaml.get("hybrid_model_syn_graph_embed_learn_args", {})
 
@@ -154,7 +154,7 @@ def starts_hybrid_model_syn_graph_embedding_learning():
     hybrid_model_syn_graph_embedding_learning.main(args)
     
 def starts_hybrid_model_syn_sem_graph_embedding_learning():
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("hybrid_model_syn_sem_graph_embed_learn_args", {})
 
@@ -174,7 +174,7 @@ def starts_hybrid_model_syn_sem_graph_embedding_learning():
     hybrid_model_syn_sem_graph_embedding_learning.main(args)
 
 def starts_cross_model_sem_graph_similarity_learning():
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("cross_model_sem_graph_similarity_learning_args", {})
 
@@ -195,7 +195,7 @@ def starts_cross_model_sem_graph_similarity_learning():
     cross_model_sem_graph_similarity_learning.main(parser_args)
 
 def starts_cross_model_syn_sem_similarity_learning():
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("cross_model_syn_sem_similarity_learning_args", {})
 
@@ -216,7 +216,7 @@ def starts_cross_model_syn_sem_similarity_learning():
     cross_model_syn_sem_similarity_learning.main(parser_args)
 
 def starts_cross_model_syn_graph_similarity_learning():
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("cross_model_syn_graph_similarity_learning_args", {})
 
@@ -236,7 +236,7 @@ def starts_cross_model_syn_graph_similarity_learning():
     cross_model_syn_graph_similarity_learning.main(args)
 
 def starts_cross_model_syn_sem_graph_similarity_learning():
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("cross_model_syn_sem_graph_similarity_learning_args", {})
 
@@ -259,7 +259,7 @@ def starts_cross_model_syn_sem_graph_similarity_learning():
 
 def starts_binary_classifier_model():
 
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("binary_classifier_model_args", {})
 
@@ -281,13 +281,13 @@ def are_embeddings_generated(dataset_name, model_name, random_state_index):
     
     random_state = [42, 84, 13][random_state_index]
 
-    embedding_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings/dataset_name={dataset_name}/model_type={model_name}/random_state={random_state}"
+    embedding_path = f"../gold_data/embeddings/dataset_name={dataset_name}/model_type={model_name}/random_state={random_state}"
 
     return os.path.exists(embedding_path)
         
 
 def starts_decision_tree_classifier_model_syn_sem_graph_similarity_learn():
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("decision_tree_classifier_model_syn_sem_graph_similarity_learning_args", {})
 
@@ -306,7 +306,7 @@ def starts_decision_tree_classifier_model_syn_sem_graph_similarity_learn():
 
 
 def starts_random_forest_classifier_model_syn_sem_graph_similarity_learn():
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("random_forest_classifier_model_syn_sem_graph_similarity_learning_args", {})
 
@@ -324,7 +324,7 @@ def starts_random_forest_classifier_model_syn_sem_graph_similarity_learn():
     random_forest_classifier_model_syn_sem_graph_similarity_learning.main(args)
 
 def starts_xgboost_classifier_model_syn_sem_graph_similarity_learn():
-    yaml_file_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/src/input_yaml_config/model_configs.yaml"
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
     yaml_args = yaml_file.get("xgboost_classifier_model_syn_sem_graph_similarity_learning_args", {})
 
@@ -340,6 +340,24 @@ def starts_xgboost_classifier_model_syn_sem_graph_similarity_learn():
     
     args, _ = parser.parse_known_args()
     xgboost_classifier_model_syn_sem_graph_similarity_learning.main(args)
+
+def starts_svm_classifier_model_syn_sem_graph_similarity_learn():
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
+    yaml_file = load_yaml(yaml_file_path)
+    yaml_args = yaml_file.get("svm_classifier_model_syn_sem_graph_similarity_learning_args", {})
+
+    parser = argparse.ArgumentParser("SVM Classifier Model Parser")
+    parser.add_argument('--dataset_name', type=str)
+    parser.add_argument('--object_to_annotate', type=str)
+    parser.add_argument('--random_state_index', type=int)
+    parser.add_argument('--batch_size', type=int, default=yaml_args.get('batch_size'))
+    parser.add_argument('--num_workers', type=int, default=yaml_args.get('num_workers'))
+    parser.add_argument('--nb_epochs', type=int, default=yaml_args.get('max_epochs'))
+    parser.add_argument('--num_classes', type=int, default=yaml_args.get('num_classes'))
+    parser.add_argument('--top_k', type=int, default=yaml_args.get('top_k'))
+    
+    args, _ = parser.parse_known_args()
+    svm_classifier_model_syn_sem_graph_similarity_learning.main(args)
     
 if __name__ == "__main__":
 
@@ -374,6 +392,7 @@ if __name__ == "__main__":
     choice_module_parser.add_argument('--enable_decision_tree_classifier_model_syn_sem_graph_similarity_learning', action='store_true', default=False)
     choice_module_parser.add_argument('--enable_random_forest_classifier_model_syn_sem_graph_similarity_learning', action='store_true', default=False)
     choice_module_parser.add_argument('--enable_xgboost_classifier_model_syn_sem_graph_similarity_learning', action='store_true', default=False)
+    choice_module_parser.add_argument('--enable_svm_classifier_model_syn_sem_graph_similarity_learning', action='store_true', default=False)
     
     choice_module_parser.add_argument('--dataset_name', type=str)
     choice_module_parser.add_argument('--random_state_index', type=int)
@@ -488,5 +507,9 @@ if __name__ == "__main__":
     if choice_module_parser_args.enable_xgboost_classifier_model_syn_sem_graph_similarity_learning:
         logger.info("---------------------------- Starts xgboost_classifier_model_syn_sem_graph_similarity_learning.py Module")
         starts_xgboost_classifier_model_syn_sem_graph_similarity_learn()
+
+    if choice_module_parser_args.enable_svm_classifier_model_syn_sem_graph_similarity_learning:
+        logger.info("---------------------------- Starts svm_classifier_model_syn_sem_graph_similarity_learning.py Module")
+        starts_svm_classifier_model_syn_sem_graph_similarity_learn()
         
     
