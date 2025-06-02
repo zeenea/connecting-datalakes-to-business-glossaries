@@ -1,0 +1,5 @@
+outs:
+- md5: edad43db80745270963d53093d099e93
+  size: 54268
+  hash: md5
+  path: property_metadata.csv
