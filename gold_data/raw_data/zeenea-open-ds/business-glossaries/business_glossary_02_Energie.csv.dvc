@@ -1,0 +1,5 @@
+outs:
+- md5: 817f2f116d067ced5b6b47bb9cb92321
+  size: 4088
+  hash: md5
+  path: business_glossary_02_Energie.csv
