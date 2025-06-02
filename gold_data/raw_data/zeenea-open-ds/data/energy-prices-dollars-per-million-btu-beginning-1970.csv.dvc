@@ -1,0 +1,5 @@
+outs:
+- md5: 268ff06f330d9fd3f07ec600d16dc88f
+  size: 6632
+  hash: md5
+  path: energy-prices-dollars-per-million-btu-beginning-1970.csv

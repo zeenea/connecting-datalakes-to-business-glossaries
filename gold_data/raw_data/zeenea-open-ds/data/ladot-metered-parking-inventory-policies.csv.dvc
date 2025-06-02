@@ -1,0 +1,5 @@
+outs:
+- md5: 91c56f5d3de98b29a741d696887bcf94
+  size: 4296
+  hash: md5
+  path: ladot-metered-parking-inventory-policies.csv

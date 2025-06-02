@@ -1,0 +1,5 @@
+outs:
+- md5: 5d4c90972e297c42badae410e3c8fdd9
+  size: 25219
+  hash: md5
+  path: oath-trials-division-case-status.csv

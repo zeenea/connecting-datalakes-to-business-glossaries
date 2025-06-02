@@ -1,0 +1,5 @@
+outs:
+- md5: 5eac7fb8df5616cff46835798a11fe83
+  size: 5294
+  hash: md5
+  path: gasoline-retail-prices-weekly-average-by-region-beginning-2007.csv

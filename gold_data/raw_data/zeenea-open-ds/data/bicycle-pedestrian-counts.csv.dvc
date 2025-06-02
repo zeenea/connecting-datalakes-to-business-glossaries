@@ -1,0 +1,5 @@
+outs:
+- md5: 754dfe034cc5ba278a9b28599feaaa2d
+  size: 3708
+  hash: md5
+  path: bicycle-pedestrian-counts.csv

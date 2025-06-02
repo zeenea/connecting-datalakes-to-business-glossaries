@@ -1,0 +1,5 @@
+outs:
+- md5: 42cd08b1fd41857e9c65f031f0a97cf2
+  size: 2999
+  hash: md5
+  path: mta-staten-island-railway-on-time-performance-beginning-2006.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: 1d6687c0a869636c5c9f186640018db0
+  size: 147941
+  hash: md5
+  path: parking-meters-parknyc-blockfaces.csv

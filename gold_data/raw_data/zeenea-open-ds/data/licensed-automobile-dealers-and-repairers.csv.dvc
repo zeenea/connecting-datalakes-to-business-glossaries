@@ -1,0 +1,5 @@
+outs:
+- md5: 55317a08480c404128426e98e2dac1dd
+  size: 7775
+  hash: md5
+  path: licensed-automobile-dealers-and-repairers.csv

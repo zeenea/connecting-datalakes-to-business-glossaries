@@ -1,0 +1,5 @@
+outs:
+- md5: 4ccfbc284149b2dbac5d8ca18314f9fd
+  size: 2566
+  hash: md5
+  path: business_glossary_04_Automobiles.csv

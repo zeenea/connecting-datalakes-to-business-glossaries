@@ -1,0 +1,5 @@
+outs:
+- md5: e4cc357c386d2dfeae72f7e790935e8d
+  size: 48821
+  hash: md5
+  path: seasonally-adjustment-transportation-data.csv

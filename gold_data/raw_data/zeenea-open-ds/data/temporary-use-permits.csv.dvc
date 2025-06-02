@@ -1,0 +1,5 @@
+outs:
+- md5: 8adc672d1a385b3bbf1e6766af50b5df
+  size: 26603
+  hash: md5
+  path: temporary-use-permits.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: 2c9d12d70fa630e0af3269d272c38406
+  size: 25401
+  hash: md5
+  path: wyoming-cv-pilot-traveler-information-message-sample-schema-version-6.csv

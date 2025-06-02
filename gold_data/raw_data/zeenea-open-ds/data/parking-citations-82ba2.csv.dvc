@@ -1,0 +1,5 @@
+outs:
+- md5: 8eb98908d2f2c159cb5534c6763420e6
+  size: 14762
+  hash: md5
+  path: parking-citations-82ba2.csv

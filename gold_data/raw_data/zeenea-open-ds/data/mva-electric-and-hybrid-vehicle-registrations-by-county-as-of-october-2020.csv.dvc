@@ -1,0 +1,5 @@
+outs:
+- md5: 0f8368d9fd8b3d0af7bbe796e0d981d5
+  size: 3518
+  hash: md5
+  path: mva-electric-and-hybrid-vehicle-registrations-by-county-as-of-october-2020.csv

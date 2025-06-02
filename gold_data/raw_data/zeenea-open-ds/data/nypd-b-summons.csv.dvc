@@ -1,0 +1,5 @@
+outs:
+- md5: 62997e5aacf719d235854b04b5a95756
+  size: 7317
+  hash: md5
+  path: nypd-b-summons.csv

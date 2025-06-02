@@ -1,0 +1,5 @@
+outs:
+- md5: dd4241ffbb39d9171e659048950b6113
+  size: 8352
+  hash: md5
+  path: metro-bike-share-trip-data.csv

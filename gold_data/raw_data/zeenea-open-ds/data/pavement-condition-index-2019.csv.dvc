@@ -1,0 +1,5 @@
+outs:
+- md5: e94754efe21cb393b66bb01cba65f677
+  size: 45168
+  hash: md5
+  path: pavement-condition-index-2019.csv

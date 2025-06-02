@@ -1,0 +1,5 @@
+outs:
+- md5: da3b9b8ae3c4cc6f1d84e05e5e4e738b
+  size: 12805
+  hash: md5
+  path: traffic-control-device-inventory.csv

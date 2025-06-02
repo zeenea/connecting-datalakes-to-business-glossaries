@@ -1,0 +1,5 @@
+outs:
+- md5: 61f2ed1fa5ba9bb7e568588290178cc9
+  size: 7442
+  hash: md5
+  path: taxi-improvement-fund-tif-medallion-payments.csv

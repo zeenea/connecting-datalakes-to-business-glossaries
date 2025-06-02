@@ -1,0 +1,5 @@
+outs:
+- md5: fcaf30390d47661113b85c8dbee202b5
+  size: 4453
+  hash: md5
+  path: mva-vehicle-sales-counts-by-month-for-calendar-year-2002-2020-up-to-october.csv

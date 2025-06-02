@@ -1,0 +1,5 @@
+outs:
+- md5: 420b931a2a15b679fcb4553688604e09
+  size: 39846
+  hash: md5
+  path: land-use-2020-cfac6.csv

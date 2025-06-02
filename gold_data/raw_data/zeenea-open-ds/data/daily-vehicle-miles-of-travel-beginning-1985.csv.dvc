@@ -1,0 +1,5 @@
+outs:
+- md5: 5554fb97d5fd74d75c34802dc24b2dd8
+  size: 2028
+  hash: md5
+  path: daily-vehicle-miles-of-travel-beginning-1985.csv

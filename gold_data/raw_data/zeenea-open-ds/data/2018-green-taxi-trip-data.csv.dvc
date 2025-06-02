@@ -1,0 +1,5 @@
+outs:
+- md5: f4ef9ae322f2ca60a4b41a0b4f4fc38a
+  size: 5323
+  hash: md5
+  path: 2018-green-taxi-trip-data.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: d47a09977dac5fa2a0ff8a888c52972b
+  size: 2646
+  hash: md5
+  path: mta-lirr-chargebacks-beginning-2015.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: 6c507480df3077de37f80236d132b1af
+  size: 5280
+  hash: md5
+  path: vehicle-fuel-type-count-by-zip-code.csv

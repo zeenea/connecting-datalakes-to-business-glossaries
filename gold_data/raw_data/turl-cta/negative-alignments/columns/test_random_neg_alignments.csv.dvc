@@ -1,0 +1,5 @@
+outs:
+- md5: 51d496856237b1528b50699726973c5c
+  size: 636618
+  hash: md5
+  path: test_random_neg_alignments.csv

@@ -1,0 +1,6 @@
+outs:
+- md5: 03876c6c680b5c4105e89e0ce73d5626
+  size: 1375
+  hash: md5
+  path: 
+    mva-vehicle-registrations-by-county-as-of-each-month-end-from-jan-2023-to-jun-2023.csv

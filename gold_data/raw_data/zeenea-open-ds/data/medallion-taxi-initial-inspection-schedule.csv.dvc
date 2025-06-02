@@ -1,0 +1,5 @@
+outs:
+- md5: d8930bcc18f1d8d2112c54c47e8c0263
+  size: 7886
+  hash: md5
+  path: medallion-taxi-initial-inspection-schedule.csv

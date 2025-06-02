@@ -1,0 +1,5 @@
+outs:
+- md5: 70d50bd544c81cddfc72bf01e975dafb
+  size: 13780
+  hash: md5
+  path: docked-bikeshare-ridership-by-system-year-and-month.csv

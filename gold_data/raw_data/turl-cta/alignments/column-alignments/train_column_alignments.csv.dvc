@@ -1,0 +1,5 @@
+outs:
+- md5: 25eef521a70a217fd836ab4df352bcec
+  size: 58111971
+  hash: md5
+  path: train_column_alignments.csv

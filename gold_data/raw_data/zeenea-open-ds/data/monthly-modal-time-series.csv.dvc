@@ -1,0 +1,5 @@
+outs:
+- md5: 14f4349394231dc46c08dbc6c8f52405
+  size: 31483
+  hash: md5
+  path: monthly-modal-time-series.csv

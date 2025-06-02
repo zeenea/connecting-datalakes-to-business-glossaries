@@ -1,0 +1,5 @@
+outs:
+- md5: 7c728c0afd141b5614b81fcc0e67180f
+  size: 8120
+  hash: md5
+  path: medallion-vehicles-authorized.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: bde2dfacd7ac446ce130249ce962c499
+  size: 15735
+  hash: md5
+  path: traffic-cameras-39eee.csv

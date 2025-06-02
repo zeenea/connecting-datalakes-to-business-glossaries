@@ -1,0 +1,5 @@
+outs:
+- md5: f3bbfd00e17ed1c1fde3804dbe46a247
+  size: 17953
+  hash: md5
+  path: baton-rouge-traffic-crash-incidents-c1a90.csv
