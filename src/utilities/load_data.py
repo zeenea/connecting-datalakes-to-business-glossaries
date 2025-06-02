@@ -68,7 +68,7 @@ def store_embeddings(col_embeddings, ds_embeddings, be_embeddings, dataset_name,
     list_objects = [col_embeddings, ds_embeddings, be_embeddings]
     list_object_names = ['col_embeddings.pt', 'ds_embeddings.pt', 'be_embeddings.pt']
 
-    obj_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings/dataset_name={dataset_name}/model_type={model_type}/random_state={random_state}"
+    obj_path = f"../gold_data/embeddings/dataset_name={dataset_name}/model_type={model_type}/random_state={random_state}"
     
     if not os.path.exists(obj_path):
         os.makedirs(obj_path)
@@ -79,7 +79,7 @@ def store_embeddings(col_embeddings, ds_embeddings, be_embeddings, dataset_name,
 
 def store_dataframe(data, data_save_name, dataset_name, object_to_annotate, random_state):
     
-    obj_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/raw_to_dataframes/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
+    obj_path = f"../gold_data/raw_to_dataframes/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
     
     if not os.path.exists(obj_path):
         os.makedirs(obj_path)
@@ -89,8 +89,8 @@ def store_dataframe(data, data_save_name, dataset_name, object_to_annotate, rand
 
 
 def load_t2dv2_artifacts(neg_strategy, random_state):
-    pos_obj_alignments_path =  "/home/aknouchea/link-prediction-experiments/data/t2dv2/alignments/column_to_business_glossary_alignments.csv"
-    neg_obj_alignments_path = f"/home/aknouchea/link-prediction-experiments/data/t2dv2/negative-alignments/{neg_strategy}_neg_column_alignments.csv"
+    pos_obj_alignments_path =  "../gold_data/raw_data/t2dv2/alignments/column_to_business_glossary_alignments.csv"
+    neg_obj_alignments_path = f"../gold_data/raw_data/t2dv2/negative-alignments/{neg_strategy}_neg_column_alignments.csv"
 
     pos_obj_alignments = pd.read_csv(pos_obj_alignments_path, index_col=0)
     pos_obj_alignments = pos_obj_alignments[~pos_obj_alignments['target_uri'].isnull()]
@@ -125,7 +125,7 @@ def load_t2dv2_artifacts(neg_strategy, random_state):
     test_alignments = pd.concat([test_pos_alignments, test_neg_alignments], axis=0).reset_index(drop=True).sample(frac=1, random_state=random_state).reset_index(drop=True)
 
 
-    business_glossary_items_path = "/home/aknouchea/link-prediction-experiments/data/t2dv2/business-glossary/property_metadata.csv"
+    business_glossary_items_path = "../gold_data/raw_data/t2dv2/business-glossary/property_metadata.csv"
     business_glossary_items = load_business_glossary(business_glossary_items_path)
     business_glossary_items = business_glossary_items.reset_index(drop=True)
     business_glossary_items = business_glossary_items.reset_index()
@@ -134,7 +134,7 @@ def load_t2dv2_artifacts(neg_strategy, random_state):
     assert max(business_glossary_items['be_id']) +1  == business_glossary_items.shape[0]
 
     # load dataset alignments
-    dataset_alignments_path = "/home/aknouchea/link-prediction-experiments/data/t2dv2/alignments/dataset_to_business_glossary_alignments.csv"
+    dataset_alignments_path = "../gold_data/raw_data/t2dv2/alignments/dataset_to_business_glossary_alignments.csv"
     dataset_alignments = pd.read_csv(dataset_alignments_path)
     dataset_alignments['id_table'] = dataset_alignments['table_file'].apply(lambda x: x[:-7])
     dataset_alignments.loc[dataset_alignments[dataset_alignments['uri']=="http://www.w3.org/2002/07/owl#Thing"].index, 'uri'] = None 
@@ -204,8 +204,8 @@ def load_zeenea_open_ds_artifacts(train_on, random_state):
 
     dataset_name = 'zeenea-open-ds'
         
-    pos_col_alignments_path =  f"/home/aknouchea/link-prediction-experiments/data/zeenea-open-ds/alignments/column_to_business_glossary_alignments.csv"
-    neg_col_alignments_path = f"/home/aknouchea/link-prediction-experiments/data/zeenea-open-ds/negative-alignments/random_neg_column_alignments.csv"
+    pos_col_alignments_path =  f"../gold_data/raw_data/zeenea-open-ds/alignments/column_to_business_glossary_alignments.csv"
+    neg_col_alignments_path = f"../gold_data/raw_data/zeenea-open-ds/negative-alignments/random_neg_column_alignments.csv"
     
     pos_col_alignments = pd.read_csv(pos_col_alignments_path, index_col=0)
     pos_col_alignments = pos_col_alignments[~pos_col_alignments['business_entity_code'].isnull()]
@@ -242,7 +242,7 @@ def load_zeenea_open_ds_artifacts(train_on, random_state):
         test_col_alignments = pd.concat([test_pos_col_alignments, test_neg_col_alignments], axis=0).reset_index(drop=True).sample(frac=1, random_state=random_state).reset_index(drop=True)
 
 
-    business_glossary_items_path = "/home/aknouchea/link-prediction-experiments/data/zeenea-open-ds/business-glossaries"
+    business_glossary_items_path = "../gold_data/raw_data/zeenea-open-ds/business-glossaries"
     business_glossary_items = load_business_glossary(business_glossary_items_path)
     business_glossary_items = business_glossary_items.reset_index(drop=True)
     business_glossary_items = business_glossary_items.reset_index()
@@ -267,7 +267,7 @@ def load_zeenea_open_ds_artifacts(train_on, random_state):
     be_to_be = be_to_be.reset_index(drop=True)
     
     # load dataset alignments
-    pos_ds_alignments_path = "/home/aknouchea/link-prediction-experiments/data/zeenea-open-ds/alignments/dataset_to_business_glossary_alignments.csv"
+    pos_ds_alignments_path = "../gold_data/raw_data/zeenea-open-ds/alignments/dataset_to_business_glossary_alignments.csv"
     pos_ds_alignments = pd.read_csv(pos_ds_alignments_path, index_col=0)
     pos_ds_alignments = pos_ds_alignments.reset_index(drop=True)
     pos_ds_alignments = pos_ds_alignments.reset_index()
@@ -286,7 +286,7 @@ def load_zeenea_open_ds_artifacts(train_on, random_state):
     pos_ds_alignments = pos_ds_alignments.rename(columns={'dataset_code':'table_name'})
     
     # split test and train for dataset alignments
-    neg_ds_alignments_path = f"/home/aknouchea/link-prediction-experiments/data/zeenea-open-ds/negative-alignments/random_neg_dataset_alignments.csv"
+    neg_ds_alignments_path = f"../gold_data/raw_data/zeenea-open-ds/negative-alignments/random_neg_dataset_alignments.csv"
     neg_ds_alignments = pd.read_csv(neg_ds_alignments_path, index_col=0)
     neg_ds_alignments = neg_ds_alignments.rename(columns={'neg_business_entity_code':'business_entity_code'})
     neg_ds_alignments = neg_ds_alignments[~neg_ds_alignments['business_entity_code'].isnull()]
@@ -333,14 +333,14 @@ def load_turl_cta_artifacts(train_on, random_state):
     dataset_name = 'turl-cta'
     
     # train 
-    train_pos_col_alignments_path = "/home/aknouchea/link-prediction-experiments/data/turl-cta/alignments/column-alignments/train_column_alignments.csv"
+    train_pos_col_alignments_path = "../gold_data/raw_data/turl-cta/alignments/column-alignments/train_column_alignments.csv"
     train_pos_col_alignments = pd.read_csv(train_pos_col_alignments_path, index_col=0)
     train_pos_col_alignments = train_pos_col_alignments.rename(columns={'column_label':'target_uri'})
     train_pos_col_alignments = train_pos_col_alignments.reset_index(drop=True)
     train_pos_col_alignments = train_pos_col_alignments[['table_id', 'target_uri', 'column_name']]
     train_pos_col_alignments['is_matching'] = 1
 
-    train_neg_col_alignments_path = "/home/aknouchea/link-prediction-experiments/data/turl-cta/negative-alignments/columns/train_random_neg_alignments.csv"
+    train_neg_col_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/columns/train_random_neg_alignments.csv"
     train_neg_col_alignments = pd.read_csv(train_neg_col_alignments_path, index_col=0)
     train_neg_col_alignments = train_neg_col_alignments.rename(columns={'neg_business_entity_code':'target_uri'})
     train_neg_col_alignments = train_neg_col_alignments.reset_index(drop=True)
@@ -350,14 +350,14 @@ def load_turl_cta_artifacts(train_on, random_state):
     assert train_pos_col_alignments.shape[0] == train_neg_col_alignments.shape[0]
 
     # dev
-    dev_pos_col_alignments_path = "/home/aknouchea/link-prediction-experiments/data/turl-cta/alignments/column-alignments/dev_column_alignments.csv"
+    dev_pos_col_alignments_path = "../gold_data/raw_data/turl-cta/alignments/column-alignments/dev_column_alignments.csv"
     dev_pos_col_alignments = pd.read_csv(dev_pos_col_alignments_path, index_col=0)
     dev_pos_col_alignments = dev_pos_col_alignments.rename(columns={'column_label':'target_uri'})
     dev_pos_col_alignments = dev_pos_col_alignments.reset_index(drop=True)
     dev_pos_col_alignments = dev_pos_col_alignments[['table_id', 'target_uri', 'column_name']]
     dev_pos_col_alignments['is_matching'] = 1
 
-    dev_neg_col_alignments_path = "/home/aknouchea/link-prediction-experiments/data/turl-cta/negative-alignments/columns/dev_random_neg_alignments.csv"
+    dev_neg_col_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/columns/dev_random_neg_alignments.csv"
     dev_neg_col_alignments = pd.read_csv(dev_neg_col_alignments_path, index_col=0)
     dev_neg_col_alignments = dev_neg_col_alignments.rename(columns={'neg_business_entity_code':'target_uri'})
     dev_neg_col_alignments = dev_neg_col_alignments.reset_index(drop=True)
@@ -368,14 +368,14 @@ def load_turl_cta_artifacts(train_on, random_state):
     assert dev_pos_col_alignments.shape[0] == dev_neg_col_alignments.shape[0]
 
     # test
-    test_pos_col_alignments_path = "/home/aknouchea/link-prediction-experiments/data/turl-cta/alignments/column-alignments/test_column_alignments.csv"
+    test_pos_col_alignments_path = "../gold_data/raw_data/turl-cta/alignments/column-alignments/test_column_alignments.csv"
     test_pos_col_alignments = pd.read_csv(test_pos_col_alignments_path, index_col=0)
     test_pos_col_alignments = test_pos_col_alignments.rename(columns={'column_label':'target_uri'})
     test_pos_col_alignments = test_pos_col_alignments.reset_index(drop=True)
     test_pos_col_alignments = test_pos_col_alignments[['table_id', 'target_uri', 'column_name']]
     test_pos_col_alignments['is_matching'] = 1
     
-    test_neg_col_alignments_path = "/home/aknouchea/link-prediction-experiments/data/turl-cta/negative-alignments/columns/test_random_neg_alignments.csv"
+    test_neg_col_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/columns/test_random_neg_alignments.csv"
     test_neg_col_alignments = pd.read_csv(test_neg_col_alignments_path, index_col=0)
     test_neg_col_alignments = test_neg_col_alignments.rename(columns={'neg_business_entity_code':'target_uri'})
     test_neg_col_alignments = test_neg_col_alignments.reset_index(drop=True)
@@ -415,7 +415,7 @@ def load_turl_cta_artifacts(train_on, random_state):
         test_col_alignments = pd.concat([pos_col_alignments[train_size:], neg_col_alignments[train_size:]], axis=0).sample(frac=1)
     
     # load business glossary
-    business_glossary_path = "/home/aknouchea/link-prediction-experiments/data/turl-cta/business-glossary/glossary_data.csv"
+    business_glossary_path = "../gold_data/raw_data/turl-cta/business-glossary/glossary_data.csv"
     business_glossary_items = load_business_glossary(business_glossary_path)
     business_glossary_items = business_glossary_items.reset_index(drop=True)
     business_glossary_items['sub_class_of'] = business_glossary_items['business_entity_code'].apply(lambda x: str(x).split('.')[0])
@@ -449,14 +449,14 @@ def load_turl_cta_artifacts(train_on, random_state):
     # load dataset alignments
 
     # train
-    train_pos_ds_alignments_path = f"/home/aknouchea/link-prediction-experiments/data/turl-cta/alignments/dataset-alignments/train_dataset_alignments.csv"
+    train_pos_ds_alignments_path = f"../gold_data/raw_data/data/turl-cta/alignments/dataset-alignments/train_dataset_alignments.csv"
     train_pos_ds_alignments = pd.read_csv(train_pos_ds_alignments_path)
     train_pos_ds_alignments = train_pos_ds_alignments.drop_duplicates(subset=['table_id'])
     train_pos_ds_alignments = train_pos_ds_alignments.reset_index(drop=True)
     train_pos_ds_alignments = train_pos_ds_alignments[['table_id', 'tag_entity', 'table_title']]
     train_pos_ds_alignments['is_matching'] = 1
 
-    train_neg_ds_alignments_path = "/home/aknouchea/link-prediction-experiments/data/turl-cta/negative-alignments/datasets/train_random_neg_alignments.csv"
+    train_neg_ds_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/datasets/train_random_neg_alignments.csv"
     train_neg_ds_alignments = pd.read_csv(train_neg_ds_alignments_path, index_col=0)
     train_neg_ds_alignments = train_neg_ds_alignments.rename(columns={'neg_business_entity_code':'tag_entity'})
     train_neg_ds_alignments = train_neg_ds_alignments.reset_index(drop=True)
@@ -466,14 +466,14 @@ def load_turl_cta_artifacts(train_on, random_state):
     
     # dev 
 
-    dev_pos_ds_alignments_path = f"/home/aknouchea/link-prediction-experiments/data/turl-cta/alignments/dataset-alignments/dev_dataset_alignments.csv"
+    dev_pos_ds_alignments_path = f"../gold_data/raw_data/turl-cta/alignments/dataset-alignments/dev_dataset_alignments.csv"
     dev_pos_ds_alignments = pd.read_csv(train_pos_ds_alignments_path)
     dev_pos_ds_alignments = dev_pos_ds_alignments.drop_duplicates(subset=['table_id'])
     dev_pos_ds_alignments = dev_pos_ds_alignments.reset_index(drop=True)
     dev_pos_ds_alignments = dev_pos_ds_alignments[['table_id', 'tag_entity', 'table_title']]
     dev_pos_ds_alignments['is_matching'] = 1
 
-    dev_neg_ds_alignments_path = "/home/aknouchea/link-prediction-experiments/data/turl-cta/negative-alignments/datasets/dev_random_neg_alignments.csv"
+    dev_neg_ds_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/datasets/dev_random_neg_alignments.csv"
     dev_neg_ds_alignments = pd.read_csv(dev_neg_ds_alignments_path, index_col=0)
     dev_neg_ds_alignments = dev_neg_ds_alignments.rename(columns={'neg_business_entity_code':'tag_entity'})
     dev_neg_ds_alignments = dev_neg_ds_alignments.reset_index(drop=True)
@@ -483,14 +483,14 @@ def load_turl_cta_artifacts(train_on, random_state):
 
     
     # test
-    test_pos_ds_alignments_path = f"/home/aknouchea/link-prediction-experiments/data/turl-cta/alignments/dataset-alignments/test_dataset_alignments.csv"
+    test_pos_ds_alignments_path = f"../gold_data/raw_data/turl-cta/alignments/dataset-alignments/test_dataset_alignments.csv"
     test_pos_ds_alignments = pd.read_csv(test_pos_ds_alignments_path)
     test_pos_ds_alignments = test_pos_ds_alignments.drop_duplicates(subset=['table_id'])
     test_pos_ds_alignments = test_pos_ds_alignments.reset_index(drop=True)
     test_pos_ds_alignments = test_pos_ds_alignments[['table_id', 'tag_entity', 'table_title']]
     test_pos_ds_alignments['is_matching'] = 1 
 
-    test_neg_ds_alignments_path = "/home/aknouchea/link-prediction-experiments/data/turl-cta/negative-alignments/datasets/test_random_neg_alignments.csv"
+    test_neg_ds_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/datasets/test_random_neg_alignments.csv"
     test_neg_ds_alignments = pd.read_csv(test_neg_ds_alignments_path, index_col=0)
     test_neg_ds_alignments = test_neg_ds_alignments.rename(columns={'neg_business_entity_code':'tag_entity'})
     test_neg_ds_alignments = test_neg_ds_alignments.reset_index(drop=True)
@@ -737,7 +737,7 @@ def main(args):
         logger.info(f"be_sem_embeddings: {be_sem_embeddings.shape}")
 
         logger.info("Save semantic Model")
-        models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
+        models_dir_path = "../gold_data/models"
         save_model(model, models_dir_path, dataset_name, 0, model_name, random_state)
 
     
