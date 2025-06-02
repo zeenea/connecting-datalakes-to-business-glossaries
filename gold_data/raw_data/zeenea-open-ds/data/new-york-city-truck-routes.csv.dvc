@@ -1,0 +1,5 @@
+outs:
+- md5: dd5471ba05c102deb6f8362abdd1d1ce
+  size: 24338
+  hash: md5
+  path: new-york-city-truck-routes.csv

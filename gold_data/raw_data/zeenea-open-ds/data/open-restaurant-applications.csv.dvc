@@ -1,0 +1,5 @@
+outs:
+- md5: 6175f4dee630eabc258085a7a5ffe9fd
+  size: 17571
+  hash: md5
+  path: open-restaurant-applications.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: 0b13284902fac2139af3e97360a2a4b9
+  size: 37444
+  hash: md5
+  path: department-for-the-aging-dfta-contracted-providers.csv

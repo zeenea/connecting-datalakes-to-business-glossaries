@@ -1,0 +1,5 @@
+outs:
+- md5: a878108e79f44f891ff694bcb77881a8
+  size: 7292
+  hash: md5
+  path: parking-transactions.csv

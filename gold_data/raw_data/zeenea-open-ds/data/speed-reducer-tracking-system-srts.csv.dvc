@@ -1,0 +1,5 @@
+outs:
+- md5: 2e8f40d14f933d94659bdf932a9603a4
+  size: 25394
+  hash: md5
+  path: speed-reducer-tracking-system-srts.csv

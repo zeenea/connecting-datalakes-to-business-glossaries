@@ -1,0 +1,5 @@
+outs:
+- md5: 2bd46215c19f9bbe54fc33c2ec62cc8e
+  size: 3844
+  hash: md5
+  path: business_glossary_20_Environment.csv

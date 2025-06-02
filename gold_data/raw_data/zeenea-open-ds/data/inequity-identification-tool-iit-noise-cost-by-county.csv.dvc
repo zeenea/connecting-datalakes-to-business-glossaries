@@ -1,0 +1,5 @@
+outs:
+- md5: a68b6b2dce076f3dd86261420be6f348
+  size: 429989
+  hash: md5
+  path: inequity-identification-tool-iit-noise-cost-by-county.csv

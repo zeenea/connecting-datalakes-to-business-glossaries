@@ -1,0 +1,5 @@
+outs:
+- md5: 400886f4272e69a2d0532860103fe073
+  size: 12063
+  hash: md5
+  path: tax-rates-by-motor-fuel-and-state.csv

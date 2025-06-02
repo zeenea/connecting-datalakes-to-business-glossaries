@@ -1,0 +1,5 @@
+outs:
+- md5: 415040ae98f5a4589363a601d2ec7ec2
+  size: 24832
+  hash: md5
+  path: theme_to_tags_metadata.json

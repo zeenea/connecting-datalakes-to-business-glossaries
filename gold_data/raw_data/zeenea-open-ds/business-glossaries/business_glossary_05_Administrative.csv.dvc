@@ -1,0 +1,5 @@
+outs:
+- md5: 3d3cc889665459706d5edf84ded065c1
+  size: 1060
+  hash: md5
+  path: business_glossary_05_Administrative.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: 4e63828f28acb8f749dd05539c088997
+  size: 6003
+  hash: md5
+  path: vehicle-registrations-by-class-and-county.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: a402e387eaef7219e8d24b197c243777
+  size: 2217
+  hash: md5
+  path: business_glossary_22_NCHS.csv

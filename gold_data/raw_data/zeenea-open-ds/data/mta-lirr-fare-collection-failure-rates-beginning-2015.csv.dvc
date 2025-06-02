@@ -1,0 +1,5 @@
+outs:
+- md5: 9d1ee0a991bc8acf786ea9aa9309a1ba
+  size: 2627
+  hash: md5
+  path: mta-lirr-fare-collection-failure-rates-beginning-2015.csv

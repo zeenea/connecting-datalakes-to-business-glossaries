@@ -1,0 +1,5 @@
+outs:
+- md5: 212948a3a8400b70b08a1455c6b2235e
+  size: 6716
+  hash: md5
+  path: highway-mileage-beginning-2008.csv

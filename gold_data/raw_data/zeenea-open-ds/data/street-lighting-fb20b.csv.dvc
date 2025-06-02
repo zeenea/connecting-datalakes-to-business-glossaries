@@ -1,0 +1,5 @@
+outs:
+- md5: 9e3d8fd02d24888384347831dc392c0a
+  size: 15917
+  hash: md5
+  path: street-lighting-fb20b.csv

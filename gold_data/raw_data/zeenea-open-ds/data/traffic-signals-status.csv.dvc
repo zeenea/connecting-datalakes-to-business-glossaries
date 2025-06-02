@@ -1,0 +1,5 @@
+outs:
+- md5: 0c8707912cca474c195c0e099cb7f571
+  size: 5913
+  hash: md5
+  path: traffic-signals-status.csv

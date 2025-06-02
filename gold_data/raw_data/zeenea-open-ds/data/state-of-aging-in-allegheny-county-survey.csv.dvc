@@ -1,0 +1,5 @@
+outs:
+- md5: 13c68bdd75e1a297ab0f83630efd5ad4
+  size: 58070
+  hash: md5
+  path: state-of-aging-in-allegheny-county-survey.csv

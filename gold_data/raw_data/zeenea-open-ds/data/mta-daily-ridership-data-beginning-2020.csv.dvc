@@ -1,0 +1,5 @@
+outs:
+- md5: c7faa3486babc589c2d3c48c369af614
+  size: 5378
+  hash: md5
+  path: mta-daily-ridership-data-beginning-2020.csv

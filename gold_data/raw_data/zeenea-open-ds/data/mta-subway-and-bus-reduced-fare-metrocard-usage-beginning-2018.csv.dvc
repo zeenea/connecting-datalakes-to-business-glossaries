@@ -1,0 +1,5 @@
+outs:
+- md5: 0f8218df10d3d6def128acc27882dcb2
+  size: 1915
+  hash: md5
+  path: mta-subway-and-bus-reduced-fare-metrocard-usage-beginning-2018.csv

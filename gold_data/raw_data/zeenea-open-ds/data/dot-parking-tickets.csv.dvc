@@ -1,0 +1,5 @@
+outs:
+- md5: 82e3bdeb9fde32adeb0b5c1c5f68f772
+  size: 14127
+  hash: md5
+  path: dot-parking-tickets.csv

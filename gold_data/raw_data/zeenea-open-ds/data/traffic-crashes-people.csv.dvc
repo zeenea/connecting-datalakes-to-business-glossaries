@@ -1,0 +1,5 @@
+outs:
+- md5: 2c3e2eb0133d7e9bf84b9217045763ec
+  size: 15811
+  hash: md5
+  path: traffic-crashes-people.csv

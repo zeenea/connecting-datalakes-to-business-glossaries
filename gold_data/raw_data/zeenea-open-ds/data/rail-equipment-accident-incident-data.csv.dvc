@@ -1,0 +1,5 @@
+outs:
+- md5: a8f5a51903f8252a2a3355994b694b65
+  size: 92634
+  hash: md5
+  path: rail-equipment-accident-incident-data.csv

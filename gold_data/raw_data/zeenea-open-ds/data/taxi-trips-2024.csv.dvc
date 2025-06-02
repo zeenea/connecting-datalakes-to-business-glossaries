@@ -1,0 +1,5 @@
+outs:
+- md5: aa0941358d25cc03ae49ea61031dabfe
+  size: 21115
+  hash: md5
+  path: taxi-trips-2024.csv

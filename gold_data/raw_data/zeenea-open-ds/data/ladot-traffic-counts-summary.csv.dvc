@@ -1,0 +1,5 @@
+outs:
+- md5: 30cd5a48fd754ef354797255581a256c
+  size: 7812
+  hash: md5
+  path: ladot-traffic-counts-summary.csv

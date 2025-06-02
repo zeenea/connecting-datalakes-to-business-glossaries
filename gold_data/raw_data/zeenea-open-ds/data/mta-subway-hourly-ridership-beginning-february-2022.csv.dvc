@@ -1,0 +1,5 @@
+outs:
+- md5: 62ee4231cc5bcabd8a3691e999171f43
+  size: 9181
+  hash: md5
+  path: mta-subway-hourly-ridership-beginning-february-2022.csv

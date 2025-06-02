@@ -1,0 +1,5 @@
+outs:
+- md5: 4c2ebc757a82f73cc8f615447ec8f790
+  size: 2035
+  hash: md5
+  path: ladot-parking-meter-occupancy.csv

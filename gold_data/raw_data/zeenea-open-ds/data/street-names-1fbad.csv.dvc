@@ -1,0 +1,5 @@
+outs:
+- md5: f371a7fd84d579acb9465fe99df5556c
+  size: 2903
+  hash: md5
+  path: street-names-1fbad.csv

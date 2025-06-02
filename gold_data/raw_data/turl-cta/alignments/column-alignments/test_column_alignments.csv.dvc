@@ -1,0 +1,5 @@
+outs:
+- md5: c6f47c71d2b3826a978c66a577ac7a11
+  size: 1205678
+  hash: md5
+  path: test_column_alignments.csv

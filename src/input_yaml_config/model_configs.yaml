@@ -1,0 +1,126 @@
+load_data_args:
+    neg_strategy: "random"
+
+random_model_args:
+    top_k: 10
+
+semantic_model_args:
+    top_k: 10
+    nb_epochs: 0
+    
+syntactic_model_args:
+    top_k: 10
+    nb_epochs: 0
+    
+graph_model_args:
+    max_epochs: 500
+    graph_dim_embeddings: 512
+    learning_rate: 0.001
+
+hybrid_model_sem_graph_embed_learn_args:
+    batch_size: 128
+    num_workers: 0
+    nb_epochs: 500
+    num_classes: 2
+    learning_rate: 0.001
+    hidden_layer_dim: 384
+    top_k: 10
+
+hybrid_model_syn_sem_embed_learn_args:
+    batch_size: 128
+    num_workers: 1
+    nb_epochs: 500
+    num_classes: 2
+    learning_rate: 0.001
+    hidden_layer_dim: 384
+    top_k: 10
+
+hybrid_model_syn_graph_embed_learn_args:
+    batch_size: 128
+    num_workers: 1
+    nb_epochs: 500
+    num_classes: 2
+    learning_rate: 0.001
+    hidden_layer_dim: 384
+    top_k: 10
+
+hybrid_model_syn_sem_graph_embed_learn_args:
+    batch_size: 128
+    num_workers: 1
+    nb_epochs: 500
+    num_classes: 2
+    learning_rate: 0.001
+    hidden_layer_dim: 384
+    top_k: 10
+
+cross_model_sem_graph_similarity_learning_args:
+    batch_size: 128
+    num_workers: 0
+    nb_epochs: 500
+    num_classes: 2
+    learning_rate: 0.001
+    hidden_layer_dim: 384
+    top_k: 10
+
+cross_model_syn_sem_similarity_learning_args:
+    batch_size: 128
+    num_workers: 0
+    nb_epochs: 500
+    num_classes: 2
+    learning_rate: 0.001
+    hidden_layer_dim: 384
+    top_k: 10
+
+cross_model_syn_graph_similarity_learning_args:
+    batch_size: 128
+    num_workers: 0
+    nb_epochs: 500
+    num_classes: 2
+    learning_rate: 0.001
+    hidden_layer_dim: 384
+    top_k: 10
+
+cross_model_syn_sem_graph_similarity_learning_args:
+    batch_size: 128
+    num_workers: 0
+    nb_epochs: 500
+    num_classes: 2
+    learning_rate: 0.001
+    hidden_layer_dim: 384
+    top_k: 10
+
+binary_classifier_model_args:
+    batch_size: 64
+    num_workers: 0
+    max_epochs: 500
+    learning_rate: 0.00001
+    num_classes: 2
+    top_k: 10
+
+decision_tree_classifier_model_syn_sem_graph_similarity_learning_args:
+    batch_size: 64
+    num_workers: 0
+    max_epochs: 0
+    num_classes: 2
+    top_k: 10
+
+random_forest_classifier_model_syn_sem_graph_similarity_learning_args:
+    batch_size: 64
+    num_workers: 0
+    max_epochs: 0
+    num_classes: 2
+    top_k: 10
+
+xgboost_classifier_model_syn_sem_graph_similarity_learning_args:
+    batch_size: 64
+    num_workers: 0
+    max_epochs: 0
+    num_classes: 2
+    top_k: 10
+
+svm_classifier_model_syn_sem_graph_similarity_learning_args:
+    batch_size: 64
+    num_workers: 0
+    max_epochs: 0
+    num_classes: 2
+    top_k: 10

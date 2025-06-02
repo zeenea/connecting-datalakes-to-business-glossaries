@@ -1,0 +1,5 @@
+outs:
+- md5: 9d685055f6d21be1767dd58fedf4490a
+  size: 5957
+  hash: md5
+  path: sales-tax-collections-by-state.csv

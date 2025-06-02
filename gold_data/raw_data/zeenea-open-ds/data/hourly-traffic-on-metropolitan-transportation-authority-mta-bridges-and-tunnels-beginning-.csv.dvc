@@ -1,0 +1,6 @@
+outs:
+- md5: 30848d582a56f07a32e81c962d1c91b0
+  size: 1582
+  hash: md5
+  path: 
+    hourly-traffic-on-metropolitan-transportation-authority-mta-bridges-and-tunnels-beginning-.csv

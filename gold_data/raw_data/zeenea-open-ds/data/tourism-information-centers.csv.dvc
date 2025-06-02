@@ -1,0 +1,5 @@
+outs:
+- md5: 3b61d9d2a5b8edc09730bad484f5d7e3
+  size: 1477
+  hash: md5
+  path: tourism-information-centers.csv

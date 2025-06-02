@@ -1,0 +1,5 @@
+outs:
+- md5: 82da69a4aaea33fa1b6d0377f5b2ab44
+  size: 3345
+  hash: md5
+  path: parking-regulation-locations-and-signs.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: 049cb5d04f759db84551d80bc7a87ec0
+  size: 8790
+  hash: md5
+  path: agency-authorized-parking-permits.csv

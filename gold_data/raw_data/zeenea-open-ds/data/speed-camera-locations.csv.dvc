@@ -1,0 +1,5 @@
+outs:
+- md5: dc4e91f174e68681c2a7fc7e3f4b6c49
+  size: 4418
+  hash: md5
+  path: speed-camera-locations.csv

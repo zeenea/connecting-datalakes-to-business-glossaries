@@ -1,0 +1,5 @@
+outs:
+- md5: a5d30d15184ba851bb428a2c76f51f62
+  size: 6309
+  hash: md5
+  path: mta-bus-speeds-beginning-2020.csv

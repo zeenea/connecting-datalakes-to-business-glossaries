@@ -1,0 +1,5 @@
+outs:
+- md5: 3f780fe64ef8289baadc34ec09a15730
+  size: 4203
+  hash: md5
+  path: vision-zero-demographic-statistics.csv

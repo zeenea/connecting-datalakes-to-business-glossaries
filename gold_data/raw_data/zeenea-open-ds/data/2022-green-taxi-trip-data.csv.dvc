@@ -1,0 +1,5 @@
+outs:
+- md5: 074f0a26b6713ccab9fb21c07dbd6c80
+  size: 5643
+  hash: md5
+  path: 2022-green-taxi-trip-data.csv

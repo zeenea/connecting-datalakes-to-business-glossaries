@@ -1,0 +1,5 @@
+outs:
+- md5: a534d9d9be7a7639d66cca9473e77a14
+  size: 13242
+  hash: md5
+  path: average-daily-traffic-counts.csv

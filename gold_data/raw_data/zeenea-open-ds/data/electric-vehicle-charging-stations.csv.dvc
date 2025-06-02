@@ -1,0 +1,5 @@
+outs:
+- md5: 65e4fd718d912ab9ad4ad37f53ad5f3d
+  size: 13108
+  hash: md5
+  path: electric-vehicle-charging-stations.csv

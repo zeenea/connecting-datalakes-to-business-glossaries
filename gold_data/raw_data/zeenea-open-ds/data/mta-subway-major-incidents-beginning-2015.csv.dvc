@@ -1,0 +1,5 @@
+outs:
+- md5: 8b0edd725b417856a296a794d5b62707
+  size: 2136
+  hash: md5
+  path: mta-subway-major-incidents-beginning-2015.csv

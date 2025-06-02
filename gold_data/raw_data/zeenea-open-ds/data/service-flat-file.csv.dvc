@@ -1,0 +1,5 @@
+outs:
+- md5: 92c96dfeb3b7fb739202dcf6ab440c50
+  size: 19140
+  hash: md5
+  path: service-flat-file.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: a6139ce62067d37765c7c9fecd3c03e3
+  size: 8673
+  hash: md5
+  path: annual-personal-consumption-expenditures-for-state-of-iowa.csv

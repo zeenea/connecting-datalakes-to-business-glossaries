@@ -1,0 +1,5 @@
+outs:
+- md5: a304cfd2851f5c65a3785eac244d4b21
+  size: 1830219
+  hash: md5
+  path: metropolitan-planning-areas.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: 080bb88b4ebd592ed2c55adb02c30bc6
+  size: 952
+  hash: md5
+  path: business_glossary_29_Demographics.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: e56a9b83ef9dc2168a53b378f4ded513
+  size: 1876
+  hash: md5
+  path: business_glossary_08_Geospatial.csv

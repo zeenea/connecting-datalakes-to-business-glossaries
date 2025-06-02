@@ -1,0 +1,5 @@
+outs:
+- md5: 9366bc1b91aa8962f7f0ab0f17aa1271
+  size: 2144
+  hash: md5
+  path: mta-metro-north-on-time-performance-beginning-2020.csv

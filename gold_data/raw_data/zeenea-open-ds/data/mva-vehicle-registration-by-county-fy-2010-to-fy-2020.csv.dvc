@@ -1,0 +1,5 @@
+outs:
+- md5: 630e44f12dc45e9224bedbde5eb36a0e
+  size: 2573
+  hash: md5
+  path: mva-vehicle-registration-by-county-fy-2010-to-fy-2020.csv

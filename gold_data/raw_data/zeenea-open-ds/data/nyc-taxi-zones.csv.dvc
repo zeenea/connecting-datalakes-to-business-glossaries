@@ -1,0 +1,5 @@
+outs:
+- md5: db120648cccd7ec4073ab1a3015f49ed
+  size: 1356676
+  hash: md5
+  path: nyc-taxi-zones.csv

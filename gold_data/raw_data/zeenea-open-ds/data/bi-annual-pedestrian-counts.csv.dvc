@@ -1,0 +1,5 @@
+outs:
+- md5: a56d8b00b12681ae7973e64dc724c170
+  size: 32452
+  hash: md5
+  path: bi-annual-pedestrian-counts.csv

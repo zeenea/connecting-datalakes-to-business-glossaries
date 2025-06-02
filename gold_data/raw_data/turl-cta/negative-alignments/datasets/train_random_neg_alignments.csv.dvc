@@ -1,0 +1,5 @@
+outs:
+- md5: a5c03614083ced23fcc7d66c6b6e320d
+  size: 10286396
+  hash: md5
+  path: train_random_neg_alignments.csv

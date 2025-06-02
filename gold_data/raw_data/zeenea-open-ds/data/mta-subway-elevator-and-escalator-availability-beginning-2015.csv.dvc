@@ -1,0 +1,5 @@
+outs:
+- md5: 519f0f640743fac7ffc5c996a803217f
+  size: 10542
+  hash: md5
+  path: mta-subway-elevator-and-escalator-availability-beginning-2015.csv
