@@ -1,0 +1,5 @@
+outs:
+- md5: 3deb3066ef10e917b4598b61233fadaf
+  size: 17268
+  hash: md5
+  path: citywide-mobility-survey-trip-survey-2019.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: 37bb55b2fe65a76c24e445e96e59078d
+  size: 31920
+  hash: md5
+  path: citywide-mobility-survey-person-2022.csv

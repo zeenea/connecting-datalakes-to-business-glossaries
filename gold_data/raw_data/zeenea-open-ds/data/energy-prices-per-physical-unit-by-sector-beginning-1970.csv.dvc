@@ -1,0 +1,5 @@
+outs:
+- md5: f56a8d3af2f685682728d8c8f9838d8d
+  size: 3747
+  hash: md5
+  path: energy-prices-per-physical-unit-by-sector-beginning-1970.csv

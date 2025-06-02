@@ -1,0 +1,5 @@
+outs:
+- md5: afc6a964dd6d67f1ce5974027597889b
+  size: 3222
+  hash: md5
+  path: taxi-medallion-transfers.csv

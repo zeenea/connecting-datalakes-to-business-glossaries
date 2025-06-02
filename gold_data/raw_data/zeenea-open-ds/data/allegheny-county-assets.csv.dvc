@@ -1,0 +1,5 @@
+outs:
+- md5: 7daeb06912159b6effa137dd7d9f2b25
+  size: 41360
+  hash: md5
+  path: allegheny-county-assets.csv

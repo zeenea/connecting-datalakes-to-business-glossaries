@@ -1,0 +1,5 @@
+outs:
+- md5: b803f68c7c11a2073305c0b613a6571a
+  size: 11345
+  hash: md5
+  path: maryland-road-closures.csv

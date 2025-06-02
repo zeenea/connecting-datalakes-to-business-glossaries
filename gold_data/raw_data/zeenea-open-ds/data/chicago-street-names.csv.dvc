@@ -1,0 +1,5 @@
+outs:
+- md5: 495da6de4a1b873890643851497492ed
+  size: 1782
+  hash: md5
+  path: chicago-street-names.csv

@@ -1,0 +1,6 @@
+outs:
+- md5: dabb7824a10fe39efe9275504e0e55a8
+  size: 11737
+  hash: md5
+  path: 
+    consumer-airfare-report-table-5-detailed-fare-information-for-highest-and-lowest-fare-mark.csv

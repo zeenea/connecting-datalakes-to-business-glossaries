@@ -1,0 +1,5 @@
+outs:
+- md5: 7c6c9dcfc84389c8aabdf7efdf1e684a
+  size: 5770
+  hash: md5
+  path: consumer-airfare-report-table-2-top-1000-city-pair-markets.csv

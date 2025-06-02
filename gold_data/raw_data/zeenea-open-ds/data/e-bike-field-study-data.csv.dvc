@@ -1,0 +1,5 @@
+outs:
+- md5: 18f982e072bc8983672d27ed1746592c
+  size: 11789
+  hash: md5
+  path: e-bike-field-study-data.csv

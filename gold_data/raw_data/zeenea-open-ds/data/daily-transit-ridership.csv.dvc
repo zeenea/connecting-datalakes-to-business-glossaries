@@ -1,0 +1,5 @@
+outs:
+- md5: fc58d15ccc783e54e3126037fb286a14
+  size: 5963
+  hash: md5
+  path: daily-transit-ridership.csv

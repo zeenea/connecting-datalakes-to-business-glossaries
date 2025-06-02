@@ -1,0 +1,5 @@
+outs:
+- md5: a1ddc0095814d3bbae697d296ba5bcba
+  size: 2741
+  hash: md5
+  path: motor-vehicle-registrations-dashboard-data.csv

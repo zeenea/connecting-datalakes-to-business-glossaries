@@ -1,0 +1,5 @@
+outs:
+- md5: c48599c60ee05969ffd8a30e9cfafa3c
+  size: 9742
+  hash: md5
+  path: mta-subway-stations-and-complexes.csv

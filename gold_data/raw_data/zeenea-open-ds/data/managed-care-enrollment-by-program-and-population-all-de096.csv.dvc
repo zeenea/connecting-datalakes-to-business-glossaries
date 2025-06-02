@@ -1,0 +1,5 @@
+outs:
+- md5: 0951c7e8eb808dba236c24f8f0d597f7
+  size: 5942
+  hash: md5
+  path: managed-care-enrollment-by-program-and-population-all-de096.csv

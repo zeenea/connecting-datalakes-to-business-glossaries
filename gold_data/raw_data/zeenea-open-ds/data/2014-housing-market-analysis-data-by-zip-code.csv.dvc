@@ -1,0 +1,5 @@
+outs:
+- md5: ce354231403ecdc6b4ae5ed638ec63f9
+  size: 5246
+  hash: md5
+  path: 2014-housing-market-analysis-data-by-zip-code.csv

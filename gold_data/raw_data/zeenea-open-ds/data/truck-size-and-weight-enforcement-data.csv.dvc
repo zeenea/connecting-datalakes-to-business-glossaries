@@ -1,0 +1,5 @@
+outs:
+- md5: 81c8a68a6d136f4f42e8531ff1d0769c
+  size: 3692
+  hash: md5
+  path: truck-size-and-weight-enforcement-data.csv

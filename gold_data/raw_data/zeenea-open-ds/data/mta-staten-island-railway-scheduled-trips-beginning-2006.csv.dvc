@@ -1,0 +1,5 @@
+outs:
+- md5: c73dfd3f46551a24e7720a5b7a3626f4
+  size: 1676
+  hash: md5
+  path: mta-staten-island-railway-scheduled-trips-beginning-2006.csv

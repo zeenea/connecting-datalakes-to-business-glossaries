@@ -1,0 +1,5 @@
+outs:
+- md5: ed0cf777f92a5414213791ac043ce34e
+  size: 1338
+  hash: md5
+  path: mta-monthly-ridership-traffic-data-beginning-january-2008.csv

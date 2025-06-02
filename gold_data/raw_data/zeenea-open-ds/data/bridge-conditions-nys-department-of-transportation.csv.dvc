@@ -1,0 +1,5 @@
+outs:
+- md5: db2618480f56e7db817406c6eabf418d
+  size: 11424
+  hash: md5
+  path: bridge-conditions-nys-department-of-transportation.csv

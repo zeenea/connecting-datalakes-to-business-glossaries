@@ -1,0 +1,5 @@
+outs:
+- md5: c44c0b37459e6bf8105d30c2267ddca7
+  size: 11794
+  hash: md5
+  path: traffic-crashes-vision-zero-chicago-traffic-fatalities.csv

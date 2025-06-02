@@ -1,0 +1,5 @@
+outs:
+- md5: c7013caa223727f98717e455e849d6e3
+  size: 6743
+  hash: md5
+  path: citywide-mobility-survey-vehicle-survey-2019.csv

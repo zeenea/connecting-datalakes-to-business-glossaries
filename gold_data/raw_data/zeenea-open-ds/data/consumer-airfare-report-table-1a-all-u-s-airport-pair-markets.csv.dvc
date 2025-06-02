@@ -1,0 +1,5 @@
+outs:
+- md5: f3ba25693c33788747872219358822c9
+  size: 17347
+  hash: md5
+  path: consumer-airfare-report-table-1a-all-u-s-airport-pair-markets.csv

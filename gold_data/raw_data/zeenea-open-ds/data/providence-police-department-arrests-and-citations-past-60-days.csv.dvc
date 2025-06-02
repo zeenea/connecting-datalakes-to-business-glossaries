@@ -1,0 +1,5 @@
+outs:
+- md5: 829b2b59b023b1585de13234c3c4fa2c
+  size: 11248
+  hash: md5
+  path: providence-police-department-arrests-and-citations-past-60-days.csv

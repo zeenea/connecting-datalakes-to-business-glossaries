@@ -1,0 +1,5 @@
+outs:
+- md5: aa6dd79680974606aaf5476818e42367
+  size: 3891
+  hash: md5
+  path: towed-vehicles.csv

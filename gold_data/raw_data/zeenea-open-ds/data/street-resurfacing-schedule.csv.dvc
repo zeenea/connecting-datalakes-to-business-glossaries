@@ -1,0 +1,5 @@
+outs:
+- md5: 4494979e653b5272092b4e9cb47b5a76
+  size: 6147
+  hash: md5
+  path: street-resurfacing-schedule.csv

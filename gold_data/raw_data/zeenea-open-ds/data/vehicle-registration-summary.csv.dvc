@@ -1,0 +1,5 @@
+outs:
+- md5: 75f193e0ca4f769087f168116515e9d1
+  size: 6172
+  hash: md5
+  path: vehicle-registration-summary.csv

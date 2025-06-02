@@ -1,0 +1,5 @@
+outs:
+- md5: c1247911914472e37ffdd08a9c878cd4
+  size: 79509
+  hash: md5
+  path: subway-lines.csv

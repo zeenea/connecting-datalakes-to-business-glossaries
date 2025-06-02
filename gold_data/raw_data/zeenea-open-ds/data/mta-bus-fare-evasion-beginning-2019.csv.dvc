@@ -1,0 +1,5 @@
+outs:
+- md5: 7c7625600c0f91ef8ef81383cd1a63ea
+  size: 1543
+  hash: md5
+  path: mta-bus-fare-evasion-beginning-2019.csv

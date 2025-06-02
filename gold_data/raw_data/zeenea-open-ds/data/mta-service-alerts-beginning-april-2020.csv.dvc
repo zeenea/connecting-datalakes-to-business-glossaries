@@ -1,0 +1,5 @@
+outs:
+- md5: f09ae8e7a671edf6528d3b259ba66005
+  size: 12121
+  hash: md5
+  path: mta-service-alerts-beginning-april-2020.csv

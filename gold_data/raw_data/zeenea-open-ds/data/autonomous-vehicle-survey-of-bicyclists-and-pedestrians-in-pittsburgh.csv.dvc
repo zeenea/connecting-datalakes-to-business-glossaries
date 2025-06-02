@@ -1,0 +1,5 @@
+outs:
+- md5: 0cb8346bd49a694648376edbf64f84a1
+  size: 19292
+  hash: md5
+  path: autonomous-vehicle-survey-of-bicyclists-and-pedestrians-in-pittsburgh.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: d7a709fb13f4b16bca5d466a32c683ee
+  size: 18924
+  hash: md5
+  path: liquor-brands.csv
