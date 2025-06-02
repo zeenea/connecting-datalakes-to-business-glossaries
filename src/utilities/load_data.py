@@ -34,7 +34,8 @@ def load_business_glossary(business_glossary_path, dataset_name=None):
         business_glossary = pd.DataFrame()
         business_glossaries_file_names = os.listdir(business_glossary_path)
         for file_path in business_glossaries_file_names:
-            business_glossary = pd.concat([business_glossary, pd.read_csv(business_glossary_path+"/"+file_path, index_col=0)], axis=0).reset_index(drop=True)
+            if '.dvc' not in file_path:
+                business_glossary = pd.concat([business_glossary, pd.read_csv(business_glossary_path+"/"+file_path, index_col=0)], axis=0).reset_index(drop=True)
 
         return business_glossary
 
@@ -204,8 +205,8 @@ def load_zeenea_open_ds_artifacts(train_on, random_state):
 
     dataset_name = 'zeenea-open-ds'
         
-    pos_col_alignments_path =  f"../gold_data/raw_data/zeenea-open-ds/alignments/column_to_business_glossary_alignments.csv"
-    neg_col_alignments_path = f"../gold_data/raw_data/zeenea-open-ds/negative-alignments/random_neg_column_alignments.csv"
+    pos_col_alignments_path = "../gold_data/raw_data/zeenea-open-ds/alignments/column_to_business_glossary_alignments.csv"
+    neg_col_alignments_path = "../gold_data/raw_data/zeenea-open-ds/negative-alignments/random_neg_column_alignments.csv"
     
     pos_col_alignments = pd.read_csv(pos_col_alignments_path, index_col=0)
     pos_col_alignments = pos_col_alignments[~pos_col_alignments['business_entity_code'].isnull()]
@@ -286,7 +287,7 @@ def load_zeenea_open_ds_artifacts(train_on, random_state):
     pos_ds_alignments = pos_ds_alignments.rename(columns={'dataset_code':'table_name'})
     
     # split test and train for dataset alignments
-    neg_ds_alignments_path = f"../gold_data/raw_data/zeenea-open-ds/negative-alignments/random_neg_dataset_alignments.csv"
+    neg_ds_alignments_path = "../gold_data/raw_data/zeenea-open-ds/negative-alignments/random_neg_dataset_alignments.csv"
     neg_ds_alignments = pd.read_csv(neg_ds_alignments_path, index_col=0)
     neg_ds_alignments = neg_ds_alignments.rename(columns={'neg_business_entity_code':'business_entity_code'})
     neg_ds_alignments = neg_ds_alignments[~neg_ds_alignments['business_entity_code'].isnull()]
