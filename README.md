@@ -17,7 +17,6 @@ This application permits to:
 
 The experimentations are tracked using MLFlow server.
 
-## Quick Start
 ### Step 1: Create a Virtual Evironnement and install Requirements
 ```
 python3 -m venv my-venv
@@ -27,16 +26,20 @@ pip install -r requirements.txt
 ```
 
 
-### step 2: Run
+### step 2: Application Run
 #### Parameters and Hyperparameters
 Parameters and hyperparameters are defined for each model in the `model_configs.yaml` file.
   
 `link-prediction-local/src/input_yaml_config/model_configs.yaml`
 
 
-#### Application run
+#### Start MLFlow Server
 ```
 mlflow server --host 127.0.0.1 --port 8080
+```
+
+#### Launching  
+```
 bash launch.sh
 ```
 
@@ -120,5 +123,8 @@ python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_t
 ```
 python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=0 --enable_xgboost_classifier_model_syn_sem_graph_similarity_learning
 ```
+ ## Licence
+ This work is licensed under CC BY-NC-SA 4.0.
+To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/ or go to [LICENCE.md](/LICENSE.md).
 
 

@@ -13,5 +13,5 @@ random_state_index=0                # 0 or 1 or 2
 
 mlflow server --host 127.0.0.1 --port 8080 &
 
-python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=0 --enable_svm_classifier_model_syn_sem_graph_similarity_learning
+python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=0  --enable_graph_model
 
