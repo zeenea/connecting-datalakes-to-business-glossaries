@@ -1,0 +1,5 @@
+outs:
+- md5: eefb35e3e13806e056b7a027ad700064
+  size: 10321
+  hash: md5
+  path: glossary_data.csv
