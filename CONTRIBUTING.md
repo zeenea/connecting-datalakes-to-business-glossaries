@@ -1,6 +1,6 @@
-# Contributing to our Open Dataset Project 
+# Contributing to our Project 
 
-We warmly welcome contributions from the community to enhance and expand our open dataset project **tabular-data-to-business-glossaries-annotation-dataset © 2024 by Zeenea**.
+We warmly welcome contributions from the community to enhance and expand our project of Data Asset Annotation in Enterprise Knowledge Graphs.
 Your input helps us improve data quality, coverage, and usability. 
 Whether you are a seasoned data scientist, a researcher, or an enthusiastic beginner, there are many ways you can contribute.
 
@@ -11,8 +11,7 @@ Whether you are a seasoned data scientist, a researcher, or an enthusiastic begi
 * **Data Enhancements:** Improve existing datasets by adding more samples or correcting inaccuracies.
 
 ### 2. Suggesting New Methods For The Tabular Data Alignment Task
-* **Prompt Enhancements**: Update or suggest new prompts to generate new business glossaries and new alignments.
-* **Proposing new alignment methods**: Propose new methods to do the alignments with/without LLMs.
+* **Proposing new alignment methods**: Propose new methods for tabular data annotation.
 
 ### 3. Documentation
 * **Improve Documentation:** Help us by writing or refining dataset documentation, including metadata descriptions, usage examples, and code snippets.
@@ -47,7 +46,7 @@ Please read our  [Code of Conduct](CODE_OF_CONDUCT.md) before contributing to en
 
 
 ## Thank You for Contributing
-Thank you for your interest in contributing to our open dataset project **tabular-data-to-business-glossaries-annotation-dataset © 2024 by Zeenea**.
+Thank you for your interest in contributing to our project.
 Your efforts help make data more accessible and useful for everyone!
 
 With gratitude,  
