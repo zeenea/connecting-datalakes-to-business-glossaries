@@ -33,7 +33,7 @@ Parameters and hyperparameters are defined for each model in the `model_configs.
 `link-prediction-local/src/input_yaml_config/model_configs.yaml`
 
 
-#### Start MLFlow Server
+#### Start MLflow Server
 ```
 mlflow server --host 127.0.0.1 --port 8080
 ```
