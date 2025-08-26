@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:owl="http://www.w3.org/2002/07/owl#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <owl:Class rdf:about="54773498_0_4341462266113591159_Meters">
+    <rdfs:label>Meters</rdfs:label>
+    <rdfs:comment>Meters column in Table Building. Other Columns: Name, City, Country, Meters, Feets, Pictures</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="54773498_0_4341462266113591159"/>
+  </owl:Class>
+  <owl:Class rdf:about="97941125_0_8220652154649529701_Numericcode">
+    <rdfs:label>Numeric code</rdfs:label>
+    <rdfs:comment>Numeric code column in Table Currency. Other Columns: Country, Currency, Alphabetic code, Numeric code, Symbol, Subdivision</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="97941125_0_8220652154649529701"/>
+  </owl:Class>
+  <owl:Class rdf:about="8468806_0_4382447409703007384_Staat(en)">
+    <rdfs:label>Staat(en)</rdfs:label>
+    <rdfs:comment>Staat(en) column in Table Lake. Other Columns: Rang, Name, Staat(en), Fläche-(km2), Länge-(km), Max.-Tiefe-(m), Volumen-(km?)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="8468806_0_4382447409703007384"/>
+  </owl:Class>
+  <owl:Class rdf:about="77694908_0_6083291340991074532_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table Film. Other Columns: Fans' Rank, Title, Year, Director(s), Overall Rank</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="77694908_0_6083291340991074532"/>
+  </owl:Class>
+  <owl:Class rdf:about="89511064_0_2199624509082573904_Continent">
+    <rdfs:label>Continent</rdfs:label>
+    <rdfs:comment>Continent column in Table Country. Other Columns: Continent, Region, Country, Capital, FIPS, ISO (2), ISO (3), ISO (No), Internet, Note</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="89511064_0_2199624509082573904"/>
+  </owl:Class>
+  <owl:Class rdf:about="49087820_0_461228320225084868_Alphabeticcode">
+    <rdfs:label>Alphabetic code</rdfs:label>
+    <rdfs:comment>Alphabetic code column in Table Currency. Other Columns: Country, Currency, Alphabetic code, Numeric code, Symbol, Subdivision</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="49087820_0_461228320225084868"/>
+  </owl:Class>
+  <owl:Class rdf:about="26310680_0_5150772059999313798_NUMERICCODE">
+    <rdfs:label>NUMERIC CODE</rdfs:label>
+    <rdfs:comment>NUMERIC CODE column in Table Currency. Other Columns: ENTITY, CURRENCY, ALPHABETIC CODE, NUMERIC CODE</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="26310680_0_5150772059999313798"/>
+  </owl:Class>
+  <owl:Class rdf:about="21801207_0_8144839668470123042_Developer">
+    <rdfs:label>Developer</rdfs:label>
+    <rdfs:comment>Developer column in Table VideoGame. Other Columns: LW, TW, Title, Developer, Label, Publisher</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="21801207_0_8144839668470123042"/>
+  </owl:Class>
+  <owl:Class rdf:about="86297395_0_6919201319699354263_Government">
+    <rdfs:label>Government</rdfs:label>
+    <rdfs:comment>Government column in Table Country. Other Columns: Country, Land area, GDP nominal (US$M), Per capita GDP (US$), Population, Government, Conscription</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="86297395_0_6919201319699354263"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_13_8724394428539174350_Genre">
+    <rdfs:label>Genre</rdfs:label>
+    <rdfs:comment>Genre column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_13_8724394428539174350"/>
+  </owl:Class>
+  <owl:Class rdf:about="50245608_0_871275842592178099_Director">
+    <rdfs:label>Director</rdfs:label>
+    <rdfs:comment>Director column in Table Film. Other Columns: Title, Year, Media Type, Director, Writer, Length, Matting</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="50245608_0_871275842592178099"/>
+  </owl:Class>
+  <owl:Class rdf:about="3962429_0_3452614694863053249_Address">
+    <rdfs:label>Address</rdfs:label>
+    <rdfs:comment>Address column in Table Hotel. Other Columns: Number, IDF Host Hotels, Address, IDF 2011 Group Rate, Rewards Program, Approximate Distance from Moscone West</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="3962429_0_3452614694863053249"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_2_4773219892816395776_Platform(s)">
+    <rdfs:label>Platform(s)</rdfs:label>
+    <rdfs:comment>Platform(s) column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_2_4773219892816395776"/>
+  </owl:Class>
+  <owl:Class rdf:about="50245608_0_871275842592178099_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table Film. Other Columns: Title, Year, Media Type, Director, Writer, Length, Matting</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="50245608_0_871275842592178099"/>
+  </owl:Class>
+  <owl:Class rdf:about="40844462_1_6230938203735169234_Rel.">
+    <rdfs:label>Rel.</rdfs:label>
+    <rdfs:comment>Rel. column in Table Film. Other Columns: Movie, Rel., Director, Reviewed</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="40844462_1_6230938203735169234"/>
+  </owl:Class>
+  <owl:Class rdf:about="73988811_0_2775758476756716904_Released">
+    <rdfs:label>Released</rdfs:label>
+    <rdfs:comment>Released column in Table Film. Other Columns: Title, Director(s), Released, Rating, View Date, Amazon</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="73988811_0_2775758476756716904"/>
+  </owl:Class>
+  <owl:Class rdf:about="11599512_1_280388135214354946_Endroit">
+    <rdfs:label>Endroit</rdfs:label>
+    <rdfs:comment>Endroit column in Table Country. Other Columns: A, Nom en anglais, Endroit, Capitale, Heure</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="11599512_1_280388135214354946"/>
+  </owl:Class>
+  <owl:Class rdf:about="22864497_0_8632623712684511496_NorthAmerica">
+    <rdfs:label>North America</rdfs:label>
+    <rdfs:comment>North America column in Table VideoGame. Other Columns: Title, Publisher, North America, Europe, Japan, Cost, Size</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="22864497_0_8632623712684511496"/>
+  </owl:Class>
+  <owl:Class rdf:about="45593932_0_6869375743660252130_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table Scientist. Other Columns: Year, Laureate, Country, Rationale</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="45593932_0_6869375743660252130"/>
+  </owl:Class>
+  <owl:Class rdf:about="24142265_0_4577466141408796359_System">
+    <rdfs:label>System</rdfs:label>
+    <rdfs:comment>System column in Table VideoGame. Other Columns: Rank, Was, Peak, Days on Chart, System, Game</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="24142265_0_4577466141408796359"/>
+  </owl:Class>
+  <owl:Class rdf:about="21362676_0_6854186738074119688_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table Film. Other Columns: Fans' Rank, Title, Year, Director(s), Overall Rank</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="21362676_0_6854186738074119688"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_2_4773219892816395776_Developer(s)">
+    <rdfs:label>Developer(s)</rdfs:label>
+    <rdfs:comment>Developer(s) column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_2_4773219892816395776"/>
+  </owl:Class>
+  <owl:Class rdf:about="41336118_0_4331895026409635103_Assets($bil)">
+    <rdfs:label>Assets ($bil)</rdfs:label>
+    <rdfs:comment>Assets ($bil) column in Table Company. Other Columns: Company, Country, Industry, Sales ($bil), Profits ($bil), Assets ($bil), Market Value ($bil)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="41336118_0_4331895026409635103"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_13_8724394428539174350_Developer(s)">
+    <rdfs:label>Developer(s)</rdfs:label>
+    <rdfs:comment>Developer(s) column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_13_8724394428539174350"/>
+  </owl:Class>
+  <owl:Class rdf:about="57938705_0_8737506792349461963_Japan">
+    <rdfs:label>Japan</rdfs:label>
+    <rdfs:comment>Japan column in Table VideoGame. Other Columns: Pos, Game, Platform, Year, Genre, Publisher, North America, Europe, Japan, Rest of World, Global</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="57938705_0_8737506792349461963"/>
+  </owl:Class>
+  <owl:Class rdf:about="54773498_0_4341462266113591159_Feets">
+    <rdfs:label>Feets</rdfs:label>
+    <rdfs:comment>Feets column in Table Building. Other Columns: Name, City, Country, Meters, Feets, Pictures</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="54773498_0_4341462266113591159"/>
+  </owl:Class>
+  <owl:Class rdf:about="21801207_0_8144839668470123042_Publisher">
+    <rdfs:label>Publisher</rdfs:label>
+    <rdfs:comment>Publisher column in Table VideoGame. Other Columns: LW, TW, Title, Developer, Label, Publisher</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="21801207_0_8144839668470123042"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_2_4773219892816395776_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_2_4773219892816395776"/>
+  </owl:Class>
+  <owl:Class rdf:about="38428277_0_1311643810102462607_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table Film. Other Columns: Fans' Rank, Title, Year, Director(s), Overall Rank</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="38428277_0_1311643810102462607"/>
+  </owl:Class>
+  <owl:Class rdf:about="90593344_0_8311455501234425088_Height(m)">
+    <rdfs:label>Height (m)</rdfs:label>
+    <rdfs:comment>Height (m) column in Table Mountain. Other Columns: Number, Fell Name, Height (m), Height (Ft), GPS reference, Guide, Steve, Justine, Emily, Sophie, Diva</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="90593344_0_8311455501234425088"/>
+  </owl:Class>
+  <owl:Class rdf:about="57938705_0_8737506792349461963_Platform">
+    <rdfs:label>Platform</rdfs:label>
+    <rdfs:comment>Platform column in Table VideoGame. Other Columns: Pos, Game, Platform, Year, Genre, Publisher, North America, Europe, Japan, Rest of World, Global</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="57938705_0_8737506792349461963"/>
+  </owl:Class>
+  <owl:Class rdf:about="75367212_2_2745466355267233390_ReleaseDate">
+    <rdfs:label>Release Date</rdfs:label>
+    <rdfs:comment>Release Date column in Table VideoGame. Other Columns: Title, Developer(s), Publisher(s), Release Date, ESRB</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="75367212_2_2745466355267233390"/>
+  </owl:Class>
+  <owl:Class rdf:about="48944826_0_2321751364268052533_Genre">
+    <rdfs:label>Genre</rdfs:label>
+    <rdfs:comment>Genre column in Table VideoGame. Other Columns: Cover, Status, Name, Genre, FSK, Kommentar, Verliehen?, System</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="48944826_0_2321751364268052533"/>
+  </owl:Class>
+  <owl:Class rdf:about="49801939_0_6964113429298874283_HEIGHTINMETERS">
+    <rdfs:label>HEIGHT IN METERS</rdfs:label>
+    <rdfs:comment>HEIGHT IN METERS column in Table Mountain. Other Columns: MOUNTAIN, HEIGHT IN METERS, RANGE, CONQUERED ON</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="49801939_0_6964113429298874283"/>
+  </owl:Class>
+  <owl:Class rdf:about="22864497_0_8632623712684511496_Japan">
+    <rdfs:label>Japan</rdfs:label>
+    <rdfs:comment>Japan column in Table VideoGame. Other Columns: Title, Publisher, North America, Europe, Japan, Cost, Size</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="22864497_0_8632623712684511496"/>
+  </owl:Class>
+  <owl:Class rdf:about="84548468_0_5955155464119382182_Director(s)">
+    <rdfs:label>Director(s)</rdfs:label>
+    <rdfs:comment>Director(s) column in Table Film. Other Columns: Fans' Rank, Title, Year, Director(s), Overall Rank</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="84548468_0_5955155464119382182"/>
+  </owl:Class>
+  <owl:Class rdf:about="44206774_0_3810538885942465703_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table GolfPlayer. Other Columns: Year, Winner/2nd, Scores, Total, Money (US$)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="44206774_0_3810538885942465703"/>
+  </owl:Class>
+  <owl:Class rdf:about="22864497_0_8632623712684511496_Europe">
+    <rdfs:label>Europe</rdfs:label>
+    <rdfs:comment>Europe column in Table VideoGame. Other Columns: Title, Publisher, North America, Europe, Japan, Cost, Size</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="22864497_0_8632623712684511496"/>
+  </owl:Class>
+  <owl:Class rdf:about="1146722_1_7558140036342906956_ALT(m)">
+    <rdfs:label>ALT (m)</rdfs:label>
+    <rdfs:comment>ALT (m) column in Table Mountain. Other Columns: PEAK, RANKING, MAP, GUIDE, GRID REF, ALT (ft), ALT (m)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="1146722_1_7558140036342906956"/>
+  </owl:Class>
+  <owl:Class rdf:about="38428277_0_1311643810102462607_Director(s)">
+    <rdfs:label>Director(s)</rdfs:label>
+    <rdfs:comment>Director(s) column in Table Film. Other Columns: Fans' Rank, Title, Year, Director(s), Overall Rank</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="38428277_0_1311643810102462607"/>
+  </owl:Class>
+  <owl:Class rdf:about="73242003_5_4847571983313033360_Publisher">
+    <rdfs:label>Publisher</rdfs:label>
+    <rdfs:comment>Publisher column in Table VideoGame. Other Columns: Rank, Title, Category, Publisher</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="73242003_5_4847571983313033360"/>
+  </owl:Class>
+  <owl:Class rdf:about="43237185_1_3636357855502246981_GrantingInstitution">
+    <rdfs:label>Granting Institution</rdfs:label>
+    <rdfs:comment>Granting Institution column in Table Scientist. Other Columns: Mathematician, Year of PhD, Granting Institution, Supervisor, Thesis</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="43237185_1_3636357855502246981"/>
+  </owl:Class>
+  <owl:Class rdf:about="49087820_0_461228320225084868_Numericcode">
+    <rdfs:label>Numeric code</rdfs:label>
+    <rdfs:comment>Numeric code column in Table Currency. Other Columns: Country, Currency, Alphabetic code, Numeric code, Symbol, Subdivision</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="49087820_0_461228320225084868"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_12_251152470253168163_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_12_251152470253168163"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_6_8221428333921653560_Genre">
+    <rdfs:label>Genre</rdfs:label>
+    <rdfs:comment>Genre column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_6_8221428333921653560"/>
+  </owl:Class>
+  <owl:Class rdf:about="45533669_1_7463037039059239824_Editeur">
+    <rdfs:label>Editeur</rdfs:label>
+    <rdfs:comment>Editeur column in Table RadioStation. Other Columns: Service, Editeur, Pays</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="45533669_1_7463037039059239824"/>
+  </owl:Class>
+  <owl:Class rdf:about="86297395_0_6919201319699354263_GDPnominal(US$M)">
+    <rdfs:label>GDP nominal (US$M)</rdfs:label>
+    <rdfs:comment>GDP nominal (US$M) column in Table Country. Other Columns: Country, Land area, GDP nominal (US$M), Per capita GDP (US$), Population, Government, Conscription</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="86297395_0_6919201319699354263"/>
+  </owl:Class>
+  <owl:Class rdf:about="19361188_0_1640726405141876003_Height(ft)">
+    <rdfs:label>Height (ft)</rdfs:label>
+    <rdfs:comment>Height (ft) column in Table Mountain. Other Columns: Summit, Height (m), Height (ft), Grid Reference, Date</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="19361188_0_1640726405141876003"/>
+  </owl:Class>
+  <owl:Class rdf:about="53822652_0_5767892317858575530_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table Film. Other Columns: Date, Movie, Year, Director</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="53822652_0_5767892317858575530"/>
+  </owl:Class>
+  <owl:Class rdf:about="68442591_0_8506821153001360777_Board">
+    <rdfs:label>Board</rdfs:label>
+    <rdfs:comment>Board column in Table Hospital. Other Columns: Site, Board, Child Health, Obs &amp; Gyn, Psych, Med, Surg</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="68442591_0_8506821153001360777"/>
+  </owl:Class>
+  <owl:Class rdf:about="40844462_1_6230938203735169234_Director">
+    <rdfs:label>Director</rdfs:label>
+    <rdfs:comment>Director column in Table Film. Other Columns: Movie, Rel., Director, Reviewed</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="40844462_1_6230938203735169234"/>
+  </owl:Class>
+  <owl:Class rdf:about="25404227_0_2240631045609013057_Director(s)">
+    <rdfs:label>Director(s)</rdfs:label>
+    <rdfs:comment>Director(s) column in Table Film. Other Columns: Rank, Title, Year, Director(s), Overall Rank</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="25404227_0_2240631045609013057"/>
+  </owl:Class>
+  <owl:Class rdf:about="35188621_0_6058553107571275232_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table Film. Other Columns: Fans' Rank, Title, Year, Director(s), Overall Rank</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="35188621_0_6058553107571275232"/>
+  </owl:Class>
+  <owl:Class rdf:about="55961337_0_6548713781034932742_Symbol">
+    <rdfs:label>Symbol</rdfs:label>
+    <rdfs:comment>Symbol column in Table Currency. Other Columns: Country, Currency, Alphabetic code, Numeric code, Symbol, Subdivision</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="55961337_0_6548713781034932742"/>
+  </owl:Class>
+  <owl:Class rdf:about="36102169_0_7739454799295072814_Developer">
+    <rdfs:label>Developer</rdfs:label>
+    <rdfs:comment>Developer column in Table VideoGame. Other Columns: Platform, Developer, Game Title, Units Sold (in millions)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="36102169_0_7739454799295072814"/>
+  </owl:Class>
+  <owl:Class rdf:about="57938705_0_8737506792349461963_Publisher">
+    <rdfs:label>Publisher</rdfs:label>
+    <rdfs:comment>Publisher column in Table VideoGame. Other Columns: Pos, Game, Platform, Year, Genre, Publisher, North America, Europe, Japan, Rest of World, Global</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="57938705_0_8737506792349461963"/>
+  </owl:Class>
+  <owl:Class rdf:about="58891288_0_1117541047012405958_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table Film. Other Columns: Rank, Title, Year, Director(s), Overall Rank</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="58891288_0_1117541047012405958"/>
+  </owl:Class>
+  <owl:Class rdf:about="46671561_0_6122315295162029872_Platform">
+    <rdfs:label>Platform</rdfs:label>
+    <rdfs:comment>Platform column in Table VideoGame. Other Columns: Game, Genre, Platform, Release</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="46671561_0_6122315295162029872"/>
+  </owl:Class>
+  <owl:Class rdf:about="68779923_0_3859283110041832023_Languages">
+    <rdfs:label>Languages</rdfs:label>
+    <rdfs:comment>Languages column in Table Country. Other Columns: Name, Date, Previous Names, Capital, Government, Languages</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="68779923_0_3859283110041832023"/>
+  </owl:Class>
+  <owl:Class rdf:about="14311244_0_7604843865524657408_HEIGHTINMETERS">
+    <rdfs:label>HEIGHT IN METERS</rdfs:label>
+    <rdfs:comment>HEIGHT IN METERS column in Table Mountain. Other Columns: MOUNTAIN, HEIGHT IN METERS, RANGE, CONQUERED ON</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="14311244_0_7604843865524657408"/>
+  </owl:Class>
+  <owl:Class rdf:about="75367212_2_2745466355267233390_Developer(s)">
+    <rdfs:label>Developer(s)</rdfs:label>
+    <rdfs:comment>Developer(s) column in Table VideoGame. Other Columns: Title, Developer(s), Publisher(s), Release Date, ESRB</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="75367212_2_2745466355267233390"/>
+  </owl:Class>
+  <owl:Class rdf:about="39759273_0_1427898308030295194_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table Film. Other Columns: N, Title, Year, Director, IMDB Rating, IMDB Votes</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="39759273_0_1427898308030295194"/>
+  </owl:Class>
+  <owl:Class rdf:about="98929678_0_3700213490979945526_Basincountries">
+    <rdfs:label>Basin countries</rdfs:label>
+    <rdfs:comment>Basin countries column in Table Lake. Other Columns: Lake, Location, Basin countries, Residence time</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="98929678_0_3700213490979945526"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_6_8221428333921653560_Platform(s)">
+    <rdfs:label>Platform(s)</rdfs:label>
+    <rdfs:comment>Platform(s) column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_6_8221428333921653560"/>
+  </owl:Class>
+  <owl:Class rdf:about="71840765_0_6664391841933033844_watergauge">
+    <rdfs:label>water gauge</rdfs:label>
+    <rdfs:comment>water gauge column in Table Lake. Other Columns: Lake, water temperature, water gauge</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="71840765_0_6664391841933033844"/>
+  </owl:Class>
+  <owl:Class rdf:about="25404227_0_2240631045609013057_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table Film. Other Columns: Rank, Title, Year, Director(s), Overall Rank</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="25404227_0_2240631045609013057"/>
+  </owl:Class>
+  <owl:Class rdf:about="45593932_0_6869375743660252130_Rationale">
+    <rdfs:label>Rationale</rdfs:label>
+    <rdfs:comment>Rationale column in Table Scientist. Other Columns: Year, Laureate, Country, Rationale</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="45593932_0_6869375743660252130"/>
+  </owl:Class>
+  <owl:Class rdf:about="57938705_0_8737506792349461963_Europe">
+    <rdfs:label>Europe</rdfs:label>
+    <rdfs:comment>Europe column in Table VideoGame. Other Columns: Pos, Game, Platform, Year, Genre, Publisher, North America, Europe, Japan, Rest of World, Global</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="57938705_0_8737506792349461963"/>
+  </owl:Class>
+  <owl:Class rdf:about="86747932_0_7532457067740920052_1T">
+    <rdfs:label>1T</rdfs:label>
+    <rdfs:comment>1T column in Table Airline. Other Columns: 1T, 1Time, WebCheckIn, Reisegep�ck</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="86747932_0_7532457067740920052"/>
+  </owl:Class>
+  <owl:Class rdf:about="36102169_0_7739454799295072814_Platform">
+    <rdfs:label>Platform</rdfs:label>
+    <rdfs:comment>Platform column in Table VideoGame. Other Columns: Platform, Developer, Game Title, Units Sold (in millions)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="36102169_0_7739454799295072814"/>
+  </owl:Class>
+  <owl:Class rdf:about="53583534_0_503521622577229691_Stadt">
+    <rdfs:label>Stadt</rdfs:label>
+    <rdfs:comment>Stadt column in Table Building. Other Columns: Dauer, Geb?udename, Stadt, Etagen, H?he</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="53583534_0_503521622577229691"/>
+  </owl:Class>
+  <owl:Class rdf:about="11833461_1_3811022039809817402_EUReleaseDate">
+    <rdfs:label>EU Release Date</rdfs:label>
+    <rdfs:comment>EU Release Date column in Table VideoGame. Other Columns: Title, Publisher, EU Release Date, AU Release Date, PEGI, ACB</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="11833461_1_3811022039809817402"/>
+  </owl:Class>
+  <owl:Class rdf:about="12125836_0_1134348206297032434_Format">
+    <rdfs:label>Format</rdfs:label>
+    <rdfs:comment>Format column in Table RadioStation. Other Columns: Dial Location, Call Letters, Format, Address, Telephone</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="12125836_0_1134348206297032434"/>
+  </owl:Class>
+  <owl:Class rdf:about="8468806_0_4382447409703007384_Max.-Tiefe-(m)">
+    <rdfs:label>Max.-Tiefe-(m)</rdfs:label>
+    <rdfs:comment>Max.-Tiefe-(m) column in Table Lake. Other Columns: Rang, Name, Staat(en), Fläche-(km2), Länge-(km), Max.-Tiefe-(m), Volumen-(km?)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="8468806_0_4382447409703007384"/>
+  </owl:Class>
+  <owl:Class rdf:about="52299421_0_4473286348258170200_GDP">
+    <rdfs:label>GDP</rdfs:label>
+    <rdfs:comment>GDP column in Table Country. Other Columns: 1998 Data Country, GDP Per Capita, GDP Growth Rate, GDP, Inflation, Population, Popul. Growth, Infant Mortality</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="52299421_0_4473286348258170200"/>
+  </owl:Class>
+  <owl:Class rdf:about="98312357_0_6395417306876145729_Spouse">
+    <rdfs:label>Spouse</rdfs:label>
+    <rdfs:comment>Spouse column in Table Monarch. Other Columns: Name, Reign, Full Name, Family, Spouse</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="98312357_0_6395417306876145729"/>
+  </owl:Class>
+  <owl:Class rdf:about="11833461_1_3811022039809817402_AUReleaseDate">
+    <rdfs:label>AU Release Date</rdfs:label>
+    <rdfs:comment>AU Release Date column in Table VideoGame. Other Columns: Title, Publisher, EU Release Date, AU Release Date, PEGI, ACB</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="11833461_1_3811022039809817402"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_13_8724394428539174350_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_13_8724394428539174350"/>
+  </owl:Class>
+  <owl:Class rdf:about="49087820_0_461228320225084868_Symbol">
+    <rdfs:label>Symbol</rdfs:label>
+    <rdfs:comment>Symbol column in Table Currency. Other Columns: Country, Currency, Alphabetic code, Numeric code, Symbol, Subdivision</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="49087820_0_461228320225084868"/>
+  </owl:Class>
+  <owl:Class rdf:about="75367212_2_2745466355267233390_Publisher(s)">
+    <rdfs:label>Publisher(s)</rdfs:label>
+    <rdfs:comment>Publisher(s) column in Table VideoGame. Other Columns: Title, Developer(s), Publisher(s), Release Date, ESRB</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="75367212_2_2745466355267233390"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_13_8724394428539174350_Platform(s)">
+    <rdfs:label>Platform(s)</rdfs:label>
+    <rdfs:comment>Platform(s) column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_13_8724394428539174350"/>
+  </owl:Class>
+  <owl:Class rdf:about="88732174_0_7321365014357502211_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table BaseballPlayer. Other Columns: Year, Player, #, Team, rWAR w/tm</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="88732174_0_7321365014357502211"/>
+  </owl:Class>
+  <owl:Class rdf:about="68779923_4_1832350971585698643_Government">
+    <rdfs:label>Government</rdfs:label>
+    <rdfs:comment>Government column in Table Country. Other Columns: Name, Date, Previous Names, Capital, Government, Languages</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="68779923_4_1832350971585698643"/>
+  </owl:Class>
+  <owl:Class rdf:about="49772588_0_6549847739640234347_Dioceses">
+    <rdfs:label>Dioceses</rdfs:label>
+    <rdfs:comment>Dioceses column in Table Country. Other Columns: #, Catholics, Population, Percent Catholic, Country, Dioceses, Diocesan Priests, Religious Priests, Total Priests, Permanent Deacons, Male Religious, Female Religious, Parishes</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="49772588_0_6549847739640234347"/>
+  </owl:Class>
+  <owl:Class rdf:about="68779923_0_3859283110041832023_Government">
+    <rdfs:label>Government</rdfs:label>
+    <rdfs:comment>Government column in Table Country. Other Columns: Name, Date, Previous Names, Capital, Government, Languages</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="68779923_0_3859283110041832023"/>
+  </owl:Class>
+  <owl:Class rdf:about="9206866_1_8114610355671172497_GNI">
+    <rdfs:label>GNI</rdfs:label>
+    <rdfs:comment>GNI column in Table Country. Other Columns: Name, Region, Income, GNI, Population</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="9206866_1_8114610355671172497"/>
+  </owl:Class>
+  <owl:Class rdf:about="50245608_0_871275842592178099_Length">
+    <rdfs:label>Length</rdfs:label>
+    <rdfs:comment>Length column in Table Film. Other Columns: Title, Year, Media Type, Director, Writer, Length, Matting</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="50245608_0_871275842592178099"/>
+  </owl:Class>
+  <owl:Class rdf:about="46671561_0_6122315295162029872_Release">
+    <rdfs:label>Release</rdfs:label>
+    <rdfs:comment>Release column in Table VideoGame. Other Columns: Game, Genre, Platform, Release</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="46671561_0_6122315295162029872"/>
+  </owl:Class>
+  <owl:Class rdf:about="22864497_0_8632623712684511496_Cost">
+    <rdfs:label>Cost</rdfs:label>
+    <rdfs:comment>Cost column in Table VideoGame. Other Columns: Title, Publisher, North America, Europe, Japan, Cost, Size</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="22864497_0_8632623712684511496"/>
+  </owl:Class>
+  <owl:Class rdf:about="48944826_0_2321751364268052533_System">
+    <rdfs:label>System</rdfs:label>
+    <rdfs:comment>System column in Table VideoGame. Other Columns: Cover, Status, Name, Genre, FSK, Kommentar, Verliehen?, System</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="48944826_0_2321751364268052533"/>
+  </owl:Class>
+  <owl:Class rdf:about="55961337_0_6548713781034932742_Numericcode">
+    <rdfs:label>Numeric code</rdfs:label>
+    <rdfs:comment>Numeric code column in Table Currency. Other Columns: Country, Currency, Alphabetic code, Numeric code, Symbol, Subdivision</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="55961337_0_6548713781034932742"/>
+  </owl:Class>
+  <owl:Class rdf:about="97941125_0_8220652154649529701_Alphabeticcode">
+    <rdfs:label>Alphabetic code</rdfs:label>
+    <rdfs:comment>Alphabetic code column in Table Currency. Other Columns: Country, Currency, Alphabetic code, Numeric code, Symbol, Subdivision</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="97941125_0_8220652154649529701"/>
+  </owl:Class>
+  <owl:Class rdf:about="86297395_0_6919201319699354263_Landarea">
+    <rdfs:label>Land area</rdfs:label>
+    <rdfs:comment>Land area column in Table Country. Other Columns: Country, Land area, GDP nominal (US$M), Per capita GDP (US$), Population, Government, Conscription</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="86297395_0_6919201319699354263"/>
+  </owl:Class>
+  <owl:Class rdf:about="22864497_0_8632623712684511496_Publisher">
+    <rdfs:label>Publisher</rdfs:label>
+    <rdfs:comment>Publisher column in Table VideoGame. Other Columns: Title, Publisher, North America, Europe, Japan, Cost, Size</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="22864497_0_8632623712684511496"/>
+  </owl:Class>
+  <owl:Class rdf:about="18422942_0_3659164506677528063_Artist">
+    <rdfs:label>Artist</rdfs:label>
+    <rdfs:comment>Artist column in Table Work. Other Columns: Name, Artist, Genre</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="18422942_0_3659164506677528063"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_12_251152470253168163_Platform(s)">
+    <rdfs:label>Platform(s)</rdfs:label>
+    <rdfs:comment>Platform(s) column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_12_251152470253168163"/>
+  </owl:Class>
+  <owl:Class rdf:about="90593344_0_8311455501234425088_Height(Ft)">
+    <rdfs:label>Height (Ft)</rdfs:label>
+    <rdfs:comment>Height (Ft) column in Table Mountain. Other Columns: Number, Fell Name, Height (m), Height (Ft), GPS reference, Guide, Steve, Justine, Emily, Sophie, Diva</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="90593344_0_8311455501234425088"/>
+  </owl:Class>
+  <owl:Class rdf:about="90325533_0_6668263142989366843_Ashton-under-Lyne">
+    <rdfs:label>Ashton-under-Lyne</rdfs:label>
+    <rdfs:comment>Ashton-under-Lyne column in Table Hospital. Other Columns: Tameside General Hospital, Breast Care Unit, Ashton-under-Lyne</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="90325533_0_6668263142989366843"/>
+  </owl:Class>
+  <owl:Class rdf:about="22864497_0_8632623712684511496_Size">
+    <rdfs:label>Size</rdfs:label>
+    <rdfs:comment>Size column in Table VideoGame. Other Columns: Title, Publisher, North America, Europe, Japan, Cost, Size</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="22864497_0_8632623712684511496"/>
+  </owl:Class>
+  <owl:Class rdf:about="3887681_0_7938589465814037992_H?he">
+    <rdfs:label>H?he</rdfs:label>
+    <rdfs:comment>H?he column in Table Lake. Other Columns: Name, H?he, Typ, Baujahr, See, Kanton</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="3887681_0_7938589465814037992"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_2_4773219892816395776_Genre">
+    <rdfs:label>Genre</rdfs:label>
+    <rdfs:comment>Genre column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_2_4773219892816395776"/>
+  </owl:Class>
+  <owl:Class rdf:about="77694908_0_6083291340991074532_Director(s)">
+    <rdfs:label>Director(s)</rdfs:label>
+    <rdfs:comment>Director(s) column in Table Film. Other Columns: Fans' Rank, Title, Year, Director(s), Overall Rank</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="77694908_0_6083291340991074532"/>
+  </owl:Class>
+  <owl:Class rdf:about="12125836_0_1134348206297032434_Address">
+    <rdfs:label>Address</rdfs:label>
+    <rdfs:comment>Address column in Table RadioStation. Other Columns: Dial Location, Call Letters, Format, Address, Telephone</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="12125836_0_1134348206297032434"/>
+  </owl:Class>
+  <owl:Class rdf:about="97941125_0_8220652154649529701_Symbol">
+    <rdfs:label>Symbol</rdfs:label>
+    <rdfs:comment>Symbol column in Table Currency. Other Columns: Country, Currency, Alphabetic code, Numeric code, Symbol, Subdivision</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="97941125_0_8220652154649529701"/>
+  </owl:Class>
+  <owl:Class rdf:about="7929299_0_3253718003116029649_State">
+    <rdfs:label>State</rdfs:label>
+    <rdfs:comment>State column in Table Airport. Other Columns: Code, Airport Name, City, State</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="7929299_0_3253718003116029649"/>
+  </owl:Class>
+  <owl:Class rdf:about="57938705_0_8737506792349461963_NorthAmerica">
+    <rdfs:label>North America</rdfs:label>
+    <rdfs:comment>North America column in Table VideoGame. Other Columns: Pos, Game, Platform, Year, Genre, Publisher, North America, Europe, Japan, Rest of World, Global</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="57938705_0_8737506792349461963"/>
+  </owl:Class>
+  <owl:Class rdf:about="46671561_0_6122315295162029872_Genre">
+    <rdfs:label>Genre</rdfs:label>
+    <rdfs:comment>Genre column in Table VideoGame. Other Columns: Game, Genre, Platform, Release</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="46671561_0_6122315295162029872"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_6_8221428333921653560_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_6_8221428333921653560"/>
+  </owl:Class>
+  <owl:Class rdf:about="68779923_5_2067037721454758189_Languages">
+    <rdfs:label>Languages</rdfs:label>
+    <rdfs:comment>Languages column in Table Country. Other Columns: Name, Date, Previous Names, Capital, Government, Languages</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="68779923_5_2067037721454758189"/>
+  </owl:Class>
+  <owl:Class rdf:about="57938705_0_8737506792349461963_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table VideoGame. Other Columns: Pos, Game, Platform, Year, Genre, Publisher, North America, Europe, Japan, Rest of World, Global</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="57938705_0_8737506792349461963"/>
+  </owl:Class>
+  <owl:Class rdf:about="9686394_0_5980699488362107028_State">
+    <rdfs:label>State</rdfs:label>
+    <rdfs:comment>State column in Table Airport. Other Columns: Code, Airport Name, City, State</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="9686394_0_5980699488362107028"/>
+  </owl:Class>
+  <owl:Class rdf:about="21245481_0_8730460088443117515_State/Province">
+    <rdfs:label>State/Province</rdfs:label>
+    <rdfs:comment>State/Province column in Table Lake. Other Columns: State/Province, Lake Name, File Size</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="21245481_0_8730460088443117515"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_6_8221428333921653560_Developer(s)">
+    <rdfs:label>Developer(s)</rdfs:label>
+    <rdfs:comment>Developer(s) column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_6_8221428333921653560"/>
+  </owl:Class>
+  <owl:Class rdf:about="19654359_0_3020273135042459469_State">
+    <rdfs:label>State</rdfs:label>
+    <rdfs:comment>State column in Table Airport. Other Columns: Code, Airport Name, City, State</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="19654359_0_3020273135042459469"/>
+  </owl:Class>
+  <owl:Class rdf:about="73988811_0_2775758476756716904_Director(s)">
+    <rdfs:label>Director(s)</rdfs:label>
+    <rdfs:comment>Director(s) column in Table Film. Other Columns: Title, Director(s), Released, Rating, View Date, Amazon</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="73988811_0_2775758476756716904"/>
+  </owl:Class>
+  <owl:Class rdf:about="21801207_0_8144839668470123042_Label">
+    <rdfs:label>Label</rdfs:label>
+    <rdfs:comment>Label column in Table VideoGame. Other Columns: LW, TW, Title, Developer, Label, Publisher</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="21801207_0_8144839668470123042"/>
+  </owl:Class>
+  <owl:Class rdf:about="41336118_0_4331895026409635103_Sales($bil)">
+    <rdfs:label>Sales ($bil)</rdfs:label>
+    <rdfs:comment>Sales ($bil) column in Table Company. Other Columns: Company, Country, Industry, Sales ($bil), Profits ($bil), Assets ($bil), Market Value ($bil)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="41336118_0_4331895026409635103"/>
+  </owl:Class>
+  <owl:Class rdf:about="93702496_0_39013305210829591_Founders">
+    <rdfs:label>Founders</rdfs:label>
+    <rdfs:comment>Founders column in Table Company. Other Columns: Rank, Company, Industry, Founders, Revenue Per Year, Revenue Per Second</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="93702496_0_39013305210829591"/>
+  </owl:Class>
+  <owl:Class rdf:about="35188621_0_6058553107571275232_Director(s)">
+    <rdfs:label>Director(s)</rdfs:label>
+    <rdfs:comment>Director(s) column in Table Film. Other Columns: Fans' Rank, Title, Year, Director(s), Overall Rank</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="35188621_0_6058553107571275232"/>
+  </owl:Class>
+  <owl:Class rdf:about="68779923_5_2067037721454758189_Government">
+    <rdfs:label>Government</rdfs:label>
+    <rdfs:comment>Government column in Table Country. Other Columns: Name, Date, Previous Names, Capital, Government, Languages</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="68779923_5_2067037721454758189"/>
+  </owl:Class>
+  <owl:Class rdf:about="24417511_0_3058323105166963431_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table BaseballPlayer. Other Columns: Year, Voted By, Inducted As, Votes, % of Ballots</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="24417511_0_3058323105166963431"/>
+  </owl:Class>
+  <owl:Class rdf:about="57938705_0_8737506792349461963_Genre">
+    <rdfs:label>Genre</rdfs:label>
+    <rdfs:comment>Genre column in Table VideoGame. Other Columns: Pos, Game, Platform, Year, Genre, Publisher, North America, Europe, Japan, Rest of World, Global</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="57938705_0_8737506792349461963"/>
+  </owl:Class>
+  <owl:Class rdf:about="53583534_0_503521622577229691_H?he">
+    <rdfs:label>H?he</rdfs:label>
+    <rdfs:comment>H?he column in Table Building. Other Columns: Dauer, Geb?udename, Stadt, Etagen, H?he</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="53583534_0_503521622577229691"/>
+  </owl:Class>
+  <owl:Class rdf:about="39759273_0_1427898308030295194_Director">
+    <rdfs:label>Director</rdfs:label>
+    <rdfs:comment>Director column in Table Film. Other Columns: N, Title, Year, Director, IMDB Rating, IMDB Votes</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="39759273_0_1427898308030295194"/>
+  </owl:Class>
+  <owl:Class rdf:about="47709681_0_4437772923903322343_Release">
+    <rdfs:label>Release</rdfs:label>
+    <rdfs:comment>Release column in Table VideoGame. Other Columns: Title, Category, Rating, Release</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="47709681_0_4437772923903322343"/>
+  </owl:Class>
+  <owl:Class rdf:about="55961337_0_6548713781034932742_Alphabeticcode">
+    <rdfs:label>Alphabetic code</rdfs:label>
+    <rdfs:comment>Alphabetic code column in Table Currency. Other Columns: Country, Currency, Alphabetic code, Numeric code, Symbol, Subdivision</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="55961337_0_6548713781034932742"/>
+  </owl:Class>
+  <owl:Class rdf:about="4501311_8_8306082458935575308_Publisher">
+    <rdfs:label>Publisher</rdfs:label>
+    <rdfs:comment>Publisher column in Table VideoGame. Other Columns: Rank, Title, Category, Publisher</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="4501311_8_8306082458935575308"/>
+  </owl:Class>
+  <owl:Class rdf:about="89511064_0_2199624509082573904_ISO(3)">
+    <rdfs:label>ISO (3)</rdfs:label>
+    <rdfs:comment>ISO (3) column in Table Country. Other Columns: Continent, Region, Country, Capital, FIPS, ISO (2), ISO (3), ISO (No), Internet, Note</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="89511064_0_2199624509082573904"/>
+  </owl:Class>
+  <owl:Class rdf:about="11833461_1_3811022039809817402_Publisher">
+    <rdfs:label>Publisher</rdfs:label>
+    <rdfs:comment>Publisher column in Table VideoGame. Other Columns: Title, Publisher, EU Release Date, AU Release Date, PEGI, ACB</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="11833461_1_3811022039809817402"/>
+  </owl:Class>
+  <owl:Class rdf:about="32051842_5_1757891723986774036_Stadt">
+    <rdfs:label>Stadt</rdfs:label>
+    <rdfs:comment>Stadt column in Table Museum. Other Columns: RANG, Museum, Stadt, Facebook-Fans</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="32051842_5_1757891723986774036"/>
+  </owl:Class>
+  <owl:Class rdf:about="12183399_0_6725061928072492226_CurrencyCode">
+    <rdfs:label>Currency Code</rdfs:label>
+    <rdfs:comment>Currency Code column in Table Country. Other Columns: Country, Country Code (3-character), Country Code (2-character), Currency, Currency Code</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="12183399_0_6725061928072492226"/>
+  </owl:Class>
+  <owl:Class rdf:about="30166286_0_1837439231599898748_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table Scientist. Other Columns: Prize, Year, Winner1, Winner2, Winner3</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="30166286_0_1837439231599898748"/>
+  </owl:Class>
+  <owl:Class rdf:about="26310680_0_5150772059999313798_ALPHABETICCODE">
+    <rdfs:label>ALPHABETIC CODE</rdfs:label>
+    <rdfs:comment>ALPHABETIC CODE column in Table Currency. Other Columns: ENTITY, CURRENCY, ALPHABETIC CODE, NUMERIC CODE</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="26310680_0_5150772059999313798"/>
+  </owl:Class>
+  <owl:Class rdf:about="68779923_4_1832350971585698643_Languages">
+    <rdfs:label>Languages</rdfs:label>
+    <rdfs:comment>Languages column in Table Country. Other Columns: Name, Date, Previous Names, Capital, Government, Languages</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="68779923_4_1832350971585698643"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_12_251152470253168163_Genre">
+    <rdfs:label>Genre</rdfs:label>
+    <rdfs:comment>Genre column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_12_251152470253168163"/>
+  </owl:Class>
+  <owl:Class rdf:about="16949304_0_2573050770332101882_Director">
+    <rdfs:label>Director</rdfs:label>
+    <rdfs:comment>Director column in Table Hospital. Other Columns: Hospital, Hospital ID, Director, Supervisor(s) of training, Contact</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="16949304_0_2573050770332101882"/>
+  </owl:Class>
+  <owl:Class rdf:about="19361188_0_1640726405141876003_Height(m)">
+    <rdfs:label>Height (m)</rdfs:label>
+    <rdfs:comment>Height (m) column in Table Mountain. Other Columns: Summit, Height (m), Height (ft), Grid Reference, Date</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="19361188_0_1640726405141876003"/>
+  </owl:Class>
+  <owl:Class rdf:about="69381058_0_984708047398578866_8.848">
+    <rdfs:label>8.848</rdfs:label>
+    <rdfs:comment>8.848 column in Table Mountain. Other Columns: Everest, 8.848, Nepal/Tibet, Asia</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="69381058_0_984708047398578866"/>
+  </owl:Class>
+  <owl:Class rdf:about="53822652_0_5767892317858575530_Director">
+    <rdfs:label>Director</rdfs:label>
+    <rdfs:comment>Director column in Table Film. Other Columns: Date, Movie, Year, Director</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="53822652_0_5767892317858575530"/>
+  </owl:Class>
+  <owl:Class rdf:about="91959037_0_7907661684242014480_System">
+    <rdfs:label>System</rdfs:label>
+    <rdfs:comment>System column in Table VideoGame. Other Columns: #, Titel, System, Reviews, Durchschnitt</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="91959037_0_7907661684242014480"/>
+  </owl:Class>
+  <owl:Class rdf:about="89511064_0_2199624509082573904_ISO(2)">
+    <rdfs:label>ISO (2)</rdfs:label>
+    <rdfs:comment>ISO (2) column in Table Country. Other Columns: Continent, Region, Country, Capital, FIPS, ISO (2), ISO (3), ISO (No), Internet, Note</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="89511064_0_2199624509082573904"/>
+  </owl:Class>
+  <owl:Ontology rdf:about="r1_test_metadata.owl"/>
+</rdf:RDF>
