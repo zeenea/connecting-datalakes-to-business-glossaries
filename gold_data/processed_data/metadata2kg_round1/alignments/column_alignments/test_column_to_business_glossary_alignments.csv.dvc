@@ -1,0 +1,5 @@
+outs:
+- md5: 13decc2503ea77ae1c864041d29c0bc5
+  size: 34611
+  hash: md5
+  path: test_column_to_business_glossary_alignments.csv
