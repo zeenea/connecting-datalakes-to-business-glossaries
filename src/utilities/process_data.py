@@ -104,6 +104,8 @@ def process_zeenea_open_ds_data():
     table_alignments.to_csv("../gold_data/processed_data/zeenea-open-ds/alignments/dataset_to_business_glossary_alignments.csv")
 
 
+
+
 if __name__ == "__main__":
 
     logger = logging.getLogger(__name__)

@@ -524,7 +524,7 @@ def load_turl_cta_artifacts(train_on, random_state):
     # dev 
 
     dev_pos_ds_alignments_path = f"../gold_data/raw_data/turl-cta/alignments/dataset_alignments/dev_dataset_alignments.csv"
-    dev_pos_ds_alignments = pd.read_csv(train_pos_ds_alignments_path)
+    dev_pos_ds_alignments = pd.read_csv(dev_pos_ds_alignments_path)
     dev_pos_ds_alignments = dev_pos_ds_alignments.drop_duplicates(subset=['table_id'])
     dev_pos_ds_alignments = dev_pos_ds_alignments.reset_index(drop=True)
     dev_pos_ds_alignments = dev_pos_ds_alignments[['table_id', 'tag_entity', 'table_title']]
@@ -590,6 +590,7 @@ def load_turl_cta_artifacts(train_on, random_state):
     ds_to_col = ds_to_col.reset_index(drop=True)
 
     business_glossary_items = business_glossary_items.rename(columns={'business_entity_name':'be_name'})
+    business_glossary_items['description'] = [""]*business_glossary_items.shape[0]
     pos_ds_alignments = pos_ds_alignments.rename(columns={'table_title':'table_name'})
     neg_ds_alignments = neg_ds_alignments.rename(columns={'table_title':'table_name'})
     train_ds_alignments = train_ds_alignments.rename(columns={'table_title':'table_name'})
