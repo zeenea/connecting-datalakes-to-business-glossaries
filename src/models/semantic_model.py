@@ -1,6 +1,5 @@
 import torch
 import logging
-import argparse
 import os
 import pandas as pd
 import mlflow
@@ -42,15 +41,16 @@ def load_processed_data(data_dir_path, dataset_name, object_to_annotate, random_
         else:
             yield pd.DataFrame()
 
+
 def test_mrr_hits_sem_model(
     test_pos_edge_index,
     obj_sem_embeddings,
     be_sem_embeddings,
     k=10,
-    device=None
-    ):
-    
-    all_entity_ids = test_pos_edge_index[1,:].unique() # get the right test data, and load the right data
+    device=None):
+
+    # get the right test data, and load the right data
+    all_entity_ids = test_pos_edge_index[1, :].unique()
 
     obj_sem_embeddings = obj_sem_embeddings.to(device)
     be_sem_embeddings = be_sem_embeddings.to(device)
@@ -58,6 +58,8 @@ def test_mrr_hits_sem_model(
     with torch.no_grad():
         
         mrrs = []
+        hits_at_1 = []
+        hits_at_5 = []
         hits_at_k = []
 
         for i in range(test_pos_edge_index.size(1)):  # Iterate over each test edge (positive)
@@ -77,7 +79,7 @@ def test_mrr_hits_sem_model(
             
             # get sorted entity ids by score
             sorted_entity_indices = src_to_entities_edge_index[1][sorted_indices]
-            #print(f"sorted_entity_indices: {sorted_entity_indices}")
+            # print(f"sorted_entity_indices: {sorted_entity_indices}")
 
             # get rank of true target entity 
             true_edge_rank = (sorted_entity_indices == tgt).nonzero(as_tuple=True)[0].item()
@@ -86,6 +88,19 @@ def test_mrr_hits_sem_model(
             mrrs.append(1.0 / (true_edge_rank+1))
 
             # Hit@K Calculation: Check if the true edge appears in the top K scores
+            # hit@1
+            if true_edge_rank <= 1:
+                hits_at_1.append(1.0)
+            else:
+                hits_at_1.append(0.0)
+
+            # hit@5
+            if true_edge_rank <= 5:
+                hits_at_5.append(1.0)
+            else:
+                hits_at_5.append(0.0)
+
+            # hit@k
             if true_edge_rank <= k:
                 hits_at_k.append(1.0)  # 1 means hit
             else:
@@ -93,9 +108,12 @@ def test_mrr_hits_sem_model(
 
         # Compute average MRR and Hit@K across all test edges
         mrr = torch.tensor(mrrs).mean().item()
+        hit_at_1 = torch.tensor(hits_at_1).mean().item()
+        hits_at_5 = torch.tensor(hits_at_5).mean().item()
         hit_at_k = torch.tensor(hits_at_k).mean().item()
 
-    return mrr, hit_at_k
+    return mrr, hit_at_1, hits_at_5, hit_at_k
+
 
 def save_metrics(metrics:dict, dataset_name, object_to_annotate, random_state, metric_dir):
 
@@ -130,9 +148,11 @@ def main(args):
     dataset_name = args.dataset_name
     object_to_annotate = args.object_to_annotate
     random_state_index = args.random_state_index
+    semantic_encoding_type = args.semantic_encoding_type
+
     parameters = {
-        "top_k":args.top_k,
-        "nb_epochs":0}
+        "top_k": args.top_k,
+        "nb_epochs": 0}
     
     logger.info(args)
 
@@ -152,13 +172,8 @@ def main(args):
     logger.info('Load processed data')
     data_dir_path = "../gold_data/raw_to_dataframes"
     data_out = list(load_processed_data(data_dir_path, dataset_name, object_to_annotate, random_state))
-    train_col_alignments = data_out[0]
     test_col_alignments = data_out[1]
-    train_ds_alignments = data_out[2]
     test_ds_alignments = data_out[3]
-    ds_to_col = data_out[4]
-    ds_to_be = data_out[5]
-    be_to_be = data_out[6]
 
     logger.info("Set device to 'cpu' or 'cuda'")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -174,14 +189,17 @@ def main(args):
         mlflow.log_param('dataset_split_random_state', random_state)
         mlflow.log_param('language_model_name', 'all-MiniLM-L6-v2')
         mlflow.log_param('embedding_dimension', col_sem_embeddings.shape[1])
+        mlflow.log_param('semantic_encoding_type', semantic_encoding_type)
 
         logger.info("Test Semantic Model. Testing: MRR, Hit@10")
     
         if object_to_annotate == 'column':
     
-            test_pos_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
+            test_pos_col_edge_index = torch.from_numpy(
+                test_col_alignments[test_col_alignments['is_matching'] == 1][['col_id', 'be_id']].values
+            ).T
     
-            mrr, hit_at_10 = test_mrr_hits_sem_model(
+            mrr, hit_at_1, hit_at_5, hit_at_k = test_mrr_hits_sem_model(
                 test_pos_col_edge_index, 
                 col_sem_embeddings,
                 be_sem_embeddings,
@@ -189,35 +207,39 @@ def main(args):
                 device=device
                 )
         else:
-            test_pos_ds_edge_index =  torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
+            test_pos_ds_edge_index = torch.from_numpy(
+                test_ds_alignments[test_ds_alignments['is_matching'] == 1][['ds_id', 'be_id']].values
+            ).T
     
-            mrr, hit_at_10 = test_mrr_hits_sem_model(
+            mrr, hit_at_1, hit_at_5, hit_at_k = test_mrr_hits_sem_model(
                 test_pos_ds_edge_index, 
                 ds_sem_embeddings,
                 be_sem_embeddings,
                 k=parameters["top_k"],
                 device=device
                 )
-            
-    
-        logger.info(f"MRR: {mrr:.4f}, Hit@10: {hit_at_10:.4f}")
+
+        logger.info(f"MRR: {mrr: .4f}, Hit@1: {hit_at_1: .4f}, Hit@5: {hit_at_5: .4f}, Hit@10: {hit_at_k: .4f}")
     
         logger.info("Save metrics")
         
         metric_dir_path = "../gold_data/metrics/semantic-model"
         metrics = {
             "MRR": round(mrr, 4),
-            "Hit@10": round(hit_at_10, 4),
+            'Hit@1': round(hit_at_1, 4),
+            'Hit@5': round(hit_at_5, 4),
+            f"Hit@{parameters['top_k']}": round(hit_at_k, 4),
             "epochs": parameters["nb_epochs"],
-            "random_state":random_state,
+            "random_state": random_state,
             "dataset_name": str(dataset_name)
         }
     
         save_metrics(metrics, dataset_name, object_to_annotate, random_state, metric_dir_path)
-    
-        
+
         mlflow.log_metric('mrr', round(mrr, 4))
-        mlflow.log_metric('hit_at_10', round(hit_at_10, 4))
+        mlflow.log_metric("hit_at_1", round(hit_at_1, 4))
+        mlflow.log_metric("hit_at_5", round(hit_at_5, 4))
+        mlflow.log_metric(f"hit_at_{parameters['top_k']}", round(hit_at_k, 4))
         
     
         

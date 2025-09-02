@@ -13,7 +13,6 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 
-
 def load_business_glossary(business_glossary_path, dataset_name=None):
 
     if os.path.isfile(business_glossary_path):
@@ -78,6 +77,7 @@ def store_embeddings(col_embeddings, ds_embeddings, be_embeddings, dataset_name,
         obj = torch.from_numpy(obj)
         torch.save(obj, f"{obj_path}/{obj_name}")
 
+
 def store_dataframe(data, data_save_name, dataset_name, object_to_annotate, random_state):
     
     obj_path = f"../gold_data/raw_to_dataframes/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
@@ -90,8 +90,8 @@ def store_dataframe(data, data_save_name, dataset_name, object_to_annotate, rand
 
 
 def load_t2dv2_artifacts(neg_strategy, random_state):
-    pos_obj_alignments_path =  "../gold_data/raw_data/t2dv2/alignments/column_to_business_glossary_alignments.csv"
-    neg_obj_alignments_path = f"../gold_data/raw_data/t2dv2/negative-alignments/{neg_strategy}_neg_column_alignments.csv"
+    pos_obj_alignments_path = f"../gold_data/raw_data/t2dv2/alignments/column_alignments/column_to_business_glossary_alignments.csv"
+    neg_obj_alignments_path = f"../gold_data/raw_data/t2dv2/negative_alignments/column_alignments/{neg_strategy}_neg_column_alignments.csv"
 
     pos_obj_alignments = pd.read_csv(pos_obj_alignments_path, index_col=0)
     pos_obj_alignments = pos_obj_alignments[~pos_obj_alignments['target_uri'].isnull()]
@@ -125,17 +125,16 @@ def load_t2dv2_artifacts(neg_strategy, random_state):
     train_alignments = pd.concat([train_pos_alignments, train_neg_alignments], axis=0).reset_index(drop=True).sample(frac=1, random_state=random_state).reset_index(drop=True)
     test_alignments = pd.concat([test_pos_alignments, test_neg_alignments], axis=0).reset_index(drop=True).sample(frac=1, random_state=random_state).reset_index(drop=True)
 
-
-    business_glossary_items_path = "../gold_data/raw_data/t2dv2/business-glossary/property_metadata.csv"
+    business_glossary_items_path = "../gold_data/raw_data/t2dv2/business_glossary/property_metadata.csv"
     business_glossary_items = load_business_glossary(business_glossary_items_path)
     business_glossary_items = business_glossary_items.reset_index(drop=True)
     business_glossary_items = business_glossary_items.reset_index()
     business_glossary_items = business_glossary_items.rename(columns={'index':'be_id'})
     business_glossary_items['be_id'] = business_glossary_items['be_id'].astype(int)
-    assert max(business_glossary_items['be_id']) +1  == business_glossary_items.shape[0]
+    assert max(business_glossary_items['be_id']) +1 == business_glossary_items.shape[0]
 
     # load dataset alignments
-    dataset_alignments_path = "../gold_data/raw_data/t2dv2/alignments/dataset_to_business_glossary_alignments.csv"
+    dataset_alignments_path = "../gold_data/raw_data/t2dv2/alignments/dataset_alignments/dataset_to_business_glossary_alignments.csv"
     dataset_alignments = pd.read_csv(dataset_alignments_path)
     dataset_alignments['id_table'] = dataset_alignments['table_file'].apply(lambda x: x[:-7])
     dataset_alignments.loc[dataset_alignments[dataset_alignments['uri']=="http://www.w3.org/2002/07/owl#Thing"].index, 'uri'] = None 
@@ -145,7 +144,7 @@ def load_t2dv2_artifacts(neg_strategy, random_state):
     dataset_alignments['is_matching'] = 1
     assert max(dataset_alignments['ds_id']) +1 == dataset_alignments.shape[0]
 
-    dataset_alignments = pd.merge(dataset_alignments, pos_obj_alignments[['col_id', 'id_table']], left_on='id_table', right_on='id_table', how='right')
+    dataset_alignments = pd.merge(dataset_alignments, pos_obj_alignments[['col_id', 'id_table', 'header']], left_on='id_table', right_on='id_table', how='right')
     dataset_alignments = dataset_alignments.drop(columns=['ds_id'])
     dataset_alignments = dataset_alignments.reset_index(drop=True)
     dataset_alignments = dataset_alignments.reset_index()
@@ -195,9 +194,10 @@ def load_t2dv2_artifacts(neg_strategy, random_state):
 
     train_ds_alignments = train_ds_alignments.rename(columns={'table_file':'table_name'})
 
-    business_glossary_items = business_glossary_items.rename(columns={'label':'be_name'})
-    dataset_alignments = dataset_alignments.rename(columns={'table_file':'table_name'})
-    
+    business_glossary_items = business_glossary_items.rename(columns={'label':'be_name', 'comment': 'description'})
+    dataset_alignments = dataset_alignments.rename(columns={'table_file':'table_name', 'header': 'table_columns'})
+    pos_obj_alignments['table_name'] = [""]* pos_obj_alignments.shape[0]
+
     return train_alignments, test_alignments, train_ds_alignments, test_ds_alignments, business_glossary_items, ds_to_obj, be_to_be, pos_obj_alignments, dataset_alignments
 
 
@@ -205,8 +205,8 @@ def load_zeenea_open_ds_artifacts(train_on, random_state):
 
     dataset_name = 'zeenea-open-ds'
         
-    pos_col_alignments_path = "../gold_data/raw_data/zeenea-open-ds/alignments/column_to_business_glossary_alignments.csv"
-    neg_col_alignments_path = "../gold_data/raw_data/zeenea-open-ds/negative-alignments/random_neg_column_alignments.csv"
+    pos_col_alignments_path = "../gold_data/raw_data/zeenea-open-ds/alignments/column_alignments/column_to_business_glossary_alignments.csv"
+    neg_col_alignments_path = "../gold_data/raw_data/zeenea-open-ds/negative_alignments/column_alignments/random_neg_column_alignments.csv"
     
     pos_col_alignments = pd.read_csv(pos_col_alignments_path, index_col=0)
     pos_col_alignments = pos_col_alignments[~pos_col_alignments['business_entity_code'].isnull()]
@@ -242,8 +242,7 @@ def load_zeenea_open_ds_artifacts(train_on, random_state):
     if train_on == 'column':
         test_col_alignments = pd.concat([test_pos_col_alignments, test_neg_col_alignments], axis=0).reset_index(drop=True).sample(frac=1, random_state=random_state).reset_index(drop=True)
 
-
-    business_glossary_items_path = "../gold_data/raw_data/zeenea-open-ds/business-glossaries"
+    business_glossary_items_path = "../gold_data/raw_data/zeenea-open-ds/business_glossaries"
     business_glossary_items = load_business_glossary(business_glossary_items_path)
     business_glossary_items = business_glossary_items.reset_index(drop=True)
     business_glossary_items = business_glossary_items.reset_index()
@@ -268,7 +267,7 @@ def load_zeenea_open_ds_artifacts(train_on, random_state):
     be_to_be = be_to_be.reset_index(drop=True)
     
     # load dataset alignments
-    pos_ds_alignments_path = "../gold_data/raw_data/zeenea-open-ds/alignments/dataset_to_business_glossary_alignments.csv"
+    pos_ds_alignments_path = "../gold_data/processed_data/zeenea-open-ds/alignments/dataset_alignments/dataset_to_business_glossary_alignments.csv"
     pos_ds_alignments = pd.read_csv(pos_ds_alignments_path, index_col=0)
     pos_ds_alignments = pos_ds_alignments.reset_index(drop=True)
     pos_ds_alignments = pos_ds_alignments.reset_index()
@@ -287,7 +286,7 @@ def load_zeenea_open_ds_artifacts(train_on, random_state):
     pos_ds_alignments = pos_ds_alignments.rename(columns={'dataset_code':'table_name'})
     
     # split test and train for dataset alignments
-    neg_ds_alignments_path = "../gold_data/raw_data/zeenea-open-ds/negative-alignments/random_neg_dataset_alignments.csv"
+    neg_ds_alignments_path = "../gold_data/raw_data/zeenea-open-ds/negative_alignments/dataset_alignments/random_neg_dataset_alignments.csv"
     neg_ds_alignments = pd.read_csv(neg_ds_alignments_path, index_col=0)
     neg_ds_alignments = neg_ds_alignments.rename(columns={'neg_business_entity_code':'business_entity_code'})
     neg_ds_alignments = neg_ds_alignments[~neg_ds_alignments['business_entity_code'].isnull()]
@@ -320,12 +319,69 @@ def load_zeenea_open_ds_artifacts(train_on, random_state):
     if train_on == 'dataset':
         test_ds_alignments = pd.merge(test_ds_alignments, business_glossary_items[['be_id', 'code']], left_on='business_entity_code', right_on='code', how='inner')
 
-
     if train_on == 'column':
         test_ds_alignments = None
     elif train_on == 'dataset':
         test_col_alignments = None
-    
+
+    pos_col_alignments = pos_col_alignments.rename(columns={'dataset_name': 'table_name'})
+
+    return train_col_alignments, test_col_alignments, train_ds_alignments, test_ds_alignments, business_glossary_items, ds_to_col, be_to_be, pos_col_alignments, pos_ds_alignments
+
+
+def load_metadata2kg_artifacts(dataset_name, random_state):
+    #dataset_name = 'metadata2kg_round1'
+
+    test_pos_col_alignments_path = f"../gold_data/processed_data/{dataset_name}/alignments/column_alignments/test_column_to_business_glossary_alignments.csv"
+    eval_pos_col_alignments_path = f"../gold_data/processed_data/{dataset_name}/alignments/column_alignments/eval_column_to_business_glossary_alignments.csv"
+
+    eval_pos_col_alignments = pd.read_csv(eval_pos_col_alignments_path, index_col=0)
+    eval_pos_col_alignments = eval_pos_col_alignments[~eval_pos_col_alignments['entity_id'].isnull()]
+    eval_pos_col_alignments = eval_pos_col_alignments.reset_index(drop=True)
+    eval_pos_col_alignments = eval_pos_col_alignments.reset_index()
+    eval_pos_col_alignments = eval_pos_col_alignments.rename(columns={'index':'col_id', 'label': 'column_name'})
+    eval_pos_col_alignments['is_matching'] = 1
+
+    test_pos_col_alignments = pd.read_csv(test_pos_col_alignments_path, index_col=0)
+    test_pos_col_alignments = test_pos_col_alignments[~test_pos_col_alignments['entity_id'].isnull()]
+    test_pos_col_alignments = test_pos_col_alignments.reset_index(drop=True)
+    test_pos_col_alignments = test_pos_col_alignments.reset_index()
+    test_pos_col_alignments = test_pos_col_alignments.rename(columns={'index':'col_id', 'label': 'column_name'})
+    test_pos_col_alignments['is_matching'] = 1
+
+    train_col_alignments = eval_pos_col_alignments.sample(frac=1, random_state=random_state).reset_index(drop=True)
+    test_col_alignments = test_pos_col_alignments.sample(frac=1, random_state=random_state).reset_index(drop=True)
+
+    business_glossary_items_path = f"../gold_data/processed_data/{dataset_name}/business_glossary/glossary.csv"
+    business_glossary_items = load_business_glossary(business_glossary_items_path)
+    business_glossary_items = business_glossary_items.reset_index(drop=True)
+    business_glossary_items = business_glossary_items.reset_index()
+    business_glossary_items = business_glossary_items.rename(columns={'index': 'be_id'})
+
+    train_col_alignments = pd.merge(train_col_alignments, business_glossary_items[['be_id', 'id']], left_on='entity_id', right_on='id', how='inner')
+    test_col_alignments = pd.merge(test_col_alignments, business_glossary_items[['be_id', 'id']], left_on='entity_id', right_on='id', how='inner')
+
+    # ds_to_col
+    ds_to_col = test_col_alignments[['table_id', 'table_name', 'col_id', 'column_name', 'table_columns']]
+    ds_to_col = ds_to_col.drop_duplicates(subset=['table_id']).reset_index(drop=True)
+    ds_to_col = ds_to_col.reset_index()
+    ds_to_col = ds_to_col.rename(columns={'index': 'ds_id'})
+
+    pos_ds_alignments = ds_to_col[['ds_id', 'table_id', 'table_name', 'table_columns']]
+    pos_ds_alignments['entity_id'] = [None] * pos_ds_alignments.shape[0]
+
+    # todo: implement all ds_to_col
+
+    ds_to_col = ds_to_col[['ds_id', 'col_id']]
+    ds_to_col = ds_to_col.reset_index(drop=True)
+
+    business_glossary_items = business_glossary_items.rename(columns={'label': 'be_name', 'desc': 'description'})
+
+    train_ds_alignments = pd.DataFrame()
+    test_ds_alignments = pd.DataFrame()
+    be_to_be = pd.DataFrame()
+    pos_col_alignments = test_pos_col_alignments
+
     return train_col_alignments, test_col_alignments, train_ds_alignments, test_ds_alignments, business_glossary_items, ds_to_col, be_to_be, pos_col_alignments, pos_ds_alignments
 
 
@@ -334,14 +390,14 @@ def load_turl_cta_artifacts(train_on, random_state):
     dataset_name = 'turl-cta'
     
     # train 
-    train_pos_col_alignments_path = "../gold_data/raw_data/turl-cta/alignments/column-alignments/train_column_alignments.csv"
+    train_pos_col_alignments_path = "../gold_data/raw_data/turl-cta/alignments/column_alignments/train_column_alignments.csv"
     train_pos_col_alignments = pd.read_csv(train_pos_col_alignments_path, index_col=0)
     train_pos_col_alignments = train_pos_col_alignments.rename(columns={'column_label':'target_uri'})
     train_pos_col_alignments = train_pos_col_alignments.reset_index(drop=True)
     train_pos_col_alignments = train_pos_col_alignments[['table_id', 'target_uri', 'column_name']]
     train_pos_col_alignments['is_matching'] = 1
 
-    train_neg_col_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/columns/train_random_neg_alignments.csv"
+    train_neg_col_alignments_path = "../gold_data/raw_data/turl-cta/negative_alignments/column_alignments/train_random_neg_alignments.csv"
     train_neg_col_alignments = pd.read_csv(train_neg_col_alignments_path, index_col=0)
     train_neg_col_alignments = train_neg_col_alignments.rename(columns={'neg_business_entity_code':'target_uri'})
     train_neg_col_alignments = train_neg_col_alignments.reset_index(drop=True)
@@ -351,14 +407,14 @@ def load_turl_cta_artifacts(train_on, random_state):
     assert train_pos_col_alignments.shape[0] == train_neg_col_alignments.shape[0]
 
     # dev
-    dev_pos_col_alignments_path = "../gold_data/raw_data/turl-cta/alignments/column-alignments/dev_column_alignments.csv"
+    dev_pos_col_alignments_path = "../gold_data/raw_data/turl-cta/alignments/column_alignments/dev_column_alignments.csv"
     dev_pos_col_alignments = pd.read_csv(dev_pos_col_alignments_path, index_col=0)
     dev_pos_col_alignments = dev_pos_col_alignments.rename(columns={'column_label':'target_uri'})
     dev_pos_col_alignments = dev_pos_col_alignments.reset_index(drop=True)
     dev_pos_col_alignments = dev_pos_col_alignments[['table_id', 'target_uri', 'column_name']]
     dev_pos_col_alignments['is_matching'] = 1
 
-    dev_neg_col_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/columns/dev_random_neg_alignments.csv"
+    dev_neg_col_alignments_path = "../gold_data/raw_data/turl-cta/negative_alignments/column_alignments/dev_random_neg_alignments.csv"
     dev_neg_col_alignments = pd.read_csv(dev_neg_col_alignments_path, index_col=0)
     dev_neg_col_alignments = dev_neg_col_alignments.rename(columns={'neg_business_entity_code':'target_uri'})
     dev_neg_col_alignments = dev_neg_col_alignments.reset_index(drop=True)
@@ -369,14 +425,14 @@ def load_turl_cta_artifacts(train_on, random_state):
     assert dev_pos_col_alignments.shape[0] == dev_neg_col_alignments.shape[0]
 
     # test
-    test_pos_col_alignments_path = "../gold_data/raw_data/turl-cta/alignments/column-alignments/test_column_alignments.csv"
+    test_pos_col_alignments_path = "../gold_data/raw_data/turl-cta/alignments/column_alignments/test_column_alignments.csv"
     test_pos_col_alignments = pd.read_csv(test_pos_col_alignments_path, index_col=0)
     test_pos_col_alignments = test_pos_col_alignments.rename(columns={'column_label':'target_uri'})
     test_pos_col_alignments = test_pos_col_alignments.reset_index(drop=True)
     test_pos_col_alignments = test_pos_col_alignments[['table_id', 'target_uri', 'column_name']]
     test_pos_col_alignments['is_matching'] = 1
     
-    test_neg_col_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/columns/test_random_neg_alignments.csv"
+    test_neg_col_alignments_path = "../gold_data/raw_data/turl-cta/negative_alignments/column_alignments/test_random_neg_alignments.csv"
     test_neg_col_alignments = pd.read_csv(test_neg_col_alignments_path, index_col=0)
     test_neg_col_alignments = test_neg_col_alignments.rename(columns={'neg_business_entity_code':'target_uri'})
     test_neg_col_alignments = test_neg_col_alignments.reset_index(drop=True)
@@ -416,7 +472,7 @@ def load_turl_cta_artifacts(train_on, random_state):
         test_col_alignments = pd.concat([pos_col_alignments[train_size:], neg_col_alignments[train_size:]], axis=0).sample(frac=1)
     
     # load business glossary
-    business_glossary_path = "../gold_data/raw_data/turl-cta/business-glossary/glossary_data.csv"
+    business_glossary_path = "../gold_data/raw_data/turl-cta/business_glossary/glossary_data.csv"
     business_glossary_items = load_business_glossary(business_glossary_path)
     business_glossary_items = business_glossary_items.reset_index(drop=True)
     business_glossary_items['sub_class_of'] = business_glossary_items['business_entity_code'].apply(lambda x: str(x).split('.')[0])
@@ -450,14 +506,14 @@ def load_turl_cta_artifacts(train_on, random_state):
     # load dataset alignments
 
     # train
-    train_pos_ds_alignments_path = f"../gold_data/raw_data/data/turl-cta/alignments/dataset-alignments/train_dataset_alignments.csv"
+    train_pos_ds_alignments_path = f"../gold_data/raw_data/turl-cta/alignments/dataset_alignments/train_dataset_alignments.csv"
     train_pos_ds_alignments = pd.read_csv(train_pos_ds_alignments_path)
     train_pos_ds_alignments = train_pos_ds_alignments.drop_duplicates(subset=['table_id'])
     train_pos_ds_alignments = train_pos_ds_alignments.reset_index(drop=True)
     train_pos_ds_alignments = train_pos_ds_alignments[['table_id', 'tag_entity', 'table_title']]
     train_pos_ds_alignments['is_matching'] = 1
 
-    train_neg_ds_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/datasets/train_random_neg_alignments.csv"
+    train_neg_ds_alignments_path = "../gold_data/raw_data/turl-cta/negative_alignments/dataset_alignments/train_random_neg_alignments.csv"
     train_neg_ds_alignments = pd.read_csv(train_neg_ds_alignments_path, index_col=0)
     train_neg_ds_alignments = train_neg_ds_alignments.rename(columns={'neg_business_entity_code':'tag_entity'})
     train_neg_ds_alignments = train_neg_ds_alignments.reset_index(drop=True)
@@ -467,14 +523,14 @@ def load_turl_cta_artifacts(train_on, random_state):
     
     # dev 
 
-    dev_pos_ds_alignments_path = f"../gold_data/raw_data/turl-cta/alignments/dataset-alignments/dev_dataset_alignments.csv"
+    dev_pos_ds_alignments_path = f"../gold_data/raw_data/turl-cta/alignments/dataset_alignments/dev_dataset_alignments.csv"
     dev_pos_ds_alignments = pd.read_csv(train_pos_ds_alignments_path)
     dev_pos_ds_alignments = dev_pos_ds_alignments.drop_duplicates(subset=['table_id'])
     dev_pos_ds_alignments = dev_pos_ds_alignments.reset_index(drop=True)
     dev_pos_ds_alignments = dev_pos_ds_alignments[['table_id', 'tag_entity', 'table_title']]
     dev_pos_ds_alignments['is_matching'] = 1
 
-    dev_neg_ds_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/datasets/dev_random_neg_alignments.csv"
+    dev_neg_ds_alignments_path = "../gold_data/raw_data/turl-cta/negative_alignments/dataset_alignments/dev_random_neg_alignments.csv"
     dev_neg_ds_alignments = pd.read_csv(dev_neg_ds_alignments_path, index_col=0)
     dev_neg_ds_alignments = dev_neg_ds_alignments.rename(columns={'neg_business_entity_code':'tag_entity'})
     dev_neg_ds_alignments = dev_neg_ds_alignments.reset_index(drop=True)
@@ -484,14 +540,14 @@ def load_turl_cta_artifacts(train_on, random_state):
 
     
     # test
-    test_pos_ds_alignments_path = f"../gold_data/raw_data/turl-cta/alignments/dataset-alignments/test_dataset_alignments.csv"
+    test_pos_ds_alignments_path = f"../gold_data/raw_data/turl-cta/alignments/dataset_alignments/test_dataset_alignments.csv"
     test_pos_ds_alignments = pd.read_csv(test_pos_ds_alignments_path)
     test_pos_ds_alignments = test_pos_ds_alignments.drop_duplicates(subset=['table_id'])
     test_pos_ds_alignments = test_pos_ds_alignments.reset_index(drop=True)
     test_pos_ds_alignments = test_pos_ds_alignments[['table_id', 'tag_entity', 'table_title']]
     test_pos_ds_alignments['is_matching'] = 1 
 
-    test_neg_ds_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/datasets/test_random_neg_alignments.csv"
+    test_neg_ds_alignments_path = "../gold_data/raw_data/turl-cta/negative_alignments/dataset_alignments/test_random_neg_alignments.csv"
     test_neg_ds_alignments = pd.read_csv(test_neg_ds_alignments_path, index_col=0)
     test_neg_ds_alignments = test_neg_ds_alignments.rename(columns={'neg_business_entity_code':'tag_entity'})
     test_neg_ds_alignments = test_neg_ds_alignments.reset_index(drop=True)
@@ -617,6 +673,7 @@ def generate_tfidf_embeddings(col_df_file, ds_df_file, be_df_file, batch_size, l
 
     return col_embeddings, ds_embeddings, be_embeddings
 
+
 def generate_semantic_embeddings(df, column_to_encode, model, stemmer, stop_words):
 
     return encode_semantic_textual_data(df[column_to_encode].apply(lambda x: preprocess(x, stemmer=stemmer, stop_words=stop_words)), model)
@@ -648,6 +705,7 @@ def main(args):
     generate_syntactic_embeddings_bool = args.generate_syntactic_embeddings
     generate_semantic_embeddings_bool = args.generate_semantic_embeddings
     generate_semantic_textual_links_bool = args.generate_semantic_textual_links
+    semantic_encoding_type = args.semantic_encoding_type
 
     logger.info(args)
     
@@ -656,7 +714,6 @@ def main(args):
 
     logger.info("Set device to 'cpu' or 'cuda' ")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
     
     logger.info("Load Data Artefacts")
     if dataset_name == 't2dv2':
@@ -684,7 +741,6 @@ def main(args):
         pos_col_alignments = results[7]
         pos_ds_alignments = results[8]
 
-
     if dataset_name == "turl-cta":
         
         results = load_turl_cta_artifacts(object_to_annotate, random_state)
@@ -698,6 +754,17 @@ def main(args):
         pos_col_alignments = results[7]
         pos_ds_alignments = results[8]
 
+    if dataset_name == "metadata2kg_round1" or dataset_name == "metadata2kg_round2":
+        results = load_metadata2kg_artifacts(dataset_name, random_state)
+        train_col_alignments = results[0]
+        test_col_alignments = results[1]
+        train_ds_alignments = results[2]
+        test_ds_alignments = results[3]
+        business_glossary_items = results[4]
+        ds_to_col = results[5]
+        be_to_be = results[6]
+        pos_col_alignments = results[7]
+        pos_ds_alignments = results[8]
     
     logger.info("Save Data Artefacts")
     store_dataframe(train_col_alignments, "train_col_alignments.parquet", dataset_name, object_to_annotate, random_state)
@@ -712,7 +779,6 @@ def main(args):
     store_dataframe(ds_to_col, "ds_to_col.parquet", dataset_name, object_to_annotate, random_state)
     store_dataframe(be_to_be, "be_to_be.parquet", dataset_name, object_to_annotate, random_state)
 
-
     if generate_semantic_embeddings_bool or generate_semantic_textual_links_bool:
         
         logger.info("Set Stopwords")
@@ -723,12 +789,52 @@ def main(args):
         model_name = 'all-MiniLM-L6-v2'
         model = SentenceTransformer(model_name).to(device)
 
-    if generate_semantic_embeddings_bool: 
+    if generate_semantic_embeddings_bool:
         logger.info("Generate Semantic Embeddings")
-        
-        col_sem_embeddings = generate_semantic_embeddings(pos_col_alignments, "column_name", model, stemmer, stop_words) 
-        ds_sem_embeddings = generate_semantic_embeddings(pos_ds_alignments, "table_name", model, stemmer, stop_words) 
-        be_sem_embeddings = generate_semantic_embeddings(business_glossary_items, 'be_name', model, stemmer, stop_words) 
+        logger.info(f"semantic_encoding_type: {semantic_encoding_type}")
+
+        if semantic_encoding_type == "SEMANTIC-ENCODING-TYPE-1":
+
+            pos_col_alignments['text'] = pos_col_alignments['column_name']
+            pos_ds_alignments['text'] = pos_ds_alignments['table_name']
+            business_glossary_items['text'] = business_glossary_items['be_name']
+
+        elif semantic_encoding_type == "SEMANTIC-ENCODING-TYPE-2":
+
+            pos_col_alignments['text'] = pos_col_alignments['column_name']
+            pos_ds_alignments['text'] = pos_ds_alignments['table_name']
+            business_glossary_items['text'] = business_glossary_items.apply(lambda x: f"{x['be_name']}, {x['description']}", axis=1)
+
+        elif semantic_encoding_type == "SEMANTIC-ENCODING-TYPE-3":
+
+            pos_col_alignments['text'] = pos_col_alignments['column_name']
+            pos_ds_alignments['text'] = pos_ds_alignments['table_name']
+            business_glossary_items['text'] = business_glossary_items['description']
+
+        elif semantic_encoding_type == "SEMANTIC-ENCODING-TYPE-4":
+
+            pos_col_alignments['text'] = pos_col_alignments.apply(lambda x: f"{x['column_name']}, {x['table_name']}", axis=1)
+            pos_ds_alignments['text'] = pos_ds_alignments.apply(lambda x: f"{x['table_name']}, {x['table_columns']}", axis=1)
+            business_glossary_items['text'] = business_glossary_items['be_name']
+
+        elif semantic_encoding_type == "SEMANTIC-ENCODING-TYPE-5":
+
+            pos_col_alignments['text'] = pos_col_alignments.apply(lambda x: f"{x['column_name']}, {x['table_name']}", axis=1)
+            pos_ds_alignments['text'] = pos_ds_alignments.apply(lambda x: f"{x['table_name']}, {x['table_columns']}", axis=1)
+            business_glossary_items['text'] = business_glossary_items.apply(lambda x: f"{x['be_name']}, {x['description']}", axis=1)
+
+        elif semantic_encoding_type == "SEMANTIC-ENCODING-TYPE-6":
+
+            pos_col_alignments['text'] = pos_col_alignments.apply(lambda x: f"{x['column_name']}, {x['table_name']}", axis=1)
+            pos_ds_alignments['text'] = pos_ds_alignments.apply(lambda x: f"{x['table_name']}, {x['table_columns']}", axis=1)
+            business_glossary_items['text'] = business_glossary_items['description']
+
+        else:
+            logger.warning("semantic_encoding_type Error!")
+
+        col_sem_embeddings = generate_semantic_embeddings(pos_col_alignments, "text", model, stemmer, stop_words)
+        ds_sem_embeddings = generate_semantic_embeddings(pos_ds_alignments, "text", model, stemmer, stop_words)
+        be_sem_embeddings = generate_semantic_embeddings(business_glossary_items, 'text', model, stemmer, stop_words)
 
         logger.info("Save Semantic Embeddings")
         store_embeddings(col_sem_embeddings, ds_sem_embeddings, be_sem_embeddings, dataset_name, 'semantic-based', random_state)
@@ -741,7 +847,6 @@ def main(args):
         models_dir_path = "../gold_data/models"
         save_model(model, models_dir_path, dataset_name, 0, model_name, random_state)
 
-    
     if generate_syntactic_embeddings_bool:
         logger.info("Generate Syntactic Embeddings")
         
@@ -767,7 +872,6 @@ def main(args):
     if generate_semantic_textual_links_bool:
         logger.info("Generate Textual Links <[CLS]source_name[SEP]target_name[SEP]>")
 
-        
         if object_to_annotate == 'column':
             column_name = "column_name"
             column_id = "col_id"
@@ -787,7 +891,6 @@ def main(args):
             table_id = "ds_id"
             be_name = "be_name"
             be_id = "be_id"
-            
 
             train_ds_alignments = pd.merge(train_ds_alignments, business_glossary_items[[be_id, be_name]], on=be_id, how='inner')
             test_ds_alignments = pd.merge(test_ds_alignments, business_glossary_items[[be_id, be_name]], on=be_id, how='inner')
