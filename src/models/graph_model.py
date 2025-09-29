@@ -697,7 +697,7 @@ def main(args):
         
         save_model(hetero_model, models_dir_path, dataset_name, max_epochs, model_name, random_state)
 
-        registered_model_name = f"{dataset_name}-{object_to_annotate}-{model_class_name}"
+        registered_model_name = f"{dataset_name}-{random_state_index}-{object_to_annotate}-{model_class_name}"
         mlflow.pytorch.log_model(hetero_model, model_class_name, registered_model_name=registered_model_name)
 
         logger.info("Save Graph Embeddings")
