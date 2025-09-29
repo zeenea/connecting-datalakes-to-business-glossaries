@@ -1,0 +1,5 @@
+outs:
+- md5: 5e874f2fdb8d1a274b9e9f65b49b0edf
+  size: 60082294
+  hash: md5
+  path: dev.table_col_type.json

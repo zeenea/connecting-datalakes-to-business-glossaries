@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:owl="http://www.w3.org/2002/07/owl#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <owl:Class rdf:about="84548468_0_5955155464119382182_Year">
+    <rdfs:label>Year</rdfs:label>
+    <rdfs:comment>Year column in Table Film. Other Columns: Fans' Rank, Title, Year, Director(s), Overall Rank</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="84548468_0_5955155464119382182"/>
+  </owl:Class>
+  <owl:Class rdf:about="69381058_0_984708047398578866_Asia">
+    <rdfs:label>Asia</rdfs:label>
+    <rdfs:comment>Asia column in Table Mountain. Other Columns: Everest, 8.848, Nepal/Tibet, Asia</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="69381058_0_984708047398578866"/>
+  </owl:Class>
+  <owl:Class rdf:about="21362676_0_6854186738074119688_Director(s)">
+    <rdfs:label>Director(s)</rdfs:label>
+    <rdfs:comment>Director(s) column in Table Film. Other Columns: Fans' Rank, Title, Year, Director(s), Overall Rank</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="21362676_0_6854186738074119688"/>
+  </owl:Class>
+  <owl:Class rdf:about="84675086_0_6386416780680710863_Genus">
+    <rdfs:label>Genus</rdfs:label>
+    <rdfs:comment>Genus column in Table Bird. Other Columns: Common Name, Genus, Species, IUCN</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="84675086_0_6386416780680710863"/>
+  </owl:Class>
+  <owl:Class rdf:about="29414811_12_251152470253168163_Developer(s)">
+    <rdfs:label>Developer(s)</rdfs:label>
+    <rdfs:comment>Developer(s) column in Table VideoGame. Other Columns: Year, Game, Genre, Platform(s), Developer(s)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="29414811_12_251152470253168163"/>
+  </owl:Class>
+  <owl:Class rdf:about="21585935_0_294037497010176843_State">
+    <rdfs:label>State</rdfs:label>
+    <rdfs:comment>State column in Table Airport. Other Columns: Code, Airport Name, City, State</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="21585935_0_294037497010176843"/>
+  </owl:Class>
+  <owl:Class rdf:about="64499281_8_7181683886563136802_Stadt">
+    <rdfs:label>Stadt</rdfs:label>
+    <rdfs:comment>Stadt column in Table Museum. Other Columns: RANG, Museum, Stadt, Facebook-Fans</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="64499281_8_7181683886563136802"/>
+  </owl:Class>
+  <owl:Class rdf:about="52208141_2_5171684379987586712_Stadt">
+    <rdfs:label>Stadt</rdfs:label>
+    <rdfs:comment>Stadt column in Table Museum. Other Columns: RANG, Museum, Stadt, Facebook-Fans</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="52208141_2_5171684379987586712"/>
+  </owl:Class>
+  <owl:Ontology rdf:about="r1_sample_metadata.owl"/>
+  <owl:Class rdf:about="58891288_0_1117541047012405958_Director(s)">
+    <rdfs:label>Director(s)</rdfs:label>
+    <rdfs:comment>Director(s) column in Table Film. Other Columns: Rank, Title, Year, Director(s), Overall Rank</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="58891288_0_1117541047012405958"/>
+  </owl:Class>
+</rdf:RDF>

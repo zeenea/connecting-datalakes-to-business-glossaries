@@ -1,5 +1,13 @@
 from utilities import load_data
-from models import semantic_model, syntactic_model, random_model, graph_model, hybrid_model_sem_graph_embedding_learning, hybrid_model_syn_sem_embedding_learning, hybrid_model_syn_sem_graph_embedding_learning, cross_model_sem_graph_similarity_learning, cross_model_syn_graph_similarity_learning, cross_model_syn_sem_similarity_learning, hybrid_model_syn_graph_embedding_learning, cross_model_syn_sem_graph_similarity_learning, binary_classifier_model, decision_tree_classifier_model_syn_sem_graph_similarity_learning, random_forest_classifier_model_syn_sem_graph_similarity_learning, svm_classifier_model_syn_sem_graph_similarity_learning, xgboost_classifier_model_syn_sem_graph_similarity_learning
+from models import semantic_model, syntactic_model, random_model, graph_model,\
+    hybrid_model_sem_graph_embedding_learning, hybrid_model_syn_sem_embedding_learning, \
+    hybrid_model_syn_sem_graph_embedding_learning, cross_model_sem_graph_similarity_learning,\
+    cross_model_syn_graph_similarity_learning, cross_model_syn_sem_similarity_learning, \
+    hybrid_model_syn_graph_embedding_learning, cross_model_syn_sem_graph_similarity_learning, \
+    binary_classifier_model, decision_tree_classifier_model_syn_sem_graph_similarity_learning, \
+    random_forest_classifier_model_syn_sem_graph_similarity_learning, \
+    svm_classifier_model_syn_sem_graph_similarity_learning, xgboost_classifier_model_syn_sem_graph_similarity_learning
+
 
 import argparse
 import yaml
@@ -25,9 +33,11 @@ def starts_load_data():
         parser.add_argument('--generate_syntactic_embeddings', action='store_true', default=False)
         parser.add_argument('--generate_semantic_embeddings', action='store_true', default=False)
         parser.add_argument('--generate_semantic_textual_links', action='store_true', default=False)
+        parser.add_argument('--semantic_encoding_type', type=str, default='SEMANTIC-ENCODING-TYPE-1')
         
         args, _ = parser.parse_known_args()
         load_data.main(args)
+
 
 def starts_random_model():    
     yaml_file_path = "./input_yaml_config/model_configs.yaml"
@@ -71,6 +81,7 @@ def starts_semantic_model():
     parser.add_argument('--random_state_index', type=int)
     parser.add_argument('--top_k', type=int, default=yaml_args.get('top_k'))
     parser.add_argument('--nb_epochs', type=int, default=yaml_args.get('nb_epochs'))
+    parser.add_argument('--semantic_encoding_type', type=str, default='SEMANTIC-ENCODING-TYPE-1')
     
     args, _ = parser.parse_known_args()
     semantic_model.main(args)

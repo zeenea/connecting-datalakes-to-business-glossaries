@@ -1,0 +1,286 @@
+{"id": "seattle-land-use-permits##Address", "mappings": [{"id": "40", "score": 1.0}, {"id": "210", "score": 1.0}]}
+{"id": "seattle-land-use-permits##Description", "mappings": [{"id": "892", "score": 1.0}]}
+{"id": "seattle-land-use-permits##Category", "mappings": [{"id": "546", "score": 1.0}, {"id": "813", "score": 1.0}]}
+{"id": "seattle-land-use-permits##Value", "mappings": [{"id": "665", "score": 1.0}]}
+{"id": "seattle-land-use-permits##Application Date", "mappings": [{"id": "47", "score": 1.0}, {"id": "75", "score": 1.0}]}
+{"id": "seattle-land-use-permits##Decision Date", "mappings": [{"id": "48", "score": 1.0}]}
+{"id": "seattle-land-use-permits##Issue Date", "mappings": [{"id": "50", "score": 1.0}, {"id": "76", "score": 1.0}]}
+{"id": "seattle-land-use-permits##Status", "mappings": [{"id": "51", "score": 1.0}, {"id": "79", "score": 1.0}, {"id": "974", "score": 1.0}]}
+{"id": "seattle-land-use-permits##Latitude", "mappings": [{"id": "54", "score": 1.0}, {"id": "80", "score": 1.0}, {"id": "217", "score": 1.0}, {"id": "821", "score": 1.0}]}
+{"id": "seattle-land-use-permits##Longitude", "mappings": [{"id": "55", "score": 1.0}, {"id": "81", "score": 1.0}, {"id": "218", "score": 1.0}, {"id": "822", "score": 1.0}]}
+{"id": "seattle-land-use-permits##Location", "mappings": [{"id": "26", "score": 1.0}, {"id": "306", "score": 1.0}, {"id": "645", "score": 1.0}, {"id": "729", "score": 1.0}, {"id": "1011", "score": 1.0}, {"id": "1023", "score": 1.0}]}
+{"id": "seattle-trade-permits##Description", "mappings": [{"id": "892", "score": 1.0}]}
+{"id": "seattle-trade-permits##Value", "mappings": [{"id": "665", "score": 1.0}]}
+{"id": "seattle-trade-permits##Application Date", "mappings": [{"id": "47", "score": 1.0}, {"id": "75", "score": 1.0}]}
+{"id": "seattle-trade-permits##Issue Date", "mappings": [{"id": "50", "score": 1.0}, {"id": "76", "score": 1.0}]}
+{"id": "seattle-trade-permits##Final Date", "mappings": [{"id": "77", "score": 1.0}]}
+{"id": "seattle-trade-permits##Expiration Date", "mappings": [{"id": "78", "score": 1.0}, {"id": "446", "score": 1.0}]}
+{"id": "seattle-trade-permits##Status", "mappings": [{"id": "51", "score": 1.0}, {"id": "79", "score": 1.0}, {"id": "974", "score": 1.0}]}
+{"id": "seattle-trade-permits##Latitude", "mappings": [{"id": "54", "score": 1.0}, {"id": "80", "score": 1.0}, {"id": "217", "score": 1.0}, {"id": "821", "score": 1.0}]}
+{"id": "seattle-trade-permits##Longitude", "mappings": [{"id": "55", "score": 1.0}, {"id": "81", "score": 1.0}, {"id": "218", "score": 1.0}, {"id": "822", "score": 1.0}]}
+{"id": "seattle-terry-stops##Stop Resolution", "mappings": [{"id": "135", "score": 1.0}]}
+{"id": "seattle-terry-stops##Weapon Type", "mappings": [{"id": "136", "score": 1.0}]}
+{"id": "seattle-terry-stops##Officer Gender", "mappings": [{"id": "139", "score": 1.0}]}
+{"id": "seattle-terry-stops##Officer Race", "mappings": [{"id": "140", "score": 1.0}]}
+{"id": "seattle-terry-stops##Initial Call Type", "mappings": [{"id": "145", "score": 1.0}]}
+{"id": "seattle-terry-stops##Final Call Type", "mappings": [{"id": "146", "score": 1.0}]}
+{"id": "seattle-terry-stops##Precinct", "mappings": [{"id": "151", "score": 1.0}]}
+{"id": "seattle-terry-stops##Sector", "mappings": [{"id": "152", "score": 1.0}, {"id": "658", "score": 1.0}]}
+{"id": "seattle-terry-stops##Beat", "mappings": [{"id": "153", "score": 1.0}]}
+{"id": "diabetes-health-indicators-dataset##BMI", "mappings": [{"id": "171", "score": 1.0}, {"id": "786", "score": 1.0}]}
+{"id": "diabetes-health-indicators-dataset##Smoker", "mappings": [{"id": "787", "score": 1.0}]}
+{"id": "diabetes-health-indicators-dataset##Stroke", "mappings": [{"id": "788", "score": 1.0}]}
+{"id": "diabetes-health-indicators-dataset##Sex", "mappings": [{"id": "581", "score": 1.0}, {"id": "800", "score": 1.0}]}
+{"id": "diabetes-health-indicators-dataset##Age", "mappings": [{"id": "107", "score": 1.0}, {"id": "247", "score": 1.0}, {"id": "452", "score": 1.0}, {"id": "562", "score": 1.0}, {"id": "582", "score": 1.0}, {"id": "635", "score": 1.0}, {"id": "647", "score": 1.0}, {"id": "754", "score": 1.0}, {"id": "801", "score": 1.0}, {"id": "930", "score": 1.0}]}
+{"id": "diabetes-health-indicators-dataset##Education", "mappings": [{"id": "567", "score": 1.0}, {"id": "760", "score": 1.0}, {"id": "802", "score": 1.0}, {"id": "1165", "score": 1.0}]}
+{"id": "diabetes-health-indicators-dataset##Education", "mappings": [{"id": "567", "score": 1.0}, {"id": "760", "score": 1.0}, {"id": "802", "score": 1.0}, {"id": "1165", "score": 1.0}]}
+{"id": "imdb-top-250-lists-1996-2020##Title", "mappings": [{"id": "196", "score": 1.0}, {"id": "571", "score": 1.0}, {"id": "805", "score": 1.0}, {"id": "1125", "score": 1.0}]}
+{"id": "imdb-top-250-lists-1996-2020##Date", "mappings": [{"id": "259", "score": 1.0}, {"id": "419", "score": 1.0}, {"id": "570", "score": 1.0}, {"id": "659", "score": 1.0}, {"id": "704", "score": 1.0}, {"id": "710", "score": 1.0}, {"id": "717", "score": 1.0}, {"id": "962", "score": 1.0}, {"id": "1068", "score": 1.0}, {"id": "1106", "score": 1.0}]}
+{"id": "imdb-top-250-lists-1996-2020##Genre", "mappings": [{"id": "223", "score": 1.0}]}
+{"id": "imdb-top-250-lists-1996-2020##Rating", "mappings": [{"id": "224", "score": 1.0}, {"id": "808", "score": 1.0}, {"id": "1143", "score": 1.0}]}
+{"id": "imdb-top-250-lists-1996-2020##Votes", "mappings": [{"id": "202", "score": 1.0}, {"id": "225", "score": 1.0}, {"id": "1142", "score": 1.0}]}
+{"id": "imdb-top-250-lists-1996-2020##Gross", "mappings": [{"id": "203", "score": 1.0}]}
+{"id": "imdb-top-250-lists-1996-2020##Director", "mappings": [{"id": "204", "score": 1.0}, {"id": "226", "score": 1.0}, {"id": "457", "score": 1.0}]}
+{"id": "seattle-code-violation-cases##Address", "mappings": [{"id": "40", "score": 1.0}, {"id": "210", "score": 1.0}]}
+{"id": "seattle-code-violation-cases##Description", "mappings": [{"id": "892", "score": 1.0}]}
+{"id": "seattle-code-violation-cases##Last Inspection Date", "mappings": [{"id": "214", "score": 1.0}]}
+{"id": "seattle-code-violation-cases##Last Inspection Result", "mappings": [{"id": "215", "score": 1.0}]}
+{"id": "seattle-code-violation-cases##Status", "mappings": [{"id": "51", "score": 1.0}, {"id": "79", "score": 1.0}, {"id": "974", "score": 1.0}]}
+{"id": "seattle-code-violation-cases##Latitude", "mappings": [{"id": "54", "score": 1.0}, {"id": "80", "score": 1.0}, {"id": "217", "score": 1.0}, {"id": "821", "score": 1.0}]}
+{"id": "seattle-code-violation-cases##Longitude", "mappings": [{"id": "55", "score": 1.0}, {"id": "81", "score": 1.0}, {"id": "218", "score": 1.0}, {"id": "822", "score": 1.0}]}
+{"id": "seattle-code-violation-cases##Location", "mappings": [{"id": "26", "score": 1.0}, {"id": "306", "score": 1.0}, {"id": "645", "score": 1.0}, {"id": "729", "score": 1.0}, {"id": "1011", "score": 1.0}, {"id": "1023", "score": 1.0}]}
+{"id": "imdb-india-movies##Name", "mappings": [{"id": "557", "score": 1.0}, {"id": "929", "score": 1.0}, {"id": "971", "score": 1.0}]}
+{"id": "imdb-india-movies##Year", "mappings": [{"id": "194", "score": 1.0}, {"id": "221", "score": 1.0}, {"id": "307", "score": 1.0}, {"id": "454", "score": 1.0}, {"id": "686", "score": 1.0}, {"id": "862", "score": 1.0}, {"id": "940", "score": 1.0}]}
+{"id": "imdb-india-movies##Duration", "mappings": [{"id": "222", "score": 1.0}, {"id": "288", "score": 1.0}, {"id": "494", "score": 1.0}, {"id": "1089", "score": 1.0}, {"id": "1173", "score": 1.0}]}
+{"id": "imdb-india-movies##Genre", "mappings": [{"id": "223", "score": 1.0}]}
+{"id": "imdb-india-movies##Rating", "mappings": [{"id": "224", "score": 1.0}, {"id": "808", "score": 1.0}, {"id": "1143", "score": 1.0}]}
+{"id": "imdb-india-movies##Votes", "mappings": [{"id": "202", "score": 1.0}, {"id": "225", "score": 1.0}, {"id": "1142", "score": 1.0}]}
+{"id": "imdb-india-movies##Director", "mappings": [{"id": "204", "score": 1.0}, {"id": "226", "score": 1.0}, {"id": "457", "score": 1.0}]}
+{"id": "imdb-india-movies##Actor 1", "mappings": [{"id": "227", "score": 1.0}]}
+{"id": "imdb-india-movies##Actor 2", "mappings": [{"id": "228", "score": 1.0}]}
+{"id": "imdb-india-movies##Actor 3", "mappings": [{"id": "229", "score": 1.0}]}
+{"id": "nys-children-in-foster-care-annually##County", "mappings": [{"id": "372", "score": 1.0}, {"id": "411", "score": 1.0}, {"id": "437", "score": 1.0}, {"id": "545", "score": 1.0}]}
+{"id": "nys-children-in-foster-care-annually##Year", "mappings": [{"id": "194", "score": 1.0}, {"id": "221", "score": 1.0}, {"id": "307", "score": 1.0}, {"id": "454", "score": 1.0}, {"id": "686", "score": 1.0}, {"id": "862", "score": 1.0}, {"id": "940", "score": 1.0}]}
+{"id": "nys-children-in-foster-care-annually##Admissions", "mappings": [{"id": "242", "score": 1.0}]}
+{"id": "nys-children-in-foster-care-annually##Discharges", "mappings": [{"id": "243", "score": 1.0}]}
+{"id": "animeplanet-recommendation-database-2020##Name", "mappings": [{"id": "557", "score": 1.0}, {"id": "929", "score": 1.0}, {"id": "971", "score": 1.0}]}
+{"id": "animeplanet-recommendation-database-2020##Tags", "mappings": [{"id": "283", "score": 1.0}, {"id": "889", "score": 1.0}]}
+{"id": "animeplanet-recommendation-database-2020##Type", "mappings": [{"id": "285", "score": 1.0}]}
+{"id": "animeplanet-recommendation-database-2020##Finished", "mappings": [{"id": "287", "score": 1.0}]}
+{"id": "animeplanet-recommendation-database-2020##Duration", "mappings": [{"id": "222", "score": 1.0}, {"id": "288", "score": 1.0}, {"id": "494", "score": 1.0}, {"id": "1089", "score": 1.0}, {"id": "1173", "score": 1.0}]}
+{"id": "animeplanet-recommendation-database-2020##Season", "mappings": [{"id": "521", "score": 1.0}]}
+{"id": "animeplanet-recommendation-database-2020##Studios", "mappings": [{"id": "292", "score": 1.0}]}
+{"id": "animeplanet-recommendation-database-2020##Synopsis", "mappings": [{"id": "293", "score": 1.0}]}
+{"id": "nys-index,-violent,-property,-and-firearm-rates##County", "mappings": [{"id": "372", "score": 1.0}, {"id": "411", "score": 1.0}, {"id": "437", "score": 1.0}, {"id": "545", "score": 1.0}]}
+{"id": "nys-index,-violent,-property,-and-firearm-rates##Year", "mappings": [{"id": "194", "score": 1.0}, {"id": "221", "score": 1.0}, {"id": "307", "score": 1.0}, {"id": "454", "score": 1.0}, {"id": "686", "score": 1.0}, {"id": "862", "score": 1.0}, {"id": "940", "score": 1.0}]}
+{"id": "nys-index,-violent,-property,-and-firearm-rates##Population", "mappings": [{"id": "517", "score": 1.0}, {"id": "1123", "score": 1.0}]}
+{"id": "pokemon-type-matchup-data##Name", "mappings": [{"id": "557", "score": 1.0}, {"id": "929", "score": 1.0}, {"id": "971", "score": 1.0}]}
+{"id": "valorant-masters-2021-player-map-data##Player", "mappings": [{"id": "354", "score": 1.0}, {"id": "613", "score": 1.0}, {"id": "1066", "score": 1.0}]}
+{"id": "valorant-masters-2021-player-map-data##Country", "mappings": [{"id": "262", "score": 1.0}, {"id": "355", "score": 1.0}, {"id": "559", "score": 1.0}, {"id": "690", "score": 1.0}, {"id": "935", "score": 1.0}, {"id": "1107", "score": 1.0}]}
+{"id": "valorant-masters-2021-player-map-data##Team", "mappings": [{"id": "356", "score": 1.0}, {"id": "523", "score": 1.0}]}
+{"id": "valorant-masters-2021-player-map-data##ACS/Map", "mappings": [{"id": "364", "score": 1.0}]}
+{"id": "nys-school-tax-relief-star-reimbursement##Levy Year", "mappings": [{"id": "371", "score": 1.0}]}
+{"id": "nys-school-tax-relief-star-reimbursement##County", "mappings": [{"id": "372", "score": 1.0}, {"id": "411", "score": 1.0}, {"id": "437", "score": 1.0}, {"id": "545", "score": 1.0}]}
+{"id": "nys-school-tax-relief-star-reimbursement##County Code", "mappings": [{"id": "373", "score": 1.0}]}
+{"id": "nys-school-tax-relief-star-reimbursement##School District Code", "mappings": [{"id": "381", "score": 1.0}]}
+{"id": "nys-psyckes-antipsychotic-polypharmacy-quality##Indicator Set", "mappings": [{"id": "407", "score": 1.0}]}
+{"id": "nys-psyckes-antipsychotic-polypharmacy-quality##Indicator Name", "mappings": [{"id": "408", "score": 1.0}]}
+{"id": "nys-psyckes-antipsychotic-polypharmacy-quality##Age Group", "mappings": [{"id": "131", "score": 1.0}, {"id": "409", "score": 1.0}]}
+{"id": "nys-psyckes-antipsychotic-polypharmacy-quality##County", "mappings": [{"id": "372", "score": 1.0}, {"id": "411", "score": 1.0}, {"id": "437", "score": 1.0}, {"id": "545", "score": 1.0}]}
+{"id": "nys-psyckes-antipsychotic-polypharmacy-quality##Region", "mappings": [{"id": "412", "score": 1.0}, {"id": "513", "score": 1.0}, {"id": "691", "score": 1.0}, {"id": "742", "score": 1.0}, {"id": "941", "score": 1.0}]}
+{"id": "nys-psyckes-antipsychotic-polypharmacy-quality##Provider", "mappings": [{"id": "413", "score": 1.0}]}
+{"id": "nys-psyckes-antipsychotic-polypharmacy-quality##Eligible Population", "mappings": [{"id": "414", "score": 1.0}]}
+{"id": "bitcoin-time-series-with-different-time-intervals##Date", "mappings": [{"id": "259", "score": 1.0}, {"id": "419", "score": 1.0}, {"id": "570", "score": 1.0}, {"id": "659", "score": 1.0}, {"id": "704", "score": 1.0}, {"id": "710", "score": 1.0}, {"id": "717", "score": 1.0}, {"id": "962", "score": 1.0}, {"id": "1068", "score": 1.0}, {"id": "1106", "score": 1.0}]}
+{"id": "bitcoin-time-series-with-different-time-intervals##Open", "mappings": [{"id": "420", "score": 1.0}, {"id": "705", "score": 1.0}, {"id": "712", "score": 1.0}, {"id": "965", "score": 1.0}]}
+{"id": "bitcoin-time-series-with-different-time-intervals##High", "mappings": [{"id": "421", "score": 1.0}, {"id": "660", "score": 1.0}, {"id": "706", "score": 1.0}, {"id": "713", "score": 1.0}, {"id": "964", "score": 1.0}]}
+{"id": "bitcoin-time-series-with-different-time-intervals##Low", "mappings": [{"id": "422", "score": 1.0}, {"id": "661", "score": 1.0}, {"id": "707", "score": 1.0}, {"id": "714", "score": 1.0}, {"id": "963", "score": 1.0}]}
+{"id": "bitcoin-time-series-with-different-time-intervals##Close", "mappings": [{"id": "423", "score": 1.0}, {"id": "708", "score": 1.0}, {"id": "715", "score": 1.0}, {"id": "966", "score": 1.0}]}
+{"id": "bitcoin-time-series-with-different-time-intervals##Adj Close", "mappings": [{"id": "424", "score": 1.0}]}
+{"id": "bitcoin-time-series-with-different-time-intervals##Volume", "mappings": [{"id": "425", "score": 1.0}, {"id": "664", "score": 1.0}, {"id": "709", "score": 1.0}, {"id": "716", "score": 1.0}, {"id": "967", "score": 1.0}]}
+{"id": "bitcoin-time-series-with-different-time-intervals##Open", "mappings": [{"id": "420", "score": 1.0}, {"id": "705", "score": 1.0}, {"id": "712", "score": 1.0}, {"id": "965", "score": 1.0}]}
+{"id": "bitcoin-time-series-with-different-time-intervals##High", "mappings": [{"id": "421", "score": 1.0}, {"id": "660", "score": 1.0}, {"id": "706", "score": 1.0}, {"id": "713", "score": 1.0}, {"id": "964", "score": 1.0}]}
+{"id": "bitcoin-time-series-with-different-time-intervals##Low", "mappings": [{"id": "422", "score": 1.0}, {"id": "661", "score": 1.0}, {"id": "707", "score": 1.0}, {"id": "714", "score": 1.0}, {"id": "963", "score": 1.0}]}
+{"id": "bitcoin-time-series-with-different-time-intervals##Close", "mappings": [{"id": "423", "score": 1.0}, {"id": "708", "score": 1.0}, {"id": "715", "score": 1.0}, {"id": "966", "score": 1.0}]}
+{"id": "bitcoin-time-series-with-different-time-intervals##Volume", "mappings": [{"id": "425", "score": 1.0}, {"id": "664", "score": 1.0}, {"id": "709", "score": 1.0}, {"id": "716", "score": 1.0}, {"id": "967", "score": 1.0}]}
+{"id": "nys-vehicle,-snowmobile,-and-boat-registrations##VIN", "mappings": [{"id": "432", "score": 1.0}]}
+{"id": "nys-vehicle,-snowmobile,-and-boat-registrations##Registration Class", "mappings": [{"id": "433", "score": 1.0}]}
+{"id": "nys-vehicle,-snowmobile,-and-boat-registrations##City", "mappings": [{"id": "578", "score": 1.0}, {"id": "694", "score": 1.0}]}
+{"id": "nys-vehicle,-snowmobile,-and-boat-registrations##State", "mappings": [{"id": "397", "score": 1.0}, {"id": "579", "score": 1.0}, {"id": "937", "score": 1.0}]}
+{"id": "nys-vehicle,-snowmobile,-and-boat-registrations##County", "mappings": [{"id": "372", "score": 1.0}, {"id": "411", "score": 1.0}, {"id": "437", "score": 1.0}, {"id": "545", "score": 1.0}]}
+{"id": "nys-vehicle,-snowmobile,-and-boat-registrations##Model Year", "mappings": [{"id": "438", "score": 1.0}]}
+{"id": "nys-vehicle,-snowmobile,-and-boat-registrations##Make", "mappings": [{"id": "439", "score": 1.0}]}
+{"id": "nys-vehicle,-snowmobile,-and-boat-registrations##Body Type", "mappings": [{"id": "440", "score": 1.0}]}
+{"id": "nys-vehicle,-snowmobile,-and-boat-registrations##Fuel Type", "mappings": [{"id": "441", "score": 1.0}]}
+{"id": "nys-vehicle,-snowmobile,-and-boat-registrations##Passengers", "mappings": [{"id": "466", "score": 1.0}]}
+{"id": "water-potability##Chloramines", "mappings": [{"id": "476", "score": 1.0}]}
+{"id": "water-potability##Conductivity", "mappings": [{"id": "478", "score": 1.0}]}
+{"id": "water-potability##Turbidity", "mappings": [{"id": "481", "score": 1.0}]}
+{"id": "premier-league-standings-11-seasons-20102021##Season", "mappings": [{"id": "521", "score": 1.0}]}
+{"id": "premier-league-standings-11-seasons-20102021##Team", "mappings": [{"id": "356", "score": 1.0}, {"id": "523", "score": 1.0}]}
+{"id": "premier-league-standings-11-seasons-20102021##GD", "mappings": [{"id": "530", "score": 1.0}]}
+{"id": "nys-jail-population-by-county-beginning-1997##Year", "mappings": [{"id": "194", "score": 1.0}, {"id": "221", "score": 1.0}, {"id": "307", "score": 1.0}, {"id": "454", "score": 1.0}, {"id": "686", "score": 1.0}, {"id": "862", "score": 1.0}, {"id": "940", "score": 1.0}]}
+{"id": "nys-jail-population-by-county-beginning-1997##Boarded Out", "mappings": [{"id": "536", "score": 1.0}]}
+{"id": "nys-jail-population-by-county-beginning-1997##Boarded In", "mappings": [{"id": "537", "score": 1.0}]}
+{"id": "nys-jail-population-by-county-beginning-1997##Sentenced", "mappings": [{"id": "539", "score": 1.0}]}
+{"id": "nys-jail-population-by-county-beginning-1997##Civil", "mappings": [{"id": "540", "score": 1.0}]}
+{"id": "nys-jail-population-by-county-beginning-1997##Federal", "mappings": [{"id": "541", "score": 1.0}]}
+{"id": "nys-biodiversity-by-county##County", "mappings": [{"id": "372", "score": 1.0}, {"id": "411", "score": 1.0}, {"id": "437", "score": 1.0}, {"id": "545", "score": 1.0}]}
+{"id": "nys-biodiversity-by-county##Category", "mappings": [{"id": "546", "score": 1.0}, {"id": "813", "score": 1.0}]}
+{"id": "nys-biodiversity-by-county##Taxonomic Group", "mappings": [{"id": "547", "score": 1.0}]}
+{"id": "nys-biodiversity-by-county##Scientific Name", "mappings": [{"id": "549", "score": 1.0}]}
+{"id": "nys-biodiversity-by-county##Common Name", "mappings": [{"id": "550", "score": 1.0}]}
+{"id": "nys-biodiversity-by-county##State Conservation Rank", "mappings": [{"id": "554", "score": 1.0}]}
+{"id": "nys-biodiversity-by-county##Global Conservation Rank", "mappings": [{"id": "555", "score": 1.0}]}
+{"id": "forbes-billionaires-2021-30##Name", "mappings": [{"id": "557", "score": 1.0}, {"id": "929", "score": 1.0}, {"id": "971", "score": 1.0}]}
+{"id": "forbes-billionaires-2021-30##Country", "mappings": [{"id": "262", "score": 1.0}, {"id": "355", "score": 1.0}, {"id": "559", "score": 1.0}, {"id": "690", "score": 1.0}, {"id": "935", "score": 1.0}, {"id": "1107", "score": 1.0}]}
+{"id": "forbes-billionaires-2021-30##Source", "mappings": [{"id": "36", "score": 1.0}, {"id": "560", "score": 1.0}]}
+{"id": "forbes-billionaires-2021-30##Rank", "mappings": [{"id": "105", "score": 1.0}, {"id": "193", "score": 1.0}, {"id": "928", "score": 1.0}]}
+{"id": "forbes-billionaires-2021-30##Age", "mappings": [{"id": "107", "score": 1.0}, {"id": "247", "score": 1.0}, {"id": "452", "score": 1.0}, {"id": "562", "score": 1.0}, {"id": "582", "score": 1.0}, {"id": "635", "score": 1.0}, {"id": "647", "score": 1.0}, {"id": "754", "score": 1.0}, {"id": "801", "score": 1.0}, {"id": "930", "score": 1.0}]}
+{"id": "forbes-billionaires-2021-30##Citizenship", "mappings": [{"id": "564", "score": 1.0}]}
+{"id": "forbes-billionaires-2021-30##Status", "mappings": [{"id": "51", "score": 1.0}, {"id": "79", "score": 1.0}, {"id": "974", "score": 1.0}]}
+{"id": "forbes-billionaires-2021-30##Children", "mappings": [{"id": "566", "score": 1.0}]}
+{"id": "forbes-billionaires-2021-30##Education", "mappings": [{"id": "567", "score": 1.0}, {"id": "760", "score": 1.0}, {"id": "802", "score": 1.0}, {"id": "1165", "score": 1.0}]}
+{"id": "superbowl-history-1967-2020##Date", "mappings": [{"id": "259", "score": 1.0}, {"id": "419", "score": 1.0}, {"id": "570", "score": 1.0}, {"id": "659", "score": 1.0}, {"id": "704", "score": 1.0}, {"id": "710", "score": 1.0}, {"id": "717", "score": 1.0}, {"id": "962", "score": 1.0}, {"id": "1068", "score": 1.0}, {"id": "1106", "score": 1.0}]}
+{"id": "superbowl-history-1967-2020##MVP", "mappings": [{"id": "576", "score": 1.0}]}
+{"id": "superbowl-history-1967-2020##Stadium", "mappings": [{"id": "577", "score": 1.0}]}
+{"id": "superbowl-history-1967-2020##City", "mappings": [{"id": "578", "score": 1.0}, {"id": "694", "score": 1.0}]}
+{"id": "superbowl-history-1967-2020##State", "mappings": [{"id": "397", "score": 1.0}, {"id": "579", "score": 1.0}, {"id": "937", "score": 1.0}]}
+{"id": "basketball##Name", "mappings": [{"id": "557", "score": 1.0}, {"id": "929", "score": 1.0}, {"id": "971", "score": 1.0}]}
+{"id": "basketball##GP", "mappings": [{"id": "614", "score": 1.0}]}
+{"id": "basketball##PTS", "mappings": [{"id": "616", "score": 1.0}]}
+{"id": "basketball##FGA", "mappings": [{"id": "618", "score": 1.0}]}
+{"id": "basketball##3PM", "mappings": [{"id": "619", "score": 1.0}]}
+{"id": "basketball##3PA", "mappings": [{"id": "620", "score": 1.0}]}
+{"id": "basketball##FTM", "mappings": [{"id": "621", "score": 1.0}]}
+{"id": "basketball##FTA", "mappings": [{"id": "622", "score": 1.0}]}
+{"id": "basketball##OREB", "mappings": [{"id": "623", "score": 1.0}]}
+{"id": "basketball##DREB", "mappings": [{"id": "624", "score": 1.0}]}
+{"id": "basketball##AST", "mappings": [{"id": "625", "score": 1.0}]}
+{"id": "basketball##STL", "mappings": [{"id": "626", "score": 1.0}]}
+{"id": "basketball##BLK", "mappings": [{"id": "627", "score": 1.0}]}
+{"id": "basketball##TOV", "mappings": [{"id": "628", "score": 1.0}]}
+{"id": "churn-for-bank-customers##Surname", "mappings": [{"id": "643", "score": 1.0}]}
+{"id": "churn-for-bank-customers##Gender", "mappings": [{"id": "109", "score": 1.0}, {"id": "185", "score": 1.0}, {"id": "248", "score": 1.0}, {"id": "498", "score": 1.0}, {"id": "636", "score": 1.0}, {"id": "646", "score": 1.0}, {"id": "882", "score": 1.0}, {"id": "933", "score": 1.0}]}
+{"id": "churn-for-bank-customers##Age", "mappings": [{"id": "107", "score": 1.0}, {"id": "247", "score": 1.0}, {"id": "452", "score": 1.0}, {"id": "562", "score": 1.0}, {"id": "582", "score": 1.0}, {"id": "635", "score": 1.0}, {"id": "647", "score": 1.0}, {"id": "754", "score": 1.0}, {"id": "801", "score": 1.0}, {"id": "930", "score": 1.0}]}
+{"id": "churn-for-bank-customers##Balance", "mappings": [{"id": "1167", "score": 1.0}]}
+{"id": "cern-electron-collision-data##Q1", "mappings": [{"id": "676", "score": 1.0}]}
+{"id": "cern-electron-collision-data##Q2", "mappings": [{"id": "684", "score": 1.0}]}
+{"id": "2018-calorie-exercise-and-weight-changes##Date", "mappings": [{"id": "259", "score": 1.0}, {"id": "419", "score": 1.0}, {"id": "570", "score": 1.0}, {"id": "659", "score": 1.0}, {"id": "704", "score": 1.0}, {"id": "710", "score": 1.0}, {"id": "717", "score": 1.0}, {"id": "962", "score": 1.0}, {"id": "1068", "score": 1.0}, {"id": "1106", "score": 1.0}]}
+{"id": "new-york-state-index-crimes##County", "mappings": [{"id": "372", "score": 1.0}, {"id": "411", "score": 1.0}, {"id": "437", "score": 1.0}, {"id": "545", "score": 1.0}]}
+{"id": "new-york-state-index-crimes##Agency", "mappings": [{"id": "638", "score": 1.0}, {"id": "817", "score": 1.0}]}
+{"id": "new-york-state-index-crimes##Months Reported", "mappings": [{"id": "731", "score": 1.0}]}
+{"id": "new-york-state-index-crimes##Murder", "mappings": [{"id": "734", "score": 1.0}, {"id": "944", "score": 1.0}]}
+{"id": "new-york-state-index-crimes##Rape", "mappings": [{"id": "735", "score": 1.0}]}
+{"id": "new-york-state-index-crimes##Robbery", "mappings": [{"id": "736", "score": 1.0}, {"id": "943", "score": 1.0}]}
+{"id": "new-york-state-index-crimes##Aggravated Assault", "mappings": [{"id": "737", "score": 1.0}]}
+{"id": "new-york-state-index-crimes##Burglary", "mappings": [{"id": "739", "score": 1.0}, {"id": "950", "score": 1.0}]}
+{"id": "new-york-state-index-crimes##Larceny", "mappings": [{"id": "740", "score": 1.0}]}
+{"id": "new-york-state-index-crimes##Motor Vehicle Theft", "mappings": [{"id": "741", "score": 1.0}]}
+{"id": "new-york-state-index-crimes##Region", "mappings": [{"id": "412", "score": 1.0}, {"id": "513", "score": 1.0}, {"id": "691", "score": 1.0}, {"id": "742", "score": 1.0}, {"id": "941", "score": 1.0}]}
+{"id": "nys-roswell-park-cancer-institute-publications##Publication Type", "mappings": [{"id": "744", "score": 1.0}]}
+{"id": "nys-roswell-park-cancer-institute-publications##Journal Name", "mappings": [{"id": "745", "score": 1.0}]}
+{"id": "nys-roswell-park-cancer-institute-publications##Publication Title", "mappings": [{"id": "746", "score": 1.0}]}
+{"id": "nys-roswell-park-cancer-institute-publications##ISSN", "mappings": [{"id": "750", "score": 1.0}]}
+{"id": "nys-roswell-park-cancer-institute-publications##Peer Reviewed", "mappings": [{"id": "751", "score": 1.0}]}
+{"id": "nys-roswell-park-cancer-institute-publications##Impact Factor", "mappings": [{"id": "752", "score": 1.0}]}
+{"id": "personal-loan-modeling##ID", "mappings": [{"id": "879", "score": 1.0}, {"id": "972", "score": 1.0}, {"id": "1095", "score": 1.0}]}
+{"id": "personal-loan-modeling##Age", "mappings": [{"id": "107", "score": 1.0}, {"id": "247", "score": 1.0}, {"id": "452", "score": 1.0}, {"id": "562", "score": 1.0}, {"id": "582", "score": 1.0}, {"id": "635", "score": 1.0}, {"id": "647", "score": 1.0}, {"id": "754", "score": 1.0}, {"id": "801", "score": 1.0}, {"id": "930", "score": 1.0}]}
+{"id": "personal-loan-modeling##ZIP Code", "mappings": [{"id": "436", "score": 1.0}, {"id": "757", "score": 1.0}]}
+{"id": "personal-loan-modeling##Education", "mappings": [{"id": "567", "score": 1.0}, {"id": "760", "score": 1.0}, {"id": "802", "score": 1.0}, {"id": "1165", "score": 1.0}]}
+{"id": "personal-loan-modeling##Mortgage", "mappings": [{"id": "761", "score": 1.0}]}
+{"id": "heart-disease-health-indicators-dataset##BMI", "mappings": [{"id": "171", "score": 1.0}, {"id": "786", "score": 1.0}]}
+{"id": "heart-disease-health-indicators-dataset##Smoker", "mappings": [{"id": "787", "score": 1.0}]}
+{"id": "heart-disease-health-indicators-dataset##Stroke", "mappings": [{"id": "788", "score": 1.0}]}
+{"id": "heart-disease-health-indicators-dataset##Diabetes", "mappings": [{"id": "789", "score": 1.0}]}
+{"id": "heart-disease-health-indicators-dataset##Sex", "mappings": [{"id": "581", "score": 1.0}, {"id": "800", "score": 1.0}]}
+{"id": "heart-disease-health-indicators-dataset##Age", "mappings": [{"id": "107", "score": 1.0}, {"id": "247", "score": 1.0}, {"id": "452", "score": 1.0}, {"id": "562", "score": 1.0}, {"id": "582", "score": 1.0}, {"id": "635", "score": 1.0}, {"id": "647", "score": 1.0}, {"id": "754", "score": 1.0}, {"id": "801", "score": 1.0}, {"id": "930", "score": 1.0}]}
+{"id": "heart-disease-health-indicators-dataset##Education", "mappings": [{"id": "567", "score": 1.0}, {"id": "760", "score": 1.0}, {"id": "802", "score": 1.0}, {"id": "1165", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Agency", "mappings": [{"id": "638", "score": 1.0}, {"id": "817", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Description", "mappings": [{"id": "892", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Location", "mappings": [{"id": "26", "score": 1.0}, {"id": "306", "score": 1.0}, {"id": "645", "score": 1.0}, {"id": "729", "score": 1.0}, {"id": "1011", "score": 1.0}, {"id": "1023", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Latitude", "mappings": [{"id": "54", "score": 1.0}, {"id": "80", "score": 1.0}, {"id": "217", "score": 1.0}, {"id": "821", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Longitude", "mappings": [{"id": "55", "score": 1.0}, {"id": "81", "score": 1.0}, {"id": "218", "score": 1.0}, {"id": "822", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Personal Injury", "mappings": [{"id": "825", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Property Damage", "mappings": [{"id": "826", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Commercial License", "mappings": [{"id": "828", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Commercial Vehicle", "mappings": [{"id": "830", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Work Zone", "mappings": [{"id": "832", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##State", "mappings": [{"id": "397", "score": 1.0}, {"id": "579", "score": 1.0}, {"id": "937", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Year", "mappings": [{"id": "194", "score": 1.0}, {"id": "221", "score": 1.0}, {"id": "307", "score": 1.0}, {"id": "454", "score": 1.0}, {"id": "686", "score": 1.0}, {"id": "862", "score": 1.0}, {"id": "940", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Make", "mappings": [{"id": "439", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Violation Type", "mappings": [{"id": "839", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Gender", "mappings": [{"id": "109", "score": 1.0}, {"id": "185", "score": 1.0}, {"id": "248", "score": 1.0}, {"id": "498", "score": 1.0}, {"id": "636", "score": 1.0}, {"id": "646", "score": 1.0}, {"id": "882", "score": 1.0}, {"id": "933", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Driver City", "mappings": [{"id": "845", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Driver State", "mappings": [{"id": "846", "score": 1.0}]}
+{"id": "traffic-violations-in-maryland-county##Arrest Type", "mappings": [{"id": "848", "score": 1.0}]}
+{"id": "nys-annual-average-daily-traffic-aadt##Region", "mappings": [{"id": "412", "score": 1.0}, {"id": "513", "score": 1.0}, {"id": "691", "score": 1.0}, {"id": "742", "score": 1.0}, {"id": "941", "score": 1.0}]}
+{"id": "nys-annual-average-daily-traffic-aadt##Begin Milepoint", "mappings": [{"id": "854", "score": 1.0}]}
+{"id": "nys-annual-average-daily-traffic-aadt##End Milepoint", "mappings": [{"id": "855", "score": 1.0}]}
+{"id": "nys-annual-average-daily-traffic-aadt##Municipality", "mappings": [{"id": "858", "score": 1.0}]}
+{"id": "nys-annual-average-daily-traffic-aadt##Year", "mappings": [{"id": "194", "score": 1.0}, {"id": "221", "score": 1.0}, {"id": "307", "score": 1.0}, {"id": "454", "score": 1.0}, {"id": "686", "score": 1.0}, {"id": "862", "score": 1.0}, {"id": "940", "score": 1.0}]}
+{"id": "mobile-health##Activity", "mappings": [{"id": "877", "score": 1.0}]}
+{"id": "animeplanet-character-recommendation##ID", "mappings": [{"id": "879", "score": 1.0}, {"id": "972", "score": 1.0}, {"id": "1095", "score": 1.0}]}
+{"id": "animeplanet-character-recommendation##Name", "mappings": [{"id": "557", "score": 1.0}, {"id": "929", "score": 1.0}, {"id": "971", "score": 1.0}]}
+{"id": "animeplanet-character-recommendation##Alias", "mappings": [{"id": "881", "score": 1.0}]}
+{"id": "animeplanet-character-recommendation##Gender", "mappings": [{"id": "109", "score": 1.0}, {"id": "185", "score": 1.0}, {"id": "248", "score": 1.0}, {"id": "498", "score": 1.0}, {"id": "636", "score": 1.0}, {"id": "646", "score": 1.0}, {"id": "882", "score": 1.0}, {"id": "933", "score": 1.0}]}
+{"id": "animeplanet-character-recommendation##Hair Color", "mappings": [{"id": "883", "score": 1.0}]}
+{"id": "animeplanet-character-recommendation##Love Rank", "mappings": [{"id": "884", "score": 1.0}]}
+{"id": "animeplanet-character-recommendation##Hate Rank", "mappings": [{"id": "885", "score": 1.0}]}
+{"id": "animeplanet-character-recommendation##Birthday", "mappings": [{"id": "887", "score": 1.0}]}
+{"id": "animeplanet-character-recommendation##Blood Type", "mappings": [{"id": "888", "score": 1.0}]}
+{"id": "animeplanet-character-recommendation##Tags", "mappings": [{"id": "283", "score": 1.0}, {"id": "889", "score": 1.0}]}
+{"id": "animeplanet-character-recommendation##Description", "mappings": [{"id": "892", "score": 1.0}]}
+{"id": "league-of-legends-worlds-2021-playin-group-stats##Team", "mappings": [{"id": "356", "score": 1.0}, {"id": "523", "score": 1.0}]}
+{"id": "league-of-legends-worlds-2021-playin-group-stats##Player", "mappings": [{"id": "354", "score": 1.0}, {"id": "613", "score": 1.0}, {"id": "1066", "score": 1.0}]}
+{"id": "league-of-legends-worlds-2021-playin-group-stats##Position", "mappings": [{"id": "522", "score": 1.0}, {"id": "911", "score": 1.0}, {"id": "939", "score": 1.0}, {"id": "1072", "score": 1.0}]}
+{"id": "league-of-legends-worlds-2021-playin-group-stats##Champion", "mappings": [{"id": "912", "score": 1.0}]}
+{"id": "league-of-legends-worlds-2021-playin-group-stats##Kills", "mappings": [{"id": "359", "score": 1.0}, {"id": "913", "score": 1.0}]}
+{"id": "league-of-legends-worlds-2021-playin-group-stats##Deaths", "mappings": [{"id": "360", "score": 1.0}, {"id": "914", "score": 1.0}]}
+{"id": "league-of-legends-worlds-2021-playin-group-stats##Assists", "mappings": [{"id": "361", "score": 1.0}, {"id": "915", "score": 1.0}, {"id": "1074", "score": 1.0}]}
+{"id": "league-of-legends-worlds-2021-playin-group-stats##Creep Score", "mappings": [{"id": "916", "score": 1.0}]}
+{"id": "league-of-legends-worlds-2021-playin-group-stats##Wards Placed", "mappings": [{"id": "919", "score": 1.0}]}
+{"id": "league-of-legends-worlds-2021-playin-group-stats##Result", "mappings": [{"id": "927", "score": 1.0}, {"id": "1071", "score": 1.0}]}
+{"id": "forbes-worlds-billionaires-in-2018##Rank", "mappings": [{"id": "105", "score": 1.0}, {"id": "193", "score": 1.0}, {"id": "928", "score": 1.0}]}
+{"id": "forbes-worlds-billionaires-in-2018##Name", "mappings": [{"id": "557", "score": 1.0}, {"id": "929", "score": 1.0}, {"id": "971", "score": 1.0}]}
+{"id": "forbes-worlds-billionaires-in-2018##Age", "mappings": [{"id": "107", "score": 1.0}, {"id": "247", "score": 1.0}, {"id": "452", "score": 1.0}, {"id": "562", "score": 1.0}, {"id": "582", "score": 1.0}, {"id": "635", "score": 1.0}, {"id": "647", "score": 1.0}, {"id": "754", "score": 1.0}, {"id": "801", "score": 1.0}, {"id": "930", "score": 1.0}]}
+{"id": "forbes-worlds-billionaires-in-2018##Source", "mappings": [{"id": "36", "score": 1.0}, {"id": "560", "score": 1.0}]}
+{"id": "forbes-worlds-billionaires-in-2018##Industry", "mappings": [{"id": "932", "score": 1.0}, {"id": "1013", "score": 1.0}, {"id": "1025", "score": 1.0}]}
+{"id": "forbes-worlds-billionaires-in-2018##Gender", "mappings": [{"id": "109", "score": 1.0}, {"id": "185", "score": 1.0}, {"id": "248", "score": 1.0}, {"id": "498", "score": 1.0}, {"id": "636", "score": 1.0}, {"id": "646", "score": 1.0}, {"id": "882", "score": 1.0}, {"id": "933", "score": 1.0}]}
+{"id": "forbes-worlds-billionaires-in-2018##Continent", "mappings": [{"id": "934", "score": 1.0}, {"id": "1113", "score": 1.0}]}
+{"id": "forbes-worlds-billionaires-in-2018##Country", "mappings": [{"id": "262", "score": 1.0}, {"id": "355", "score": 1.0}, {"id": "559", "score": 1.0}, {"id": "690", "score": 1.0}, {"id": "935", "score": 1.0}, {"id": "1107", "score": 1.0}]}
+{"id": "forbes-worlds-billionaires-in-2018##State", "mappings": [{"id": "397", "score": 1.0}, {"id": "579", "score": 1.0}, {"id": "937", "score": 1.0}]}
+{"id": "forbes-worlds-billionaires-in-2018##Net Worth", "mappings": [{"id": "558", "score": 1.0}]}
+{"id": "forbes-worlds-billionaires-in-2018##Title", "mappings": [{"id": "196", "score": 1.0}, {"id": "571", "score": 1.0}, {"id": "805", "score": 1.0}, {"id": "1125", "score": 1.0}]}
+{"id": "bangladesh-crime-statistics-20102019##Year", "mappings": [{"id": "194", "score": 1.0}, {"id": "221", "score": 1.0}, {"id": "307", "score": 1.0}, {"id": "454", "score": 1.0}, {"id": "686", "score": 1.0}, {"id": "862", "score": 1.0}, {"id": "940", "score": 1.0}]}
+{"id": "bangladesh-crime-statistics-20102019##Robbery", "mappings": [{"id": "736", "score": 1.0}, {"id": "943", "score": 1.0}]}
+{"id": "bangladesh-crime-statistics-20102019##Murder", "mappings": [{"id": "734", "score": 1.0}, {"id": "944", "score": 1.0}]}
+{"id": "bangladesh-crime-statistics-20102019##Riot", "mappings": [{"id": "946", "score": 1.0}]}
+{"id": "bangladesh-crime-statistics-20102019##Kidnapping", "mappings": [{"id": "948", "score": 1.0}]}
+{"id": "bangladesh-crime-statistics-20102019##Burglary", "mappings": [{"id": "739", "score": 1.0}, {"id": "950", "score": 1.0}]}
+{"id": "bangladesh-crime-statistics-20102019##Theft", "mappings": [{"id": "951", "score": 1.0}]}
+{"id": "bangladesh-crime-statistics-20102019##Total Cases", "mappings": [{"id": "1114", "score": 1.0}]}
+{"id": "nys-oasas-medicaid-trend-recipient-summary-profile##County", "mappings": [{"id": "372", "score": 1.0}, {"id": "411", "score": 1.0}, {"id": "437", "score": 1.0}, {"id": "545", "score": 1.0}]}
+{"id": "news-popularity-in-multiple-social-media-platforms##Title", "mappings": [{"id": "196", "score": 1.0}, {"id": "571", "score": 1.0}, {"id": "805", "score": 1.0}, {"id": "1125", "score": 1.0}]}
+{"id": "news-popularity-in-multiple-social-media-platforms##Source", "mappings": [{"id": "36", "score": 1.0}, {"id": "560", "score": 1.0}]}
+{"id": "amazon-fine-food-reviews##Id", "mappings": [{"id": "1137", "score": 1.0}]}
+{"id": "amazon-fine-food-reviews##Summary", "mappings": [{"id": "1061", "score": 1.0}, {"id": "1065", "score": 1.0}, {"id": "1145", "score": 1.0}]}
+{"id": "minecraft-composting-dataset##Apples", "mappings": [{"id": "1147", "score": 1.0}]}
+{"id": "minecraft-composting-dataset##Cacti", "mappings": [{"id": "1148", "score": 1.0}]}
+{"id": "minecraft-composting-dataset##Carrots", "mappings": [{"id": "1149", "score": 1.0}]}
+{"id": "minecraft-composting-dataset##Cookies", "mappings": [{"id": "1150", "score": 1.0}]}
+{"id": "minecraft-composting-dataset##Potatoes", "mappings": [{"id": "1155", "score": 1.0}]}
+{"id": "minecraft-composting-dataset##Pumpkins", "mappings": [{"id": "1156", "score": 1.0}]}
+{"id": "minecraft-composting-dataset##Wheat", "mappings": [{"id": "1161", "score": 1.0}]}
+{"id": "portuguese-bank-marketing##Job", "mappings": [{"id": "1163", "score": 1.0}]}
+{"id": "portuguese-bank-marketing##Marital Status", "mappings": [{"id": "565", "score": 1.0}]}
+{"id": "portuguese-bank-marketing##Education", "mappings": [{"id": "567", "score": 1.0}, {"id": "760", "score": 1.0}, {"id": "802", "score": 1.0}, {"id": "1165", "score": 1.0}]}
+{"id": "portuguese-bank-marketing##Contact", "mappings": [{"id": "1170", "score": 1.0}]}
+{"id": "portuguese-bank-marketing##Campaign", "mappings": [{"id": "1174", "score": 1.0}]}
+{"id": "portuguese-bank-marketing##Pdays", "mappings": [{"id": "1175", "score": 1.0}]}
+{"id": "portuguese-bank-marketing##Previous", "mappings": [{"id": "1176", "score": 1.0}]}
+{"id": "portuguese-bank-marketing##Poutcome", "mappings": [{"id": "1177", "score": 1.0}]}
+{"id": "portuguese-bank-marketing##Subscription", "mappings": [{"id": "1178", "score": 1.0}]}
+{"id": "forest-fire-area##FFMC", "mappings": [{"id": "1183", "score": 1.0}]}
+{"id": "forest-fire-area##DMC", "mappings": [{"id": "1184", "score": 1.0}]}
+{"id": "forest-fire-area##DC", "mappings": [{"id": "1185", "score": 1.0}]}
+{"id": "forest-fire-area##ISI", "mappings": [{"id": "1186", "score": 1.0}]}

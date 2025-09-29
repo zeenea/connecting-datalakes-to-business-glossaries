@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:owl="http://www.w3.org/2002/07/owl#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <owl:Class rdf:about="nys-traffic-tickets-issued-four-year-window##Gender">
+    <rdfs:label>Gender</rdfs:label>
+    <rdfs:comment>Gender column in Table NYS Traffic Tickets Issued: Four Year Window. Other Columns: X, Y, month, day, FFMC, DMC, DC, ISI, temp, RH, wind, rain, area</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="nys-traffic-tickets-issued-four-year-window"/>
+  </owl:Class>
+  <owl:Class rdf:about="nys-traffic-tickets-issued-four-year-window##Source">
+    <rdfs:label>Source</rdfs:label>
+    <rdfs:comment>Source column in Table NYS Traffic Tickets Issued: Four Year Window. Other Columns: X, Y, month, day, FFMC, DMC, DC, ISI, temp, RH, wind, rain, area</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="nys-traffic-tickets-issued-four-year-window"/>
+  </owl:Class>
+  <owl:Class rdf:about="nys-traffic-tickets-issued-four-year-window##Violation Day of Week">
+    <rdfs:label>Violation Day of Week</rdfs:label>
+    <rdfs:comment>Violation Day of Week column in Table NYS Traffic Tickets Issued: Four Year Window. Other Columns: X, Y, month, day, FFMC, DMC, DC, ISI, temp, RH, wind, rain, area</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="nys-traffic-tickets-issued-four-year-window"/>
+  </owl:Class>
+  <owl:Class rdf:about="nys-traffic-tickets-issued-four-year-window##State of License">
+    <rdfs:label>State of License</rdfs:label>
+    <rdfs:comment>State of License column in Table NYS Traffic Tickets Issued: Four Year Window. Other Columns: X, Y, month, day, FFMC, DMC, DC, ISI, temp, RH, wind, rain, area</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="nys-traffic-tickets-issued-four-year-window"/>
+  </owl:Class>
+  <owl:Class rdf:about="nys-traffic-tickets-issued-four-year-window##Violation Charged Code">
+    <rdfs:label>Violation Charged Code</rdfs:label>
+    <rdfs:comment>Violation Charged Code column in Table NYS Traffic Tickets Issued: Four Year Window. Other Columns: X, Y, month, day, FFMC, DMC, DC, ISI, temp, RH, wind, rain, area</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="nys-traffic-tickets-issued-four-year-window"/>
+  </owl:Class>
+  <owl:Class rdf:about="nys-traffic-tickets-issued-four-year-window##Police Agency">
+    <rdfs:label>Police Agency</rdfs:label>
+    <rdfs:comment>Police Agency column in Table NYS Traffic Tickets Issued: Four Year Window. Other Columns: X, Y, month, day, FFMC, DMC, DC, ISI, temp, RH, wind, rain, area</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="nys-traffic-tickets-issued-four-year-window"/>
+  </owl:Class>
+  <owl:Class rdf:about="nys-traffic-tickets-issued-four-year-window##Violation Description">
+    <rdfs:label>Violation Description</rdfs:label>
+    <rdfs:comment>Violation Description column in Table NYS Traffic Tickets Issued: Four Year Window. Other Columns: X, Y, month, day, FFMC, DMC, DC, ISI, temp, RH, wind, rain, area</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="nys-traffic-tickets-issued-four-year-window"/>
+  </owl:Class>
+  <owl:Class rdf:about="nys-traffic-tickets-issued-four-year-window##Violation Month">
+    <rdfs:label>Violation Month</rdfs:label>
+    <rdfs:comment>Violation Month column in Table NYS Traffic Tickets Issued: Four Year Window. Other Columns: X, Y, month, day, FFMC, DMC, DC, ISI, temp, RH, wind, rain, area</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="nys-traffic-tickets-issued-four-year-window"/>
+  </owl:Class>
+  <owl:Class rdf:about="nys-traffic-tickets-issued-four-year-window##Court">
+    <rdfs:label>Court</rdfs:label>
+    <rdfs:comment>Court column in Table NYS Traffic Tickets Issued: Four Year Window. Other Columns: X, Y, month, day, FFMC, DMC, DC, ISI, temp, RH, wind, rain, area</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="nys-traffic-tickets-issued-four-year-window"/>
+  </owl:Class>
+  <owl:Class rdf:about="nys-traffic-tickets-issued-four-year-window##Violation Year">
+    <rdfs:label>Violation Year</rdfs:label>
+    <rdfs:comment>Violation Year column in Table NYS Traffic Tickets Issued: Four Year Window. Other Columns: X, Y, month, day, FFMC, DMC, DC, ISI, temp, RH, wind, rain, area</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="nys-traffic-tickets-issued-four-year-window"/>
+  </owl:Class>
+  <owl:Class rdf:about="nys-traffic-tickets-issued-four-year-window##Age at Violation">
+    <rdfs:label>Age at Violation</rdfs:label>
+    <rdfs:comment>Age at Violation column in Table NYS Traffic Tickets Issued: Four Year Window. Other Columns: X, Y, month, day, FFMC, DMC, DC, ISI, temp, RH, wind, rain, area</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="nys-traffic-tickets-issued-four-year-window"/>
+  </owl:Class>
+  <owl:Ontology rdf:about="r2_sample_metadata.owl"/>
+</rdf:RDF>

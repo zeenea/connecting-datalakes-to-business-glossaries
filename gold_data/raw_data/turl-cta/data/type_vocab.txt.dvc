@@ -1,0 +1,5 @@
+outs:
+- md5: 716d617dfd49b5db54d90f435e79bdb2
+  size: 6677
+  hash: md5
+  path: type_vocab.txt
