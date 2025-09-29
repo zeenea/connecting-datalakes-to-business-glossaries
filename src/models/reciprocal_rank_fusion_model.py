@@ -74,7 +74,7 @@ def infer_with_semantic_model(
         #mrrs = []
         #hits_at_k = []
 
-        sorted_top_k_suggestions = torch.tensor()
+        sorted_top_k_suggestions = torch.tensor([])
 
         for i in range(test_pos_edge_index.size(1)):  # Iterate over each test edge (positive)
 
