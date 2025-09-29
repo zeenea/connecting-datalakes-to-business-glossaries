@@ -450,7 +450,7 @@ def load_turl_cta_artifacts(train_on, random_state):
     # load dataset alignments
 
     # train
-    train_pos_ds_alignments_path = f"../gold_data/raw_data/data/turl-cta/alignments/dataset-alignments/train_dataset_alignments.csv"
+    train_pos_ds_alignments_path = f"../gold_data/raw_data/turl-cta/alignments/dataset-alignments/train_dataset_alignments.csv"
     train_pos_ds_alignments = pd.read_csv(train_pos_ds_alignments_path)
     train_pos_ds_alignments = train_pos_ds_alignments.drop_duplicates(subset=['table_id'])
     train_pos_ds_alignments = train_pos_ds_alignments.reset_index(drop=True)
