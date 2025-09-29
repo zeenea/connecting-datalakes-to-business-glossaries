@@ -298,18 +298,31 @@ def main(args):
     assert col_graph_embeddings.shape[1] == ds_graph_embeddings.shape[1]
     assert col_graph_embeddings.shape[1] == be_graph_embeddings.shape[1]
 
+    logger.info('Load processed data')
+    data_dir_path = "../gold_data/raw_to_dataframes"
+    data_out = list(load_processed_data(data_dir_path, dataset_name, object_to_annotate, random_state))
+    train_col_alignments = data_out[0]
+    test_col_alignments = data_out[1]
+    train_ds_alignments = data_out[2]
+    test_ds_alignments = data_out[3]
+    ds_to_col = data_out[4]
+    ds_to_be = data_out[5]
+    be_to_be = data_out[6]
+
     logger.info("Load Edge Indexes")
     edge_indexes_dir_path = f"../gold_data/edge_indexes/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
 
-    #if object_to_annotate == 'column':
-    train_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_col_edge_index.pt')
-    #train_neg_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_neg_col_edge_index.pt')
-    test_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_col_edge_index.pt')
+    if object_to_annotate == 'column':
+        train_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_col_edge_index.pt')
+        #train_neg_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_neg_col_edge_index.pt')
+        test_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_col_edge_index.pt')
 
-    #elif object_to_annotate == 'dataset':
-    train_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_ds_edge_index.pt')
-    #train_neg_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_neg_ds_edge_index.pt')
-    test_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_ds_edge_index.pt')
+        print(ds_to_be.head())
+
+    elif object_to_annotate == 'dataset':
+        train_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_ds_edge_index.pt')
+        #train_neg_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_neg_ds_edge_index.pt')
+        test_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_ds_edge_index.pt')
 
     ds_to_col_pos_edge_index = load_torch_tensor(edge_indexes_dir_path, 'ds_to_col_pos_edge_index.pt')
     be_to_be_pos_edge_index = load_torch_tensor(edge_indexes_dir_path, 'be_to_be_pos_edge_index.pt')
