@@ -349,8 +349,8 @@ def main(args):
         train_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_ds_edge_index.pt')
         test_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_ds_edge_index.pt')
 
-        train_pos_col_edge_index = torch.from_numpy(train_col_alignments[train_col_alignments['is_matching'] == 1][['ds_id', 'be_id']].values).T
-        test_pos_col_edge_index = torch.from_numpy(test_col_alignments[test_col_alignments['is_matching'] == 1][['ds_id', 'be_id']].values).T
+        train_pos_col_edge_index = torch.from_numpy(train_col_alignments[train_col_alignments['is_matching'] == 1][['col_id', 'be_id']].values).T
+        test_pos_col_edge_index = torch.from_numpy(test_col_alignments[test_col_alignments['is_matching'] == 1][['col_id', 'be_id']].values).T
         pos_col_edge_index = torch.concat((train_pos_col_edge_index, test_pos_col_edge_index), dim=1)
 
     ds_to_col_pos_edge_index = load_torch_tensor(edge_indexes_dir_path, 'ds_to_col_pos_edge_index.pt')
