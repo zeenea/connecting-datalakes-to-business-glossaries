@@ -96,6 +96,7 @@ def infer_with_semantic_model(
 
     return sorted_top_k_suggestions
 
+
 def create_hetero_graph_dataset(
         object_to_annotate,
         col_embeddings,
@@ -120,9 +121,7 @@ def create_hetero_graph_dataset(
     dataset['business_entity'].x = be_embeddings
     dataset['dataset'].x = ds_embeddings
 
-
     if add_col_to_be:
-        print("Add Implements : column -> business_entity")
 
         train_pos_col_edge_index = torch.from_numpy(train_col_alignments[train_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
         train_neg_col_edge_index = torch.from_numpy(train_col_alignments[train_col_alignments['is_matching']==0][['col_id', 'be_id']].values).T
@@ -137,16 +136,13 @@ def create_hetero_graph_dataset(
         dataset['column', 'implements', 'business_entity'].edge_index = train_pos_col_edge_index
         dataset['business_entity', 'rev_implements', 'column'].edge_index = torch.flipud(train_pos_col_edge_index)
 
-
     if add_ds_to_col:
-        print("Add Contains: dataset -> column")
 
         ds_to_col_pos_edge_index = torch.from_numpy(ds_to_col.values).T
         dataset['dataset', 'contains', 'column'].edge_index = ds_to_col_pos_edge_index
         dataset['column', 'rev_contains', 'dataset'].edge_index = torch.flipud(ds_to_col_pos_edge_index)
 
     if add_ds_to_be:
-        print("Add Implements : dataset -> business_entity")
 
         train_pos_ds_edge_index = torch.from_numpy(train_ds_alignments[train_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
         train_neg_ds_edge_index = torch.from_numpy(train_ds_alignments[train_ds_alignments['is_matching']==0][['ds_id', 'be_id']].values).T
@@ -162,7 +158,6 @@ def create_hetero_graph_dataset(
         dataset['business_entity', 'rev_implements', 'dataset'].edge_index = torch.flipud(train_pos_ds_edge_index)
 
     if add_be_to_be:
-        print("Add Composes: business_entity -> business_entity")
 
         be_to_be_pos_edge_index = torch.from_numpy(be_to_be.values).T.type(torch.int64)
         dataset['business_entity', 'composes', 'business_entity'].edge_index = be_to_be_pos_edge_index
@@ -178,22 +173,12 @@ def infer_with_graph_model(col_embeddings, ds_embeddings, be_embeddings, source_
 
     with torch.no_grad():
         # Encode node embeddings using the trained GraphSAGE model
-
         x_dict = {}
-
-        #for key, value in dataset.x_dict.items():
-        #    x_dict[key] = value.to(device)
-
         x_dict['column'] = col_embeddings.to(device)
         x_dict['dataset'] = ds_embeddings.to(device)
         x_dict['business_entity'] = be_embeddings.to(device)
 
         edge_index_dict = {}
-
-        #for key, value in dataset.edge_index_dict.items():
-        #    print(key)
-        #    print(value)
-        #    edge_index_dict[key] = value.long().to(device)
 
         z = hetero_model.encode(x_dict, train_pos_edge_index)
 
@@ -226,6 +211,11 @@ def infer_with_graph_model(col_embeddings, ds_embeddings, be_embeddings, source_
             sorted_top_k_suggestions = torch.concat((sorted_top_k_suggestions, sorted_entity_indices), dim=0)
 
     return sorted_top_k_suggestions
+
+def load_torch_tensor(tensor_dir_path, tensor_name):
+
+    return torch.load(f"{tensor_dir_path}/{tensor_name}")
+
 
 
 def main(args):
@@ -271,52 +261,22 @@ def main(args):
     assert col_graph_embeddings.shape[1] == ds_graph_embeddings.shape[1]
     assert col_graph_embeddings.shape[1] == be_graph_embeddings.shape[1]
 
-    logger.info('Load processed data')
-    data_dir_path = "../gold_data/raw_to_dataframes"
-    data_out = list(load_processed_data(data_dir_path, dataset_name, object_to_annotate, random_state))
-    train_col_alignments = data_out[0]
-    test_col_alignments = data_out[1]
-    train_ds_alignments = data_out[2]
-    test_ds_alignments = data_out[3]
-    ds_to_col = data_out[4]
-    ds_to_be = data_out[5]
-    be_to_be = data_out[6]
+    logger.info("Load Edge Indexes")
+    edge_indexes_dir_path = f"../gold_data/edge_indexes/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
 
-    logger.info('Create hetero graph dataset')
+    if object_to_annotate == 'column':
+        train_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_col_edge_index.pt')
+        train_neg_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_neg_col_edge_index.pt')
+        test_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_col_edge_index.pt')
 
-    add_col_to_be = True
-    add_ds_to_col = True
-    add_ds_to_be = True
-    add_be_to_be = True
+    elif object_to_annotate == 'dataset':
+        train_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_ds_edge_index.pt')
+        train_neg_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_neg_ds_edge_index.pt')
+        test_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_ds_edge_index.pt')
 
-    edge_indexes_out = create_hetero_graph_dataset(
-        object_to_annotate,
-        col_sem_embeddings,
-        be_sem_embeddings,
-        ds_sem_embeddings,
-        train_col_alignments,
-        test_col_alignments,
-        train_ds_alignments,
-        test_ds_alignments,
-        ds_to_col,
-        be_to_be,
-        add_col_to_be,
-        add_ds_to_col,
-        add_ds_to_be,
-        add_be_to_be
-    )
+    else:
+        print("Error in object_to_annotate var")
 
-    hetero_dataset = edge_indexes_out[0]
-    train_pos_col_edge_index = edge_indexes_out[1]
-    train_neg_col_edge_index = edge_indexes_out[2]
-    test_pos_col_edge_index = edge_indexes_out[3]
-    test_neg_col_edge_index = edge_indexes_out[4]
-    train_pos_ds_edge_index = edge_indexes_out[5]
-    train_neg_ds_edge_index = edge_indexes_out[6]
-    test_pos_ds_edge_index = edge_indexes_out[7]
-    test_neg_ds_edge_index = edge_indexes_out[8]
-    ds_to_col_pos_edge_index = edge_indexes_out[9]
-    be_to_be_pos_edge_index = edge_indexes_out[10]
 
     logger.info("Load Graph Model")
 
@@ -394,7 +354,6 @@ def main(args):
 
         print(semantic_top_k_suggestions.shape)
         print(graph_top_k_suggestions.shape)
-
 
         logger.info("Compute MRR and Hit@K")
 
