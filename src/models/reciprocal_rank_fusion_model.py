@@ -221,9 +221,9 @@ def load_torch_tensor(tensor_dir_path, tensor_name):
 def create_dataset_edge_index(object_to_annotate,
                                 ds_to_col_pos_edge_index,
                                 be_to_be_pos_edge_index,
-                                pos_col_edge_index,
+                                train_pos_col_edge_index,
                                 test_pos_col_edge_index,
-                                pos_ds_edge_index,
+                                train_pos_ds_edge_index,
                                 test_pos_ds_edge_index,
                                 device):
     pos_edge_index_dict = {}
@@ -240,8 +240,8 @@ def create_dataset_edge_index(object_to_annotate,
         pos_edge_index_dict['business_entity', 'rev_implements', 'column'] = torch.flipud(test_pos_col_edge_index).to(device)
 
         #pos_ds_edge_index = torch.concat((train_pos_ds_edge_index, test_pos_ds_edge_index), dim=1)
-        pos_edge_index_dict['dataset', 'implements', 'business_entity'] = pos_ds_edge_index.to(device)
-        pos_edge_index_dict['business_entity', 'rev_implements', 'dataset'] = torch.flipud(pos_ds_edge_index).to(device)
+        pos_edge_index_dict['dataset', 'implements', 'business_entity'] = train_pos_ds_edge_index.to(device)
+        pos_edge_index_dict['business_entity', 'rev_implements', 'dataset'] = torch.flipud(train_pos_ds_edge_index).to(device)
 
     if object_to_annotate == 'dataset':
 
@@ -249,8 +249,8 @@ def create_dataset_edge_index(object_to_annotate,
         pos_edge_index_dict['business_entity', 'rev_implements', 'dataset'] = torch.flipud(test_pos_ds_edge_index).to(device)
 
         #pos_col_edge_index = torch.concat((train_pos_col_edge_index, test_pos_col_edge_index), dim=1)
-        pos_edge_index_dict['column', 'implements', 'business_entity'] = pos_col_edge_index.to(device)
-        pos_edge_index_dict['business_entity', 'rev_implements', 'column'] = torch.flipud(pos_col_edge_index).to(device)
+        pos_edge_index_dict['column', 'implements', 'business_entity'] = train_pos_col_edge_index.to(device)
+        pos_edge_index_dict['business_entity', 'rev_implements', 'column'] = torch.flipud(train_pos_col_edge_index).to(device)
 
     return pos_edge_index_dict
 
@@ -342,16 +342,12 @@ def main(args):
         test_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_col_edge_index.pt')
 
         train_pos_ds_edge_index = torch.from_numpy(train_ds_alignments[train_ds_alignments['is_matching'] == 1][['ds_id', 'be_id']].values).T
-        test_pos_ds_edge_index = torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching'] == 1][['ds_id', 'be_id']].values).T
-        pos_ds_edge_index = torch.concat((train_pos_ds_edge_index, test_pos_ds_edge_index), dim=1)
 
     elif object_to_annotate == 'dataset':
         train_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_ds_edge_index.pt')
         test_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_ds_edge_index.pt')
 
         train_pos_col_edge_index = torch.from_numpy(train_col_alignments[train_col_alignments['is_matching'] == 1][['col_id', 'be_id']].values).T
-        test_pos_col_edge_index = torch.from_numpy(test_col_alignments[test_col_alignments['is_matching'] == 1][['col_id', 'be_id']].values).T
-        pos_col_edge_index = torch.concat((train_pos_col_edge_index, test_pos_col_edge_index), dim=1)
 
     ds_to_col_pos_edge_index = load_torch_tensor(edge_indexes_dir_path, 'ds_to_col_pos_edge_index.pt')
     be_to_be_pos_edge_index = load_torch_tensor(edge_indexes_dir_path, 'be_to_be_pos_edge_index.pt')
@@ -367,9 +363,9 @@ def main(args):
     dataset_edge_index = create_dataset_edge_index(object_to_annotate=object_to_annotate,
                                                    ds_to_col_pos_edge_index=ds_to_col_pos_edge_index,
                                                    be_to_be_pos_edge_index=be_to_be_pos_edge_index,
-                                                   pos_col_edge_index=pos_col_edge_index,
+                                                   train_pos_col_edge_index=train_pos_col_edge_index,
                                                    test_pos_col_edge_index=test_pos_col_edge_index,
-                                                   pos_ds_edge_index=pos_ds_edge_index,
+                                                   train_pos_ds_edge_index=train_pos_ds_edge_index,
                                                    test_pos_ds_edge_index=test_pos_ds_edge_index,
                                                    device=device
                                                    )
