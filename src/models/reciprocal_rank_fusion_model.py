@@ -352,12 +352,6 @@ def main(args):
     ds_to_col_pos_edge_index = load_torch_tensor(edge_indexes_dir_path, 'ds_to_col_pos_edge_index.pt')
     be_to_be_pos_edge_index = load_torch_tensor(edge_indexes_dir_path, 'be_to_be_pos_edge_index.pt')
 
-    print(ds_to_col_pos_edge_index.shape)
-    print(be_to_be_pos_edge_index.shape)
-    print(train_pos_ds_edge_index.shape)
-    print(test_pos_ds_edge_index.shape)
-    print(train_pos_col_edge_index.shape)
-
     logger.info("Set device to 'cpu' or 'cuda'")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -432,9 +426,7 @@ def main(args):
                 device=device
             )
 
-            print(type(train_pos_ds_edge_index))
-            print(train_pos_ds_edge_index.shape)
-
+            print(dataset_edge_index)
             graph_top_k_suggestions = infer_with_graph_model(
                 col_embeddings=col_graph_embeddings,
                 ds_embeddings=ds_graph_embeddings,
