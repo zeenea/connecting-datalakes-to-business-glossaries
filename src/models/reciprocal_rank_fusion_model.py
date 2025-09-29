@@ -322,7 +322,7 @@ def main(args):
 
     model_class_name = "HeteroGraphSage"
     registered_model_name = f"{dataset_name}-{object_to_annotate}-{model_class_name}"
-    graph_model = mlflow.pytorch.load_model(registered_model_name=registered_model_name)
+    graph_model = mlflow.pytorch.load_model(model_uri=registered_model_name)
 
     logger.info("Set device to 'cpu' or 'cuda'")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
