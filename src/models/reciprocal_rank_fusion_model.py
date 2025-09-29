@@ -300,9 +300,9 @@ def main(args):
     random_state = [42, 84, 13][random_state_index]
 
     logger.info('Load semantic embeddings')
-    model_type = "semantic-based"
+    semantic_model_type = "semantic-based"
     embeddings_dir_path = "../gold_data/embeddings"
-    embeddings_out = list(load_embeddings(embeddings_dir_path, dataset_name, model_type, random_state))
+    embeddings_out = list(load_embeddings(embeddings_dir_path, dataset_name, semantic_model_type, random_state))
     col_sem_embeddings = embeddings_out[0]
     ds_sem_embeddings = embeddings_out[1]
     be_sem_embeddings = embeddings_out[2]
@@ -311,12 +311,14 @@ def main(args):
     assert col_sem_embeddings.shape[1] == be_sem_embeddings.shape[1]
 
     logger.info('Load graph embeddings')
-    model_type = "graph-based"
+    graph_model_type = "graph-based"
     embeddings_dir_path = "../gold_data/embeddings"
-    embeddings_out = list(load_embeddings(embeddings_dir_path, dataset_name, model_type, random_state))
+    embeddings_out = list(load_embeddings(embeddings_dir_path, dataset_name, graph_model_type, random_state))
     col_graph_embeddings = embeddings_out[0]
     ds_graph_embeddings = embeddings_out[1]
     be_graph_embeddings = embeddings_out[2]
+
+    print("graph embeddings: ",col_graph_embeddings.shape)
 
     assert col_graph_embeddings.shape[1] == ds_graph_embeddings.shape[1]
     assert col_graph_embeddings.shape[1] == be_graph_embeddings.shape[1]
@@ -426,7 +428,6 @@ def main(args):
                 device=device
             )
 
-            print(dataset_edge_index)
             graph_top_k_suggestions = infer_with_graph_model(
                 col_embeddings=col_graph_embeddings,
                 ds_embeddings=ds_graph_embeddings,
