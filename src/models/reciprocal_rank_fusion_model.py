@@ -334,20 +334,24 @@ def main(args):
 
     logger.info("Load Edge Indexes")
     edge_indexes_dir_path = f"../gold_data/edge_indexes/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
+    print(ds_to_be.info())
+    print(ds_to_be.info())
 
     if object_to_annotate == 'column':
         train_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_col_edge_index.pt')
-        #train_neg_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_neg_col_edge_index.pt')
         test_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_col_edge_index.pt')
 
-        pos_ds_edge_index = ds_to_be
-        print(ds_to_be.info())
-        print(ds_to_be.info())
+        train_pos_ds_edge_index = torch.from_numpy(train_ds_alignments[train_ds_alignments['is_matching'] == 1][['ds_id', 'be_id']].values).T
+        test_pos_ds_edge_index = torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching'] == 1][['ds_id', 'be_id']].values).T
+        pos_ds_edge_index = torch.concat((train_pos_ds_edge_index, test_pos_ds_edge_index), dim=1)
 
     elif object_to_annotate == 'dataset':
         train_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_ds_edge_index.pt')
-        #train_neg_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_neg_ds_edge_index.pt')
         test_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_ds_edge_index.pt')
+
+        train_pos_col_edge_index = torch.from_numpy(train_col_alignments[train_col_alignments['is_matching'] == 1][['ds_id', 'be_id']].values).T
+        test_pos_col_edge_index = torch.from_numpy(test_col_alignments[test_col_alignments['is_matching'] == 1][['ds_id', 'be_id']].values).T
+        pos_col_edge_index = torch.concat((train_pos_col_edge_index, test_pos_col_edge_index), dim=1)
 
     ds_to_col_pos_edge_index = load_torch_tensor(edge_indexes_dir_path, 'ds_to_col_pos_edge_index.pt')
     be_to_be_pos_edge_index = load_torch_tensor(edge_indexes_dir_path, 'be_to_be_pos_edge_index.pt')
