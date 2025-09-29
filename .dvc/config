@@ -2,4 +2,4 @@
     autostage = true
 ['remote "origin"']
     url = s3://dvc
-    endpointurl = https://dagshub.com/AKNOUCHEanis/link-prediction-local.s3
+    endpointurl = https://dagshub.com/AKNOUCHEanis/connecting-datalakes-to-business-glossaries.s3

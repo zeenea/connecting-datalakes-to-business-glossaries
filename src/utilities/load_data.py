@@ -450,7 +450,251 @@ def load_turl_cta_artifacts(train_on, random_state):
     # load dataset alignments
 
     # train
-    train_pos_ds_alignments_path = f"../gold_data/raw_data/data/turl-cta/alignments/dataset-alignments/train_dataset_alignments.csv"
+    train_pos_ds_alignments_path = f"../gold_data/raw_data/turl-cta/alignments/dataset-alignments/train_dataset_alignments.csv"
+    train_pos_ds_alignments = pd.read_csv(train_pos_ds_alignments_path)
+    train_pos_ds_alignments = train_pos_ds_alignments.drop_duplicates(subset=['table_id'])
+    train_pos_ds_alignments = train_pos_ds_alignments.reset_index(drop=True)
+    train_pos_ds_alignments = train_pos_ds_alignments[['table_id', 'tag_entity', 'table_title']]
+    train_pos_ds_alignments['is_matching'] = 1
+
+    train_neg_ds_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/datasets/train_random_neg_alignments.csv"
+    train_neg_ds_alignments = pd.read_csv(train_neg_ds_alignments_path, index_col=0)
+    train_neg_ds_alignments = train_neg_ds_alignments.rename(columns={'neg_business_entity_code':'tag_entity'})
+    train_neg_ds_alignments = train_neg_ds_alignments.reset_index(drop=True)
+    train_neg_ds_alignments = pd.merge(train_neg_ds_alignments, train_pos_ds_alignments[['table_id', 'table_title']], left_on='table_id', right_on='table_id', how='inner')
+    train_neg_ds_alignments = train_neg_ds_alignments[['table_id', 'tag_entity', 'table_title']]
+    train_neg_ds_alignments['is_matching'] = 0
+    
+    # dev 
+
+    dev_pos_ds_alignments_path = f"../gold_data/raw_data/turl-cta/alignments/dataset-alignments/dev_dataset_alignments.csv"
+    dev_pos_ds_alignments = pd.read_csv(train_pos_ds_alignments_path)
+    dev_pos_ds_alignments = dev_pos_ds_alignments.drop_duplicates(subset=['table_id'])
+    dev_pos_ds_alignments = dev_pos_ds_alignments.reset_index(drop=True)
+    dev_pos_ds_alignments = dev_pos_ds_alignments[['table_id', 'tag_entity', 'table_title']]
+    dev_pos_ds_alignments['is_matching'] = 1
+
+    dev_neg_ds_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/datasets/dev_random_neg_alignments.csv"
+    dev_neg_ds_alignments = pd.read_csv(dev_neg_ds_alignments_path, index_col=0)
+    dev_neg_ds_alignments = dev_neg_ds_alignments.rename(columns={'neg_business_entity_code':'tag_entity'})
+    dev_neg_ds_alignments = dev_neg_ds_alignments.reset_index(drop=True)
+    dev_neg_ds_alignments = pd.merge(dev_neg_ds_alignments, dev_pos_ds_alignments[['table_id', 'table_title']], left_on='table_id', right_on='table_id', how='inner')
+    dev_neg_ds_alignments = dev_neg_ds_alignments[['table_id', 'tag_entity', 'table_title']]
+    dev_neg_ds_alignments['is_matching'] = 0
+
+    
+    # test
+    test_pos_ds_alignments_path = f"../gold_data/raw_data/turl-cta/alignments/dataset-alignments/test_dataset_alignments.csv"
+    test_pos_ds_alignments = pd.read_csv(test_pos_ds_alignments_path)
+    test_pos_ds_alignments = test_pos_ds_alignments.drop_duplicates(subset=['table_id'])
+    test_pos_ds_alignments = test_pos_ds_alignments.reset_index(drop=True)
+    test_pos_ds_alignments = test_pos_ds_alignments[['table_id', 'tag_entity', 'table_title']]
+    test_pos_ds_alignments['is_matching'] = 1 
+
+    test_neg_ds_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/datasets/test_random_neg_alignments.csv"
+    test_neg_ds_alignments = pd.read_csv(test_neg_ds_alignments_path, index_col=0)
+    test_neg_ds_alignments = test_neg_ds_alignments.rename(columns={'neg_business_entity_code':'tag_entity'})
+    test_neg_ds_alignments = test_neg_ds_alignments.reset_index(drop=True)
+    test_neg_ds_alignments = pd.merge(test_neg_ds_alignments, test_pos_ds_alignments[['table_id', 'table_title']], left_on='table_id', right_on='table_id', how='inner')
+    test_neg_ds_alignments = test_neg_ds_alignments[['table_id', 'tag_entity', 'table_title']]
+    test_neg_ds_alignments['is_matching'] = 0
+
+    
+    pos_ds_alignments = pd.concat([train_pos_ds_alignments, dev_pos_ds_alignments, test_pos_ds_alignments], axis=0)
+    pos_ds_alignments = pos_ds_alignments[~pos_ds_alignments['table_title'].isna()]
+    pos_ds_alignments = pos_ds_alignments.reset_index(drop=True)
+    pos_ds_alignments = pos_ds_alignments.reset_index()
+    pos_ds_alignments = pos_ds_alignments.rename(columns={'index':'ds_id'})
+    pos_ds_alignments = pd.merge(pos_ds_alignments[['ds_id', 'table_id', 'tag_entity', 'table_title', 'is_matching']],  business_glossary_items[['be_id', 'business_entity_code']], left_on='tag_entity', right_on='business_entity_code', how='inner')
+    pos_ds_alignments = pos_ds_alignments.sample(frac=1, random_state=random_state)
+
+    neg_ds_alignments = pd.concat([train_neg_ds_alignments, dev_neg_ds_alignments, test_neg_ds_alignments], axis=0)
+    neg_ds_alignments = neg_ds_alignments[~neg_ds_alignments['table_title'].isna()]
+    neg_ds_alignments = neg_ds_alignments.reset_index(drop=True)
+    neg_ds_alignments = neg_ds_alignments.reset_index()
+    neg_ds_alignments = neg_ds_alignments.rename(columns={'index':'ds_id'})
+    neg_ds_alignments = pd.merge(neg_ds_alignments[['ds_id', 'table_id', 'tag_entity', 'table_title', 'is_matching']],  business_glossary_items[['be_id', 'business_entity_code']], left_on='tag_entity', right_on='business_entity_code', how='inner')
+    neg_ds_alignments = neg_ds_alignments.sample(frac=1, random_state=random_state)
+
+    # train and test sets
+    if train_on == 'dataset':
+        train_size = int(pos_ds_alignments.shape[0] * 0.8)
+    else:
+        train_size = pos_ds_alignments.shape[0]
+    
+    train_ds_alignments = pd.concat([pos_ds_alignments[:train_size], neg_ds_alignments[:train_size]], axis=0).sample(frac=1)
+
+    if train_on == 'dataset':
+        test_ds_alignments = pd.concat([pos_ds_alignments[train_size:], neg_ds_alignments[train_size:]], axis=0).sample(frac=1)
+
+    
+    # ds_to_col
+    ds_to_col = pd.merge(pos_ds_alignments, pos_col_alignments, left_on='table_id', right_on='table_id', how='inner')
+    ds_to_col = ds_to_col[['ds_id', 'col_id']]
+    ds_to_col = ds_to_col.reset_index(drop=True)
+
+    business_glossary_items = business_glossary_items.rename(columns={'business_entity_name':'be_name'})
+    pos_ds_alignments = pos_ds_alignments.rename(columns={'table_title':'table_name'})
+    neg_ds_alignments = neg_ds_alignments.rename(columns={'table_title':'table_name'})
+    train_ds_alignments = train_ds_alignments.rename(columns={'table_title':'table_name'})
+
+    
+    if train_on == 'column':
+        test_ds_alignments = None
+
+    if train_on == 'dataset':
+        test_col_alignments = None
+        test_ds_alignments = test_ds_alignments.rename(columns={'table_title':'table_name'})
+    
+    return train_col_alignments, test_col_alignments, train_ds_alignments, test_ds_alignments, business_glossary_items, ds_to_col, be_to_be, pos_col_alignments, pos_ds_alignments
+
+def load_origin_turl_cta_artifacts(train_on, random_state):
+
+    dataset_name = 'turl-cta'
+    
+    # train 
+    train_pos_col_alignments_path = "../gold_data/raw_data/turl-cta/alignments/column-alignments/train_column_alignments.csv"
+    train_pos_col_alignments = pd.read_csv(train_pos_col_alignments_path, index_col=0)
+    train_pos_col_alignments = train_pos_col_alignments.rename(columns={'column_label':'target_uri'})
+    train_pos_col_alignments = train_pos_col_alignments[['table_id', 'target_uri', 'column_name']]
+    train_pos_col_alignments = train_pos_col_alignments[~train_pos_col_alignments['column_name'].isna()]
+    train_pos_col_alignments = train_pos_col_alignments.reset_index(drop=True)
+    train_pos_col_alignments = train_pos_col_alignments.reset_index()
+    train_pos_col_alignments = train_pos_col_alignments.rename(columns={'index':'col_id'})
+    train_pos_col_alignments['is_matching'] = 1
+
+    train_neg_col_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/columns/train_random_neg_alignments.csv"
+    train_neg_col_alignments = pd.read_csv(train_neg_col_alignments_path, index_col=0)
+    train_neg_col_alignments = train_neg_col_alignments.rename(columns={'neg_business_entity_code':'target_uri'})
+    train_neg_col_alignments = train_neg_col_alignments[['table_id', 'target_uri', 'column_name']]
+    train_neg_col_alignments = train_neg_col_alignments[~train_neg_col_alignments['column_name'].isna()]
+    train_neg_col_alignments = train_neg_col_alignments.reset_index(drop=True)
+    train_neg_col_alignments = train_neg_col_alignments.reset_index()
+    train_neg_col_alignments = train_neg_col_alignments.rename(columns={'index':'col_id'})
+    train_neg_col_alignments['is_matching'] = 0
+    
+    assert train_pos_col_alignments.shape[0] == train_neg_col_alignments.shape[0]
+
+    # dev
+    dev_pos_col_alignments_path = "../gold_data/raw_data/turl-cta/alignments/column-alignments/dev_column_alignments.csv"
+    dev_pos_col_alignments = pd.read_csv(dev_pos_col_alignments_path, index_col=0)
+    dev_pos_col_alignments = dev_pos_col_alignments.rename(columns={'column_label':'target_uri'})
+    dev_pos_col_alignments = dev_pos_col_alignments[['table_id', 'target_uri', 'column_name']]
+    dev_pos_col_alignments = dev_pos_col_alignments[~dev_pos_col_alignments['column_name'].isna()]
+    dev_pos_col_alignments = dev_pos_col_alignments.reset_index(drop=True)
+    dev_pos_col_alignments = dev_pos_col_alignments.reset_index()
+    dev_pos_col_alignments = dev_pos_col_alignments.rename(columns={'index':'col_id'})
+    dev_pos_col_alignments['col_id'] = dev_pos_col_alignments['col_id'].apply(lambda x: int(x) + train_pos_col_alignments.shape[0])
+    dev_pos_col_alignments['is_matching'] = 1
+
+    dev_neg_col_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/columns/dev_random_neg_alignments.csv"
+    dev_neg_col_alignments = pd.read_csv(dev_neg_col_alignments_path, index_col=0)
+    dev_neg_col_alignments = dev_neg_col_alignments.rename(columns={'neg_business_entity_code':'target_uri'})
+    dev_neg_col_alignments = dev_neg_col_alignments[['table_id', 'target_uri', 'column_name']]
+    dev_neg_col_alignments = dev_neg_col_alignments[~dev_neg_col_alignments['column_name'].isna()]
+    dev_neg_col_alignments = dev_neg_col_alignments.reset_index(drop=True)
+    dev_neg_col_alignments = dev_neg_col_alignments.reset_index()
+    dev_neg_col_alignments = dev_neg_col_alignments.rename(columns={'index':'col_id'})
+    dev_neg_col_alignments['col_id'] = dev_neg_col_alignments['col_id'].apply(lambda x: int(x) + train_pos_col_alignments.shape[0])
+    dev_neg_col_alignments['is_matching'] = 0
+    
+
+    assert dev_pos_col_alignments.shape[0] == dev_neg_col_alignments.shape[0]
+
+    # test
+    test_pos_col_alignments_path = "../gold_data/raw_data/turl-cta/alignments/column-alignments/test_column_alignments.csv"
+    test_pos_col_alignments = pd.read_csv(test_pos_col_alignments_path, index_col=0)
+    test_pos_col_alignments = test_pos_col_alignments.rename(columns={'column_label':'target_uri'})
+    test_pos_col_alignments = test_pos_col_alignments[['table_id', 'target_uri', 'column_name']]
+    test_pos_col_alignments = test_pos_col_alignments[~test_pos_col_alignments['column_name'].isna()]
+    test_pos_col_alignments = test_pos_col_alignments.reset_index(drop=True)
+    test_pos_col_alignments = test_pos_col_alignments.reset_index()
+    test_pos_col_alignments = test_pos_col_alignments.rename(columns={'index':'col_id'})
+    test_pos_col_alignments['col_id'] = test_pos_col_alignments['col_id'].apply(lambda x: int(x) + train_pos_col_alignments.shape[0] + dev_pos_col_alignments.shape[0])
+    test_pos_col_alignments['is_matching'] = 1
+    
+    test_neg_col_alignments_path = "../gold_data/raw_data/turl-cta/negative-alignments/columns/test_random_neg_alignments.csv"
+    test_neg_col_alignments = pd.read_csv(test_neg_col_alignments_path, index_col=0)
+    test_neg_col_alignments = test_neg_col_alignments.rename(columns={'neg_business_entity_code':'target_uri'})
+    test_neg_col_alignments = test_neg_col_alignments[['table_id', 'target_uri', 'column_name']]
+    test_neg_col_alignments = test_neg_col_alignments[~test_neg_col_alignments['column_name'].isna()]
+    test_neg_col_alignments = test_neg_col_alignments.reset_index(drop=True)
+    test_neg_col_alignments = test_neg_col_alignments.reset_index()
+    test_neg_col_alignments = test_neg_col_alignments.rename(columns={'index':'col_id'})
+    test_neg_col_alignments['col_id'] = test_neg_col_alignments['col_id'].apply(lambda x: int(x) + train_pos_col_alignments.shape[0] + dev_pos_col_alignments.shape[0])
+    test_neg_col_alignments['is_matching'] = 0
+
+    assert test_pos_col_alignments.shape[0] == test_neg_col_alignments.shape[0]
+
+
+    # pos and neg alignments
+
+    pos_col_alignments = pd.concat([train_pos_col_alignments, dev_pos_col_alignments, test_pos_col_alignments], axis=0)
+    pos_col_alignments = pos_col_alignments[~pos_col_alignments['column_name'].isna()]
+    pos_col_alignments = pos_col_alignments.reset_index(drop=True)
+    #pos_col_alignments = pos_col_alignments.reset_index()
+    #pos_col_alignments = pos_col_alignments.rename(columns={'index':'col_id'})
+    pos_col_alignments = pos_col_alignments.sample(frac=1, random_state=random_state)
+
+    neg_col_alignments = pd.concat([train_neg_col_alignments, dev_neg_col_alignments, test_neg_col_alignments], axis=0)
+    neg_col_alignments = neg_col_alignments[~neg_col_alignments['column_name'].isna()]
+    neg_col_alignments = neg_col_alignments.reset_index(drop=True)
+    #neg_col_alignments = neg_col_alignments.reset_index()
+    #neg_col_alignments = neg_col_alignments.rename(columns={'index':'col_id'})
+    neg_col_alignments = neg_col_alignments.sample(frac=1, random_state=random_state)
+
+    assert pos_col_alignments.shape[0] == neg_col_alignments.shape[0]
+    
+    ## train and test sets
+    #if train_on == 'column':
+    #    train_size = int(pos_col_alignments.shape[0] * 0.8)
+    #else:
+    #    train_size = pos_col_alignments.shape[0]
+
+    
+    #train_col_alignments = pd.concat([pos_col_alignments[:train_size], neg_col_alignments[:train_size]], axis=0).sample(frac=1)
+    train_col_alignments = pd.concat([train_pos_col_alignments, train_neg_col_alignments], axis=0).sample(frac=1)
+    
+    if train_on == 'column':
+        #test_col_alignments = pd.concat([pos_col_alignments[train_size:], neg_col_alignments[train_size:]], axis=0).sample(frac=1)
+        test_col_alignments = pd.concat([test_pos_col_alignments, test_neg_col_alignments], axis=0).sample(frac=1)
+    
+    # load business glossary
+    business_glossary_path = "../gold_data/raw_data/turl-cta/business-glossary/glossary_data.csv"
+    business_glossary_items = load_business_glossary(business_glossary_path)
+    business_glossary_items = business_glossary_items.reset_index(drop=True)
+    business_glossary_items['sub_class_of'] = business_glossary_items['business_entity_code'].apply(lambda x: str(x).split('.')[0])
+    parent_entities = business_glossary_items['sub_class_of'].unique()
+    business_glossary_items = pd.concat([pd.DataFrame({'business_entity_code':parent_entities, 'business_entity_name': parent_entities, 'sub_class_of':[None for i in range(len(parent_entities))]}), business_glossary_items], axis=0)
+    business_glossary_items = business_glossary_items.reset_index(drop=True)
+    business_glossary_items = business_glossary_items.reset_index()
+    business_glossary_items = business_glossary_items.rename(columns={'index':'be_id'})
+    business_glossary_items['be_id'] = business_glossary_items['be_id'].apply(lambda x: int(x))
+    
+    assert max(business_glossary_items['be_id']) < (business_glossary_items.shape[0])
+    
+    be_code_bg = "business_entity_code"
+
+    train_col_alignments = pd.merge(train_col_alignments, business_glossary_items[['be_id', be_code_bg]], left_on='target_uri', right_on=be_code_bg, how='inner')
+    train_col_alignments = train_col_alignments[['col_id', 'column_name', 'be_id', 'is_matching']]
+
+    if train_on == 'column':
+        test_col_alignments = pd.merge(test_col_alignments, business_glossary_items[['be_id', be_code_bg]], left_on='target_uri', right_on=be_code_bg, how='inner')
+        test_col_alignments = test_col_alignments[['col_id', 'column_name', 'be_id', 'is_matching']]
+    
+    # be_to_be
+    be_to_be = business_glossary_items[['be_id', 'sub_class_of']]
+    be_to_be = be_to_be.rename(columns={'be_id':'src_be_id'})
+    be_to_be = pd.merge(be_to_be, business_glossary_items[['be_id', 'business_entity_code']], left_on='sub_class_of', right_on='business_entity_code', how='left')
+    be_to_be = be_to_be[['src_be_id', 'be_id']]
+    be_to_be = be_to_be.rename(columns={'be_id':'trgt_be_id'})
+    be_to_be = be_to_be[be_to_be['trgt_be_id'].notnull()]
+    be_to_be = be_to_be.reset_index(drop=True)
+
+    # load dataset alignments
+
+    # train
+    train_pos_ds_alignments_path = f"../gold_data/raw_data/turl-cta/alignments/dataset-alignments/train_dataset_alignments.csv"
     train_pos_ds_alignments = pd.read_csv(train_pos_ds_alignments_path)
     train_pos_ds_alignments = train_pos_ds_alignments.drop_duplicates(subset=['table_id'])
     train_pos_ds_alignments = train_pos_ds_alignments.reset_index(drop=True)
@@ -687,7 +931,7 @@ def main(args):
 
     if dataset_name == "turl-cta":
         
-        results = load_turl_cta_artifacts(object_to_annotate, random_state)
+        results = load_origin_turl_cta_artifacts(object_to_annotate, random_state)
         train_col_alignments = results[0]
         test_col_alignments = results[1]
         train_ds_alignments = results[2]

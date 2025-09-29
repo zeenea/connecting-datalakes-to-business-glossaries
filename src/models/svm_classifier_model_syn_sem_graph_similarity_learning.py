@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from sklearn.model_selection import GridSearchCV
 
 import xgboost as xgb
-from xgboost import XGBClassifier
+#from xgboost import XGBClassifier
 from sklearn.svm import SVC
 
 
