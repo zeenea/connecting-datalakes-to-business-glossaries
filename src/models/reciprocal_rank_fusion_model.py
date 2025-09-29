@@ -3,6 +3,7 @@ import logging
 import torch
 import os
 import mlflow
+from torch_geometric.data import HeteroData
 
 
 def compute_rrf():
@@ -71,9 +72,6 @@ def infer_with_semantic_model(
 
     with torch.no_grad():
 
-        #mrrs = []
-        #hits_at_k = []
-
         sorted_top_k_suggestions = torch.tensor([])
 
         for i in range(test_pos_edge_index.size(1)):  # Iterate over each test edge (positive)
@@ -93,31 +91,142 @@ def infer_with_semantic_model(
 
             # get sorted entity ids by score
             sorted_entity_indices = src_to_entities_edge_index[1][sorted_indices]
-
-            print(sorted_entity_indices.shape)
-            print(sorted_entity_indices)
-
             sorted_entity_indices = sorted_entity_indices[:k]
             sorted_top_k_suggestions = torch.concat((sorted_top_k_suggestions, sorted_entity_indices), dim=0)
-            #print(f"sorted_entity_indices: {sorted_entity_indices}")
-
-            # get rank of true target entity
-            #true_edge_rank = (sorted_entity_indices == tgt).nonzero(as_tuple=True)[0].item()
-
-            # MRR Calculation: Reciprocal of the true edge's rank
-            #mrrs.append(1.0 / (true_edge_rank+1))
-
-            # Hit@K Calculation: Check if the true edge appears in the top K scores
-            #if true_edge_rank <= k:
-            #    hits_at_k.append(1.0)  # 1 means hit
-            #else:
-            #    hits_at_k.append(0.0)  # 0 means miss
-
-        # Compute average MRR and Hit@K across all test edges
-        #mrr = torch.tensor(mrrs).mean().item()
-        #hit_at_k = torch.tensor(hits_at_k).mean().item()
 
     return sorted_top_k_suggestions
+
+def create_hetero_graph_dataset(
+        object_to_annotate,
+        col_embeddings,
+        be_embeddings,
+        ds_embeddings,
+        train_col_alignments,
+        test_col_alignments,
+        train_ds_alignments,
+        test_ds_alignments,
+        ds_to_col,
+        be_to_be,
+        add_col_to_be,
+        add_ds_to_col,
+        add_ds_to_be,
+        add_be_to_be
+):
+    """Creates Hetero-Graph Dataset."""
+
+    dataset = HeteroData()
+
+    dataset['column'].x = col_embeddings
+    dataset['business_entity'].x = be_embeddings
+    dataset['dataset'].x = ds_embeddings
+
+
+    if add_col_to_be:
+        print("Add Implements : column -> business_entity")
+
+        train_pos_col_edge_index = torch.from_numpy(train_col_alignments[train_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
+        train_neg_col_edge_index = torch.from_numpy(train_col_alignments[train_col_alignments['is_matching']==0][['col_id', 'be_id']].values).T
+
+        if object_to_annotate == 'column':
+            test_pos_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
+            test_neg_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==0][['col_id', 'be_id']].values).T
+        else:
+            test_pos_col_edge_index = None
+            test_neg_col_edge_index = None
+
+        dataset['column', 'implements', 'business_entity'].edge_index = train_pos_col_edge_index
+        dataset['business_entity', 'rev_implements', 'column'].edge_index = torch.flipud(train_pos_col_edge_index)
+
+
+    if add_ds_to_col:
+        print("Add Contains: dataset -> column")
+
+        ds_to_col_pos_edge_index = torch.from_numpy(ds_to_col.values).T
+        dataset['dataset', 'contains', 'column'].edge_index = ds_to_col_pos_edge_index
+        dataset['column', 'rev_contains', 'dataset'].edge_index = torch.flipud(ds_to_col_pos_edge_index)
+
+    if add_ds_to_be:
+        print("Add Implements : dataset -> business_entity")
+
+        train_pos_ds_edge_index = torch.from_numpy(train_ds_alignments[train_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
+        train_neg_ds_edge_index = torch.from_numpy(train_ds_alignments[train_ds_alignments['is_matching']==0][['ds_id', 'be_id']].values).T
+
+        if object_to_annotate == 'dataset':
+            test_pos_ds_edge_index =  torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
+            test_neg_ds_edge_index =  torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==0][['ds_id', 'be_id']].values).T
+        else:
+            test_pos_ds_edge_index = None
+            test_neg_ds_edge_index = None
+
+        dataset['dataset', 'implements', 'business_entity'].edge_index = train_pos_ds_edge_index
+        dataset['business_entity', 'rev_implements', 'dataset'].edge_index = torch.flipud(train_pos_ds_edge_index)
+
+    if add_be_to_be:
+        print("Add Composes: business_entity -> business_entity")
+
+        be_to_be_pos_edge_index = torch.from_numpy(be_to_be.values).T.type(torch.int64)
+        dataset['business_entity', 'composes', 'business_entity'].edge_index = be_to_be_pos_edge_index
+        dataset['business_entity', 'rev_composes', 'business_entity'].edge_index = torch.flipud(be_to_be_pos_edge_index)
+
+    return dataset, train_pos_col_edge_index, train_neg_col_edge_index, test_pos_col_edge_index, test_neg_col_edge_index, train_pos_ds_edge_index, train_neg_ds_edge_index, test_pos_ds_edge_index, test_neg_ds_edge_index, ds_to_col_pos_edge_index, be_to_be_pos_edge_index
+
+
+def infer_with_graph_model(col_embeddings, ds_embeddings, be_embeddings, source_object, hetero_model, train_pos_edge_index, test_pos_edge_index, k=10, device=None):
+    hetero_model.eval()
+
+    all_entity_ids = test_pos_edge_index[1,:].unique() # get the right test data, and load the right data
+
+    with torch.no_grad():
+        # Encode node embeddings using the trained GraphSAGE model
+
+        x_dict = {}
+
+        #for key, value in dataset.x_dict.items():
+        #    x_dict[key] = value.to(device)
+
+        x_dict['column'] = col_embeddings.to(device)
+        x_dict['dataset'] = ds_embeddings.to(device)
+        x_dict['business_entity'] = be_embeddings.to(device)
+
+        edge_index_dict = {}
+
+        #for key, value in dataset.edge_index_dict.items():
+        #    print(key)
+        #    print(value)
+        #    edge_index_dict[key] = value.long().to(device)
+
+        z = hetero_model.encode(x_dict, train_pos_edge_index)
+
+        sorted_top_k_suggestions = torch.tensor([])
+
+        for i in range(test_pos_edge_index.size(1)):  # Iterate over each test edge (positive)
+            # Get the source and target nodes of the positive test edge
+            src, tgt = test_pos_edge_index[0, i], test_pos_edge_index[1, i]
+
+            # Compute the score for all possible links from src to all target entities
+            all_entity_ids = all_entity_ids.reshape(1, -1)
+            tensor_src = src.repeat(all_entity_ids.shape[1]).reshape(1, -1)
+
+            assert tensor_src.shape[1] == all_entity_ids.shape[1]
+
+            src_to_entities_edge_index = torch.concat([tensor_src, all_entity_ids], dim=0).to(device)
+            target_true_index = (src_to_entities_edge_index[1,:] == tgt).nonzero(as_tuple=True)[0].to(device)
+
+            embeddings1 = z[source_object][src_to_entities_edge_index[0]]
+            embeddings2 = z['business_entity'][src_to_entities_edge_index[1]]
+
+            # cosine similarity
+            edge_scores = hetero_model.decode(embeddings1, embeddings2)
+
+            # Rank the scores (higher is better), and get the rank of the true edge
+            sorted_scores, sorted_indices = torch.sort(edge_scores, descending=True)
+
+            sorted_entity_indices = src_to_entities_edge_index[1][sorted_indices]
+            sorted_entity_indices = sorted_entity_indices[:k]
+            sorted_top_k_suggestions = torch.concat((sorted_top_k_suggestions, sorted_entity_indices), dim=0)
+
+    return sorted_top_k_suggestions
+
 
 def main(args):
 
@@ -173,6 +282,48 @@ def main(args):
     ds_to_be = data_out[5]
     be_to_be = data_out[6]
 
+    logger.info('Create hetero graph dataset')
+
+    add_col_to_be = True
+    add_ds_to_col = True
+    add_ds_to_be = True
+    add_be_to_be = True
+
+    edge_indexes_out = create_hetero_graph_dataset(
+        object_to_annotate,
+        col_sem_embeddings,
+        be_sem_embeddings,
+        ds_sem_embeddings,
+        train_col_alignments,
+        test_col_alignments,
+        train_ds_alignments,
+        test_ds_alignments,
+        ds_to_col,
+        be_to_be,
+        add_col_to_be,
+        add_ds_to_col,
+        add_ds_to_be,
+        add_be_to_be
+    )
+
+    hetero_dataset = edge_indexes_out[0]
+    train_pos_col_edge_index = edge_indexes_out[1]
+    train_neg_col_edge_index = edge_indexes_out[2]
+    test_pos_col_edge_index = edge_indexes_out[3]
+    test_neg_col_edge_index = edge_indexes_out[4]
+    train_pos_ds_edge_index = edge_indexes_out[5]
+    train_neg_ds_edge_index = edge_indexes_out[6]
+    test_pos_ds_edge_index = edge_indexes_out[7]
+    test_neg_ds_edge_index = edge_indexes_out[8]
+    ds_to_col_pos_edge_index = edge_indexes_out[9]
+    be_to_be_pos_edge_index = edge_indexes_out[10]
+
+    logger.info("Load Graph Model")
+
+    model_class_name = "HeteroGraphSage"
+    registered_model_name = f"{dataset_name}-{object_to_annotate}-{model_class_name}"
+    graph_model = mlflow.pytorch.load_model(registered_model_name=registered_model_name)
+
     logger.info("Set device to 'cpu' or 'cuda'")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -195,7 +346,7 @@ def main(args):
 
         if object_to_annotate == 'column':
 
-            test_pos_col_edge_index = torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
+            #test_pos_col_edge_index = torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
 
             semantic_top_k_suggestions = infer_with_semantic_model(
                 test_pos_col_edge_index,
@@ -204,8 +355,20 @@ def main(args):
                 k=parameters["top_k"],
                 device=device
             )
+
+            graph_top_k_suggestions = infer_with_graph_model(
+                col_embeddings=col_graph_embeddings,
+                ds_embeddings=ds_graph_embeddings,
+                be_embeddings=be_graph_embeddings,
+                source_object=object_to_annotate,
+                hetero_model=graph_model,
+                train_pos_edge_index=,
+                test_pos_col_edge_index=test_pos_col_edge_index,
+                k=parameters['top_k'],
+                device=device
+            )
         else:
-            test_pos_ds_edge_index = torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
+            #test_pos_ds_edge_index = torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
 
             semantic_top_k_suggestions = infer_with_semantic_model(
                 test_pos_ds_edge_index,
@@ -215,7 +378,23 @@ def main(args):
                 device=device
             )
 
+            graph_top_k_suggestions = infer_with_graph_model(
+                col_embeddings=col_graph_embeddings,
+                ds_embeddings=ds_graph_embeddings,
+                be_embeddings=be_graph_embeddings,
+                source_object=object_to_annotate,
+                hetero_model=graph_model,
+                train_pos_edge_index=,
+                test_pos_col_edge_index=test_pos_col_edge_index,
+                k=parameters['top_k'],
+                device=device
+            )
+
         logger.info("Compute final ranking with RRF")
+
+        print(semantic_top_k_suggestions.shape)
+        print(graph_top_k_suggestions.shape)
+
 
         logger.info("Compute MRR and Hit@K")
 
