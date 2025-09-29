@@ -369,8 +369,8 @@ def main(args):
                                                    device=device
                                                    )
 
-    for key, value in dataset_edge_index:
-        print(f"{key} :{value.shape}")
+    for x in dataset_edge_index:
+        print(f"{x[0]} :{x[1].shape}")
 
     logger.info("Load Graph Model")
 
