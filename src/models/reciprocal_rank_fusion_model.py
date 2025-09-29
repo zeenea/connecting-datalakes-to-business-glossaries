@@ -317,6 +317,9 @@ def main(args):
     #else:
     #    print("Error in object_to_annotate var")
 
+    logger.info("Set device to 'cpu' or 'cuda'")
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
     logger.info("Create dataset edge index")
 
     dataset_edge_index = create_dataset_edge_index(object_to_annotate=object_to_annotate,
@@ -325,12 +328,10 @@ def main(args):
                                                    train_pos_col_edge_index=train_pos_col_edge_index,
                                                    test_pos_col_edge_index=test_pos_col_edge_index,
                                                    train_pos_ds_edge_index=train_pos_ds_edge_index,
-                                                   test_pos_ds_edge_index=test_pos_ds_edge_index
+                                                   test_pos_ds_edge_index=test_pos_ds_edge_index,
+                                                   device=device
                                                    )
 
-
-    logger.info("Set device to 'cpu' or 'cuda'")
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     logger.info("Load Graph Model")
 
