@@ -92,6 +92,7 @@ def infer_with_semantic_model(
             # get sorted entity ids by score
             sorted_entity_indices = src_to_entities_edge_index[1][sorted_indices]
             sorted_entity_indices = sorted_entity_indices[:k]
+            sorted_entity_indices = sorted_entity_indices.reshape(1, -1)
             sorted_top_k_suggestions = torch.concat((sorted_top_k_suggestions, sorted_entity_indices), dim=0)
 
     return sorted_top_k_suggestions
@@ -166,8 +167,7 @@ def create_hetero_graph_dataset(
     return dataset, train_pos_col_edge_index, train_neg_col_edge_index, test_pos_col_edge_index, test_neg_col_edge_index, train_pos_ds_edge_index, train_neg_ds_edge_index, test_pos_ds_edge_index, test_neg_ds_edge_index, ds_to_col_pos_edge_index, be_to_be_pos_edge_index
 
 
-def infer_with_graph_model(col_embeddings, ds_embeddings, be_embeddings, source_object, hetero_model, train_pos_edge_index, test_pos_edge_index, k=10, device=None):
-    #hetero_model.eval()
+def infer_with_graph_model(col_embeddings, ds_embeddings, be_embeddings, source_object, hetero_model, test_pos_edge_index, k=10, device=None):
 
     all_entity_ids = test_pos_edge_index[1,:].unique() # get the right test data, and load the right data
 
@@ -177,10 +177,6 @@ def infer_with_graph_model(col_embeddings, ds_embeddings, be_embeddings, source_
         x_dict['column'] = col_embeddings.to(device)
         x_dict['dataset'] = ds_embeddings.to(device)
         x_dict['business_entity'] = be_embeddings.to(device)
-
-        edge_index_dict = {}
-
-        #z = hetero_model.encode(x_dict, train_pos_edge_index)
 
         sorted_top_k_suggestions = torch.tensor([])
 
@@ -195,8 +191,6 @@ def infer_with_graph_model(col_embeddings, ds_embeddings, be_embeddings, source_
             assert tensor_src.shape[1] == all_entity_ids.shape[1]
 
             src_to_entities_edge_index = torch.concat([tensor_src, all_entity_ids], dim=0).to(device)
-            target_true_index = (src_to_entities_edge_index[1,:] == tgt).nonzero(as_tuple=True)[0].to(device)
-
             embeddings1 = x_dict[source_object][src_to_entities_edge_index[0]]
             embeddings2 = x_dict['business_entity'][src_to_entities_edge_index[1]]
 
@@ -208,6 +202,7 @@ def infer_with_graph_model(col_embeddings, ds_embeddings, be_embeddings, source_
 
             sorted_entity_indices = src_to_entities_edge_index[1][sorted_indices]
             sorted_entity_indices = sorted_entity_indices[:k]
+            sorted_entity_indices = sorted_entity_indices.reshape(1, -1)
             sorted_top_k_suggestions = torch.concat((sorted_top_k_suggestions, sorted_entity_indices), dim=0)
 
     return sorted_top_k_suggestions
@@ -411,7 +406,6 @@ def main(args):
                 be_embeddings=be_graph_embeddings,
                 source_object=object_to_annotate,
                 hetero_model=graph_model,
-                train_pos_edge_index=dataset_edge_index,
                 test_pos_edge_index=test_pos_col_edge_index,
                 k=parameters['top_k'],
                 device=device
@@ -435,7 +429,6 @@ def main(args):
                 be_embeddings=be_graph_embeddings,
                 source_object=object_to_annotate,
                 hetero_model=graph_model,
-                train_pos_edge_index=dataset_edge_index,
                 test_pos_edge_index=test_pos_ds_edge_index,
                 k=parameters['top_k'],
                 device=device
