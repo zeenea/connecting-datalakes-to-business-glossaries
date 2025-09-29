@@ -647,7 +647,7 @@ def main(args):
             train_metrics = {
                 'train_loss': round(train_loss.item(), 4),
                 'test_loss': round(test_loss.item(), 4),
-                'test_auc': round(test_auc.item(), 4)
+                'test_auc': round(test_auc, 4)
             }
             mlflow.log_metrics(train_metrics, epoch)
 
