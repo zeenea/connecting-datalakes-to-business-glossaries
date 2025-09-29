@@ -362,8 +362,8 @@ def main(args):
                 be_embeddings=be_graph_embeddings,
                 source_object=object_to_annotate,
                 hetero_model=graph_model,
-                train_pos_edge_index=,
-                test_pos_col_edge_index=test_pos_col_edge_index,
+                train_pos_edge_index=train_pos_col_edge_index,
+                test_pos_edge_index=test_pos_col_edge_index,
                 k=parameters['top_k'],
                 device=device
             )
@@ -384,8 +384,8 @@ def main(args):
                 be_embeddings=be_graph_embeddings,
                 source_object=object_to_annotate,
                 hetero_model=graph_model,
-                train_pos_edge_index=,
-                test_pos_col_edge_index=test_pos_col_edge_index,
+                train_pos_edge_index=train_pos_ds_edge_index,
+                test_pos_edge_index=test_pos_ds_edge_index,
                 k=parameters['top_k'],
                 device=device
             )
