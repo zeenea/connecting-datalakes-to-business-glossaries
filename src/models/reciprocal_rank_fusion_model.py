@@ -368,7 +368,7 @@ def main(args):
                                                    )
 
     for x in dataset_edge_index:
-        print(f"{x}")
+        print(f"{x}: {dataset_edge_index[x].shape}")
 
     logger.info("Load Graph Model")
 
