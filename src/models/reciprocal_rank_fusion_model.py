@@ -127,8 +127,8 @@ def create_hetero_graph_dataset(
         train_neg_col_edge_index = torch.from_numpy(train_col_alignments[train_col_alignments['is_matching']==0][['col_id', 'be_id']].values).T
 
         if object_to_annotate == 'column':
-            test_pos_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
-            test_neg_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==0][['col_id', 'be_id']].values).T
+            test_pos_col_edge_index = torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
+            test_neg_col_edge_index = torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==0][['col_id', 'be_id']].values).T
         else:
             test_pos_col_edge_index = None
             test_neg_col_edge_index = None
@@ -148,8 +148,8 @@ def create_hetero_graph_dataset(
         train_neg_ds_edge_index = torch.from_numpy(train_ds_alignments[train_ds_alignments['is_matching']==0][['ds_id', 'be_id']].values).T
 
         if object_to_annotate == 'dataset':
-            test_pos_ds_edge_index =  torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
-            test_neg_ds_edge_index =  torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==0][['ds_id', 'be_id']].values).T
+            test_pos_ds_edge_index = torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
+            test_neg_ds_edge_index = torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==0][['ds_id', 'be_id']].values).T
         else:
             test_pos_ds_edge_index = None
             test_neg_ds_edge_index = None
@@ -369,6 +369,8 @@ def main(args):
                                                    device=device
                                                    )
 
+    for key, value in dataset_edge_index:
+        print(f"{key} :{value.shape}")
 
     logger.info("Load Graph Model")
 
