@@ -334,8 +334,6 @@ def main(args):
 
     logger.info("Load Edge Indexes")
     edge_indexes_dir_path = f"../gold_data/edge_indexes/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
-    print(ds_to_be.info())
-    print(ds_to_be.info())
 
     if object_to_annotate == 'column':
         train_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_col_edge_index.pt')
@@ -354,8 +352,11 @@ def main(args):
     ds_to_col_pos_edge_index = load_torch_tensor(edge_indexes_dir_path, 'ds_to_col_pos_edge_index.pt')
     be_to_be_pos_edge_index = load_torch_tensor(edge_indexes_dir_path, 'be_to_be_pos_edge_index.pt')
 
-    #else:
-    #    print("Error in object_to_annotate var")
+    print(ds_to_col_pos_edge_index.shape)
+    print(be_to_be_pos_edge_index.shape)
+    print(train_pos_ds_edge_index.shape)
+    print(test_pos_ds_edge_index.shape)
+    print(train_pos_col_edge_index.shape)
 
     logger.info("Set device to 'cpu' or 'cuda'")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
