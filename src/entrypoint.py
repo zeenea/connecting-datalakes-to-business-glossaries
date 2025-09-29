@@ -1,5 +1,14 @@
 from utilities import load_data
-from models import semantic_model, syntactic_model, random_model, graph_model, hybrid_model_sem_graph_embedding_learning, hybrid_model_syn_sem_embedding_learning, hybrid_model_syn_sem_graph_embedding_learning, cross_model_sem_graph_similarity_learning, cross_model_syn_graph_similarity_learning, cross_model_syn_sem_similarity_learning, hybrid_model_syn_graph_embedding_learning, cross_model_syn_sem_graph_similarity_learning, binary_classifier_model, decision_tree_classifier_model_syn_sem_graph_similarity_learning, random_forest_classifier_model_syn_sem_graph_similarity_learning, svm_classifier_model_syn_sem_graph_similarity_learning, xgboost_classifier_model_syn_sem_graph_similarity_learning
+from models import semantic_model, syntactic_model, random_model, graph_model,\
+    hybrid_model_sem_graph_embedding_learning, hybrid_model_syn_sem_embedding_learning,\
+    hybrid_model_syn_sem_graph_embedding_learning, cross_model_sem_graph_similarity_learning,\
+    cross_model_syn_graph_similarity_learning, cross_model_syn_sem_similarity_learning,\
+    hybrid_model_syn_graph_embedding_learning, cross_model_syn_sem_graph_similarity_learning,\
+    binary_classifier_model, decision_tree_classifier_model_syn_sem_graph_similarity_learning, \
+    random_forest_classifier_model_syn_sem_graph_similarity_learning,\
+    svm_classifier_model_syn_sem_graph_similarity_learning, xgboost_classifier_model_syn_sem_graph_similarity_learning,\
+    reciprocal_rank_fusion_model
+
 
 import argparse
 import yaml
@@ -113,6 +122,7 @@ def starts_hybrid_model_sem_graph_embedding_learning():
     args, _ = parser.parse_known_args()
     hybrid_model_sem_graph_embedding_learning.main(args)
 
+
 def starts_hybrid_model_syn_sem_embedding_learning():
     yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml = load_yaml(yaml_file_path)
@@ -152,7 +162,8 @@ def starts_hybrid_model_syn_graph_embedding_learning():
 
     args, _ = parser.parse_known_args()
     hybrid_model_syn_graph_embedding_learning.main(args)
-    
+
+
 def starts_hybrid_model_syn_sem_graph_embedding_learning():
     yaml_file_path = "./input_yaml_config/model_configs.yaml"
     yaml_file = load_yaml(yaml_file_path)
@@ -358,6 +369,22 @@ def starts_svm_classifier_model_syn_sem_graph_similarity_learn():
     
     args, _ = parser.parse_known_args()
     svm_classifier_model_syn_sem_graph_similarity_learning.main(args)
+
+
+def starts_reciprocal_rank_fusion_model():
+    yaml_file_path = "./input_yaml_config/model_configs.yaml"
+    yaml_file = load_yaml(yaml_file_path)
+    yaml_args = yaml_file.get("reciprocal_rank_fusion_model_args", {})
+
+    parser = argparse.ArgumentParser("RRF Model Parser")
+    parser.add_argument('--dataset_name', type=str)
+    parser.add_argument('--object_to_annotate', type=str)
+    parser.add_argument('--random_state_index', type=int)
+    parser.add_argument('--top_k', type=int, default=yaml_args.get('top_k'))
+
+    args, _ = parser.parse_known_args()
+    reciprocal_rank_fusion_model.main(args)
+
     
 if __name__ == "__main__":
 
@@ -393,6 +420,8 @@ if __name__ == "__main__":
     choice_module_parser.add_argument('--enable_random_forest_classifier_model_syn_sem_graph_similarity_learning', action='store_true', default=False)
     choice_module_parser.add_argument('--enable_xgboost_classifier_model_syn_sem_graph_similarity_learning', action='store_true', default=False)
     choice_module_parser.add_argument('--enable_svm_classifier_model_syn_sem_graph_similarity_learning', action='store_true', default=False)
+
+    choice_module_parser.add_argument('--enable_reciprocal_rank_fusion_model', action='store_true', default=False)
     
     choice_module_parser.add_argument('--dataset_name', type=str)
     choice_module_parser.add_argument('--random_state_index', type=int)
@@ -442,8 +471,8 @@ if __name__ == "__main__":
             starts_graph_model()
             
             logger.info("----------------------- Starts hybrid_model_sem_graph_embedding_learning.py Module ------------------------------")
-            starts_hybrid_model_sem_grah_embedding_learning()
-            
+            starts_hybrid_model_sem_graph_embedding_learning()
+
     if choice_module_parser_args.enable_hybrid_model_syn_graph_embedding_learning:
         if are_embeddings_generated(dataset_name, 'syntactic-based', random_state_index) and are_embeddings_generated(dataset_name, 'graph-based', random_state_index):
             logger.info('------------------------- Starts hybrid_model_syn_graph_embedding_learning.py Module ----')
@@ -511,5 +540,9 @@ if __name__ == "__main__":
     if choice_module_parser_args.enable_svm_classifier_model_syn_sem_graph_similarity_learning:
         logger.info("---------------------------- Starts svm_classifier_model_syn_sem_graph_similarity_learning.py Module")
         starts_svm_classifier_model_syn_sem_graph_similarity_learn()
+
+    if choice_module_parser_args.enable_reciprocal_rank_fusion_model:
+        logger.info("---------------------------- Starts reciprocal_rank_fusion_model.py Module")
+        starts_reciprocal_rank_fusion_model()
         
     
