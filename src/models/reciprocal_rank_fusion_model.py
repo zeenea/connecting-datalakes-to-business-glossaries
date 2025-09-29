@@ -167,7 +167,7 @@ def create_hetero_graph_dataset(
 
 
 def infer_with_graph_model(col_embeddings, ds_embeddings, be_embeddings, source_object, hetero_model, train_pos_edge_index, test_pos_edge_index, k=10, device=None):
-    hetero_model.eval()
+    #hetero_model.eval()
 
     all_entity_ids = test_pos_edge_index[1,:].unique() # get the right test data, and load the right data
 
@@ -180,7 +180,7 @@ def infer_with_graph_model(col_embeddings, ds_embeddings, be_embeddings, source_
 
         edge_index_dict = {}
 
-        z = hetero_model.encode(x_dict, train_pos_edge_index)
+        #z = hetero_model.encode(x_dict, train_pos_edge_index)
 
         sorted_top_k_suggestions = torch.tensor([])
 
@@ -197,8 +197,8 @@ def infer_with_graph_model(col_embeddings, ds_embeddings, be_embeddings, source_
             src_to_entities_edge_index = torch.concat([tensor_src, all_entity_ids], dim=0).to(device)
             target_true_index = (src_to_entities_edge_index[1,:] == tgt).nonzero(as_tuple=True)[0].to(device)
 
-            embeddings1 = z[source_object][src_to_entities_edge_index[0]]
-            embeddings2 = z['business_entity'][src_to_entities_edge_index[1]]
+            embeddings1 = x_dict[source_object][src_to_entities_edge_index[0]]
+            embeddings2 = x_dict['business_entity'][src_to_entities_edge_index[1]]
 
             # cosine similarity
             edge_scores = hetero_model.decode(embeddings1, embeddings2)
@@ -367,9 +367,6 @@ def main(args):
                                                    device=device
                                                    )
 
-    for x in dataset_edge_index:
-        print(f"{x}: {dataset_edge_index[x].shape}")
-
     logger.info("Load Graph Model")
 
     model_class_name = "HeteroGraphSage"
@@ -406,6 +403,8 @@ def main(args):
                 device=device
             )
 
+            print(semantic_top_k_suggestions.shape)
+
             graph_top_k_suggestions = infer_with_graph_model(
                 col_embeddings=col_graph_embeddings,
                 ds_embeddings=ds_graph_embeddings,
@@ -417,6 +416,8 @@ def main(args):
                 k=parameters['top_k'],
                 device=device
             )
+
+            print(graph_top_k_suggestions.shape)
         else:
             #test_pos_ds_edge_index = torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
 
