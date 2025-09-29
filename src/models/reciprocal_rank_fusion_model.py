@@ -212,6 +212,7 @@ def infer_with_graph_model(col_embeddings, ds_embeddings, be_embeddings, source_
 
     return sorted_top_k_suggestions
 
+
 def load_torch_tensor(tensor_dir_path, tensor_name):
 
     return torch.load(f"{tensor_dir_path}/{tensor_name}")
@@ -337,6 +338,9 @@ def main(args):
                 k=parameters["top_k"],
                 device=device
             )
+
+            print(type(train_pos_ds_edge_index))
+            print(train_pos_ds_edge_index.shape)
 
             graph_top_k_suggestions = infer_with_graph_model(
                 col_embeddings=col_graph_embeddings,
