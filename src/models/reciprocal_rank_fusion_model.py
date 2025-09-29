@@ -318,8 +318,6 @@ def main(args):
     ds_graph_embeddings = embeddings_out[1]
     be_graph_embeddings = embeddings_out[2]
 
-    print("graph embeddings: ",col_graph_embeddings.shape)
-
     assert col_graph_embeddings.shape[1] == ds_graph_embeddings.shape[1]
     assert col_graph_embeddings.shape[1] == be_graph_embeddings.shape[1]
 
@@ -370,7 +368,7 @@ def main(args):
                                                    )
 
     for x in dataset_edge_index:
-        print(f"{x[0]} :{x[1].shape}")
+        print(f"{x}")
 
     logger.info("Load Graph Model")
 
