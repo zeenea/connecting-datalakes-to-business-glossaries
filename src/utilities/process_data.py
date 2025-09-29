@@ -1,6 +1,6 @@
 import pandas as pd
 import logging
-
+import json
 
 def process_metadata2kg_data():
     logger.info("Process metadata2kg-round1 data")
@@ -104,6 +104,49 @@ def process_zeenea_open_ds_data():
     table_alignments.to_csv("../gold_data/processed_data/zeenea-open-ds/alignments/dataset_to_business_glossary_alignments.csv")
 
 
+def process_turl_tables():
+
+    logger.info("Add table headers to dataset alignments")
+
+    train_data_path = "../gold_data/raw_data/turl-cta/data/train.table_col_type.json"
+    dev_data_path = "../gold_data/raw_data/turl-cta/data/dev.table_col_type.json"
+    test_data_path = "../gold_data/raw_data/turl-cta/data/test.table_col_type.json"
+
+    raw_train_alignments_path = "../gold_data/raw_data/turl-cta/alignments/dataset_alignments/train_dataset_alignments.csv"
+    raw_dev_alignments_path = "../gold_data/raw_data/turl-cta/alignments/dataset_alignments/dev_dataset_alignments.csv"
+    raw_test_alignments_path = "../gold_data/raw_data/turl-cta/alignments/dataset_alignments/test_dataset_alignments.csv"
+
+    processed_train_alignments_path = "../gold_data/processed_data/turl-cta/alignments/dataset_alignments/train_dataset_alignments.csv"
+    processed_dev_alignments_path = "../gold_data/processed_data/turl-cta/alignments/dataset_alignments/dev_dataset_alignments.csv"
+    processed_test_alignments_path = "../gold_data/processed_data/turl-cta/alignments/dataset_alignments/test_dataset_alignments.csv"
+
+    data_file_list = [train_data_path, dev_data_path, test_data_path]
+    raw_alignments_file_list = [raw_train_alignments_path, raw_dev_alignments_path, raw_test_alignments_path]
+    processed_alignments_file_list = [processed_train_alignments_path, processed_dev_alignments_path, processed_test_alignments_path]
+
+    for data_path, raw_alignments_path, processed_alignments_path  in zip(data_file_list, raw_alignments_file_list, processed_alignments_file_list):
+        print(data_path)
+        with open(data_path, 'r') as f:
+            data_json = json.load(f)
+
+        data_df = pd.DataFrame()
+
+        total = len(data_json)
+        idx = 0
+        for table in data_json:
+            print(f"{data_path}, table idx: {idx}/{total}")
+            table_id = table[0]
+            table_columns = table[5]
+
+            data_df = pd.concat([data_df, pd.DataFrame({'table_id':table_id, 'table_columns':str(table_columns)}, index=[0])], axis=0)
+            data_df = data_df.reset_index(drop=True)
+            idx += 1
+
+        print(raw_alignments_path)
+        dataset_alignments_df = pd.read_csv(raw_alignments_path, index_col=0)
+        dataset_alignments_df = dataset_alignments_df.drop_duplicates(subset=['table_id']).reset_index(drop=True)
+        dataset_alignments_df = pd.merge(dataset_alignments_df, data_df, left_on='table_id', right_on='table_id', how='left')
+        dataset_alignments_df.to_csv(processed_alignments_path)
 
 
 if __name__ == "__main__":
@@ -117,3 +160,5 @@ if __name__ == "__main__":
     #process_metadata2kg_data()
 
     #process_zeenea_open_ds_data()
+
+    process_turl_tables()

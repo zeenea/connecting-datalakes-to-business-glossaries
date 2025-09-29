@@ -1,0 +1,5 @@
+outs:
+- md5: 419691264f509fe7cc0178daf446b3fc
+  size: 2147355817
+  hash: md5
+  path: train.table_col_type.json
