@@ -441,7 +441,9 @@ def compute_mrr_hits(
             sorted_entity_indices = combined_suggestions[i].flatten()
 
             # get rank of true target entity
+            print(sorted_entity_indices)
             if tgt in sorted_entity_indices:
+
                 true_edge_rank = (sorted_entity_indices == tgt).nonzero(as_tuple=True)[0].item()
 
                 mrrs.append(1.0 / (true_edge_rank+1))
