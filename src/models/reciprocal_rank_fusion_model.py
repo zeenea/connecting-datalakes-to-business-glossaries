@@ -702,7 +702,7 @@ def main(args):
             )
         elif object_to_annotate == "dataset":
             mrr, hit_at_k = compute_mrr_hits(
-                test_pos_edge_index=test_pos_col_edge_index,
+                test_pos_edge_index=test_pos_ds_edge_index,
                 combined_suggestions=top_k_combined_suggestions,
                 k=parameters['top_k'],
                 device=device
