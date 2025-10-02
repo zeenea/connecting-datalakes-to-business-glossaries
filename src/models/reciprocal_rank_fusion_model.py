@@ -698,7 +698,7 @@ def main(args):
             hybrid_sem_graph_suggestions=hybrid_sem_graph_top_k_suggestions,
             top_k=parameters['top_k']
         )
-        top_k_combined_suggestions = top_k_combined_suggestions.to(torch.LongTensor)
+        top_k_combined_suggestions = top_k_combined_suggestions.type(torch.LongTensor)
         print(top_k_combined_suggestions.shape)
 
         logger.info("Compute MRR and Hit@K")
