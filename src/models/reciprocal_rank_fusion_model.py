@@ -435,10 +435,10 @@ def compute_mrr_hits(
             src, tgt = test_pos_edge_index[0, i], test_pos_edge_index[1, i]
 
             # Compute the score for all possible links from src to all target entities
-            src_to_entities_edge_index = torch.stack([src.repeat(all_entity_ids.size(0)), all_entity_ids], dim=0).to(device)
+            #src_to_entities_edge_index = torch.stack([src.repeat(all_entity_ids.size(0)), all_entity_ids], dim=0).to(device)
 
             # random sorted entity ids by score
-            sorted_entity_indices = combined_suggestions[i]
+            sorted_entity_indices = combined_suggestions[i].flatten()
 
             # get rank of true target entity
             if tgt in sorted_entity_indices:
