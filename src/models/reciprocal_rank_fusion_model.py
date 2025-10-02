@@ -35,7 +35,7 @@ def compute_rrf(semantic_suggestions, graph_suggestions, cross_sem_graph_suggest
                 entity_id = suggestions_i[j]
 
                 if entity_id in dict_entity_id_to_rrf.keys():
-                    dict_entity_id_to_rrf += rr_index[j]
+                    dict_entity_id_to_rrf[entity_id] += rr_index[j]
                 else:
                     dict_entity_id_to_rrf[entity_id] = rr_index[j]
 
@@ -445,7 +445,7 @@ def compute_mrr_hits(
             print(tgt)
             if tgt in sorted_entity_indices:
 
-                true_edge_rank = (sorted_entity_indices == tgt).nonzero(as_tuple=True)[0]
+                true_edge_rank = (sorted_entity_indices == tgt).nonzero(as_tuple=True)[0].item()
                 print(true_edge_rank)
 
                 mrrs.append(1.0 / (true_edge_rank+1))
