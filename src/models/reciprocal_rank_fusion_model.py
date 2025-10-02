@@ -437,23 +437,23 @@ def compute_mrr_hits(
             # Compute the score for all possible links from src to all target entities
             src_to_entities_edge_index = torch.stack([src.repeat(all_entity_ids.size(0)), all_entity_ids], dim=0).to(device)
 
-            # random index
-            random_index = torch.randperm(src_to_entities_edge_index.shape[1])
-
             # random sorted entity ids by score
             sorted_entity_indices = combined_suggestions[i]
 
             # get rank of true target entity
-            true_edge_rank = (sorted_entity_indices == tgt).nonzero(as_tuple=True)[0].item()
+            if tgt in sorted_entity_indices:
+                true_edge_rank = (sorted_entity_indices == tgt).nonzero(as_tuple=True)[0].item()
 
-            # MRR Calculation: Reciprocal of the true edge's rank
-            mrrs.append(1.0 / (true_edge_rank+1))
+                mrrs.append(1.0 / (true_edge_rank+1))
 
-            # Hit@K Calculation: Check if the true edge appears in the top K scores
-            if true_edge_rank <= k:
-                hits_at_k.append(1.0)  # 1 means hit
+                if true_edge_rank <= k:
+                    hits_at_k.append(1.0)  # 1 means hit
+                else:
+                    hits_at_k.append(0.0)  # 0 means miss
             else:
-                hits_at_k.append(0.0)  # 0 means miss
+                mrrs.append(0.0)
+                hits_at_k.append(0.0)
+
 
         # Compute average MRR and Hit@K across all test edges
         mrr = torch.tensor(mrrs).mean().item()
