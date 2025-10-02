@@ -696,6 +696,7 @@ def main(args):
         )
         top_k_combined_suggestions = top_k_combined_suggestions.type(torch.LongTensor)
         print(top_k_combined_suggestions[0])
+        print(test_pos_ds_edge_index[0])
 
         logger.info("Compute MRR and Hit@K")
 
@@ -731,7 +732,7 @@ def main(args):
         mlflow.log_metric('mrr', round(mrr, 4))
         mlflow.log_metric(f"hit_at_{parameters['top_k']}", round(hit_at_k, 4))
 
-        logger.info(f"{dataset_name}, {random_state_index}, {object_to_annotate}, {model_class_name}")
+        logger.info(f"{dataset_name}, {random_state_index}, {object_to_annotate}")
         logger.info(f"MRR: {mrr}, Hit@{parameters['top_k']}: {hit_at_k}")
 
 
