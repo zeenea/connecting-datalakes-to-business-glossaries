@@ -447,13 +447,10 @@ def compute_mrr_hits(
             sorted_entity_indices = combined_suggestions[i]
 
             # get rank of true target entity
-            print(sorted_entity_indices)
-            print(tgt)
+
             if tgt in sorted_entity_indices:
 
                 true_edge_rank = (sorted_entity_indices == tgt).nonzero(as_tuple=True)[0].item()
-                print(true_edge_rank)
-
                 mrrs.append(1.0 / (true_edge_rank+1))
 
                 if true_edge_rank <= k:
@@ -471,6 +468,7 @@ def compute_mrr_hits(
 
     return mrr, hit_at_k
 
+
 def main(args):
 
     logger = logging.getLogger(__name__)
@@ -485,8 +483,9 @@ def main(args):
     object_to_annotate = args.object_to_annotate
     random_state_index = args.random_state_index
     parameters = {
-        "top_k":args.top_k,
-        "nb_epochs":0}
+        "top_k": args.top_k,
+        "nb_epochs": 0
+    }
 
     logger.info(args)
 
@@ -597,8 +596,6 @@ def main(args):
 
         if object_to_annotate == 'column':
 
-            #test_pos_col_edge_index = torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
-
             semantic_top_k_suggestions = infer_with_semantic_model(
                 test_pos_col_edge_index,
                 col_sem_embeddings,
@@ -641,7 +638,6 @@ def main(args):
             )
 
         else:
-            #test_pos_ds_edge_index = torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
 
             semantic_top_k_suggestions = infer_with_semantic_model(
                 test_pos_ds_edge_index,
@@ -684,10 +680,10 @@ def main(args):
                 device=None
             )
 
-        print(semantic_top_k_suggestions.shape)
-        print(graph_top_k_suggestions.shape)
-        print(hybrid_sem_graph_top_k_suggestions.shape)
-        print(cross_sem_graph_top_k_suggestions.shape)
+        print(semantic_top_k_suggestions)
+        print(graph_top_k_suggestions)
+        print(hybrid_sem_graph_top_k_suggestions)
+        print(cross_sem_graph_top_k_suggestions)
 
         logger.info("Compute final ranking with RRF")
 
@@ -699,7 +695,7 @@ def main(args):
             top_k=parameters['top_k']
         )
         top_k_combined_suggestions = top_k_combined_suggestions.type(torch.LongTensor)
-        print(top_k_combined_suggestions.shape)
+        print(top_k_combined_suggestions)
 
         logger.info("Compute MRR and Hit@K")
 
@@ -737,7 +733,6 @@ def main(args):
 
         logger.info(f"{dataset_name}, {random_state_index}, {object_to_annotate}, {model_class_name}")
         logger.info(f"MRR: {mrr}, Hit@{parameters['top_k']}: {hit_at_k}")
-
 
 
 if __name__ == "__main__":
