@@ -6,8 +6,45 @@ import mlflow
 from torch_geometric.data import HeteroData
 
 
-def compute_rrf():
-    pass
+def compute_rrf(semantic_suggestions, graph_suggestions, cross_sem_graph_suggestions, hybrid_sem_graph_suggestions, top_k):
+
+    assert semantic_suggestions.shape[0] == graph_suggestions.shape[0]
+    assert graph_suggestions.shape[0] == cross_sem_graph_suggestions.shape[0]
+    assert cross_sem_graph_suggestions.shape[0] == hybrid_sem_graph_suggestions.shape[0]
+
+    nb_elements = semantic_suggestions.shape[0]
+
+    k = 60
+
+    rr_index = [1/(k + i) for i in range(top_k)]
+
+    top_k_combined_suggestions = torch.tensor([])
+
+    for i in range(nb_elements):
+        print(f"{i}/{nb_elements}")
+        semantic_suggestions_i = semantic_suggestions[i]
+        graph_suggestions_i = graph_suggestions[i]
+        cross_sem_graph_suggestions_i = cross_sem_graph_suggestions[i]
+        hybrid_sem_graph_suggestions_i = hybrid_sem_graph_suggestions[i]
+
+        dict_entity_id_to_rrf = {}
+
+        list_suggestions_i = [semantic_suggestions_i, graph_suggestions_i, cross_sem_graph_suggestions_i, hybrid_sem_graph_suggestions_i]
+        for suggestions_i in list_suggestions_i:
+
+            for j in range(top_k):
+                entity_id = suggestions_i[j]
+
+                if entity_id in dict_entity_id_to_rrf.keys():
+                    dict_entity_id_to_rrf += rr_index[j]
+                else:
+                    dict_entity_id_to_rrf[entity_id] = rr_index[j]
+
+        combined_suggestions = list(dict(sorted(dict_entity_id_to_rrf.items(), key=lambda item: item[1])).keys())
+
+        top_k_combined_suggestions = torch.concat((top_k_combined_suggestions, torch.tensor(combined_suggestions[:top_k])), dim=0)
+
+    return top_k_combined_suggestions
 
 
 def load_embeddings(embeddings_dir_path, dataset_name, model_type, random_state):
@@ -592,12 +629,22 @@ def main(args):
                 device=None
             )
 
-        logger.info("Compute final ranking with RRF")
-
         print(semantic_top_k_suggestions.shape)
         print(graph_top_k_suggestions.shape)
         print(hybrid_sem_graph_top_k_suggestions.shape)
         print(cross_sem_graph_top_k_suggestions.shape)
+
+        logger.info("Compute final ranking with RRF")
+
+        top_k_combined_suggestions = compute_rrf(
+            semantic_suggestions=semantic_top_k_suggestions,
+            graph_suggestions=graph_top_k_suggestions,
+            cross_sem_graph_suggestions=cross_sem_graph_top_k_suggestions,
+            hybrid_sem_graph_suggestions=hybrid_sem_graph_top_k_suggestions,
+            top_k=parameters['top_k']
+        )
+
+        print(top_k_combined_suggestions.shape)
 
         logger.info("Compute MRR and Hit@K")
 
