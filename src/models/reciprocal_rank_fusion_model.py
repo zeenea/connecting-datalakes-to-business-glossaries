@@ -592,7 +592,7 @@ def main(args):
 
         # inference
 
-        logger.info("Infer with Semantic Model")
+        logger.info("Infer with Semantic, Graph, Cross-sem-graph-sim, Hybrid-sem-graph-embed Models")
 
         if object_to_annotate == 'column':
 
@@ -617,7 +617,7 @@ def main(args):
 
             cross_sem_graph_top_k_suggestions = infer_with_cross_sem_graph_model(
                 cross_model=cross_sem_graph_model,
-                test_pos_edge_index=test_pos_ds_edge_index,
+                test_pos_edge_index=test_pos_col_edge_index,
                 obj_sem_embeddings=col_sem_embeddings,
                 obj_graph_embeddings=col_graph_embeddings,
                 be_sem_embeddings=be_sem_embeddings,
