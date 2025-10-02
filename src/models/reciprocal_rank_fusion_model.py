@@ -273,6 +273,60 @@ def load_processed_data(data_dir_path, dataset_name, object_to_annotate, random_
             yield pd.DataFrame()
 
 
+def infer_with_hybrid_sem_graph_model(
+    hybrid_model,
+    test_pos_edge_index,
+    obj_sem_embeddings,
+    obj_graph_embeddings,
+    be_sem_embeddings,
+    be_graph_embeddings,
+    k=10,
+    device=None
+):
+
+    # get the right test data, and load the right data
+    all_entity_ids = test_pos_edge_index[1, :].unique()
+
+    obj_sem_embeddings = obj_sem_embeddings.to(device)
+    obj_graph_embeddings = obj_graph_embeddings.to(device)
+    be_sem_embeddings = be_sem_embeddings.to(device)
+    be_graph_embeddings = be_graph_embeddings.to(device)
+
+    hybrid_model.eval()
+
+    with torch.no_grad():
+
+        sorted_top_k_suggestions = torch.tensor([])
+
+        for i in range(test_pos_edge_index.size(1)):  # Iterate over each test edge (positive)
+
+            # Get the source and target nodes of the positive test edge
+            src, tgt = test_pos_edge_index[0, i], test_pos_edge_index[1, i]
+
+            # Compute the score for all possible links from src to all target entities
+            src_to_entities_edge_index = torch.stack([src.repeat(all_entity_ids.size(0)), all_entity_ids], dim=0).to(device)
+            obj_sem_embed_i = obj_sem_embeddings[src_to_entities_edge_index[0]]
+            obj_graph_embed_i = obj_graph_embeddings[src_to_entities_edge_index[0]]
+            be_sem_embed_i = be_sem_embeddings[src_to_entities_edge_index[1]]
+            be_graph_embed_i = be_graph_embeddings[src_to_entities_edge_index[1]]
+
+            src_g_embed, src_w_embed, trg_g_embed, trg_w_embed = hybrid_model.forward(obj_sem_embed_i, obj_graph_embed_i, be_sem_embed_i, be_graph_embed_i)#[:, 1]
+
+            g_cosine_similarity = torch.nn.functional.cosine_similarity(src_g_embed, trg_g_embed)
+            w_cosine_similarity = torch.nn.functional.cosine_similarity(src_w_embed, trg_w_embed)
+            cosine_similarity = g_cosine_similarity + w_cosine_similarity
+
+            # Rank the scores (higher is better), and get the rank of the true edge
+            sorted_scores, sorted_indices = torch.sort(cosine_similarity, descending=True)
+
+            # get sorted entity ids by score
+            sorted_entity_indices = src_to_entities_edge_index[1][sorted_indices]
+            sorted_entity_indices = sorted_entity_indices[:k]
+            sorted_entity_indices = sorted_entity_indices.reshape(1, -1)
+            sorted_top_k_suggestions = torch.concat((sorted_top_k_suggestions, sorted_entity_indices), dim=0)
+
+    return sorted_top_k_suggestions
+
 def main(args):
 
     logger = logging.getLogger(__name__)
@@ -403,8 +457,6 @@ def main(args):
                 device=device
             )
 
-            print(semantic_top_k_suggestions.shape)
-
             graph_top_k_suggestions = infer_with_graph_model(
                 col_embeddings=col_graph_embeddings,
                 ds_embeddings=ds_graph_embeddings,
@@ -416,7 +468,17 @@ def main(args):
                 device=device
             )
 
-            print(graph_top_k_suggestions.shape)
+            hybrid_sem_graph_top_k_suggestions = infer_with_hybrid_sem_graph_model(
+                hybrid_model=hybrid_sem_graph_model,
+                test_pos_edge_index=test_pos_ds_edge_index,
+                obj_sem_embeddings=col_sem_embeddings,
+                obj_graph_embeddings=col_graph_embeddings,
+                be_sem_embeddings=be_sem_embeddings,
+                be_graph_embeddings=be_graph_embeddings,
+                k=parameters['top_k'],
+                device=None
+            )
+
         else:
             #test_pos_ds_edge_index = torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
 
@@ -439,10 +501,22 @@ def main(args):
                 device=device
             )
 
+            hybrid_sem_graph_top_k_suggestions = infer_with_hybrid_sem_graph_model(
+                hybrid_model=hybrid_sem_graph_model,
+                test_pos_edge_index=test_pos_ds_edge_index,
+                obj_sem_embeddings=ds_sem_embeddings,
+                obj_graph_embeddings=ds_graph_embeddings,
+                be_sem_embeddings=be_sem_embeddings,
+                be_graph_embeddings=be_graph_embeddings,
+                k=parameters['top_k'],
+                device=None
+            )
+
         logger.info("Compute final ranking with RRF")
 
         print(semantic_top_k_suggestions.shape)
         print(graph_top_k_suggestions.shape)
+        print(hybrid_sem_graph_top_k_suggestions.shape)
 
         logger.info("Compute MRR and Hit@K")
 
