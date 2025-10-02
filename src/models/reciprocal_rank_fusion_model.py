@@ -680,10 +680,6 @@ def main(args):
                 device=None
             )
 
-        print(semantic_top_k_suggestions[0])
-        print(graph_top_k_suggestions[0])
-        print(hybrid_sem_graph_top_k_suggestions[0])
-        print(cross_sem_graph_top_k_suggestions[0])
 
         logger.info("Compute final ranking with RRF")
 
@@ -695,8 +691,6 @@ def main(args):
             top_k=parameters['top_k']
         )
         top_k_combined_suggestions = top_k_combined_suggestions.type(torch.LongTensor)
-        print(top_k_combined_suggestions[0])
-        print(test_pos_ds_edge_index[:, 1])
 
         logger.info("Compute MRR and Hit@K")
 
