@@ -696,7 +696,7 @@ def main(args):
         )
         top_k_combined_suggestions = top_k_combined_suggestions.type(torch.LongTensor)
         print(top_k_combined_suggestions[0])
-        print(test_pos_ds_edge_index[0])
+        print(test_pos_ds_edge_index[:, 1])
 
         logger.info("Compute MRR and Hit@K")
 
