@@ -327,6 +327,58 @@ def infer_with_hybrid_sem_graph_model(
 
     return sorted_top_k_suggestions
 
+
+def infer_with_cross_sem_graph_model(
+        cross_model,
+        test_pos_edge_index,
+        obj_sem_embeddings,
+        obj_graph_embeddings,
+        be_sem_embeddings,
+        be_graph_embeddings,
+        k=10,
+        device=None
+):
+
+    all_entity_ids = test_pos_edge_index[1,:].unique() # get the right test data, and load the right data
+
+    obj_sem_embeddings = obj_sem_embeddings.to(device)
+    obj_graph_embeddings = obj_graph_embeddings.to(device)
+    be_sem_embeddings = be_sem_embeddings.to(device)
+    be_graph_embeddings = be_graph_embeddings.to(device)
+
+    cross_model.eval()
+
+    with torch.no_grad():
+
+        sorted_top_k_suggestions = torch.tensor([])
+
+        for i in range(test_pos_edge_index.size(1)):  # Iterate over each test edge (positive)
+
+            # Get the source and target nodes of the positive test edge
+            src, tgt = test_pos_edge_index[0, i], test_pos_edge_index[1, i]
+
+            # Compute the score for all possible links from src to all target entities
+            src_to_entities_edge_index = torch.stack([src.repeat(all_entity_ids.size(0)), all_entity_ids], dim=0).to(device)
+
+            obj_sem_embed_i = obj_sem_embeddings[src_to_entities_edge_index[0]]
+            obj_graph_embed_i = obj_graph_embeddings[src_to_entities_edge_index[0]]
+            be_sem_embed_i = be_sem_embeddings[src_to_entities_edge_index[1]]
+            be_graph_embed_i = be_graph_embeddings[src_to_entities_edge_index[1]]
+
+            logits = cross_model.forward(obj_sem_embed_i, obj_graph_embed_i, be_sem_embed_i, be_graph_embed_i)#[:, 1]
+
+            # Rank the scores (higher is better), and get the rank of the true edge
+            sorted_scores, sorted_indices = torch.sort(torch.flatten(logits), descending=True)
+
+            # get sorted entity ids by score
+            sorted_entity_indices = src_to_entities_edge_index[1][sorted_indices]
+            sorted_entity_indices = sorted_entity_indices[:k]
+            sorted_entity_indices = sorted_entity_indices.reshape(1, -1)
+            sorted_top_k_suggestions = torch.concat((sorted_top_k_suggestions, sorted_entity_indices), dim=0)
+
+    return sorted_top_k_suggestions
+
+
 def main(args):
 
     logger = logging.getLogger(__name__)
@@ -422,6 +474,12 @@ def main(args):
     graph_model = mlflow.pytorch.load_model(f"models:/{registered_model_name}/Latest")
     graph_model.to(device)
 
+    logger.info("Load Cross-Semantic-Graph Model")
+    model_class_name = "CrossSemGraphSimLearn"
+    registered_model_name = f"{dataset_name}-{random_state_index}-{object_to_annotate}-{model_class_name}"
+    cross_sem_graph_model = mlflow.pytorch.load_model(f"models:/{registered_model_name}/Latest")
+    cross_sem_graph_model.to(device)
+
     logger.info("Load Hybrid-Semantic-Graph Model")
     model_class_name = "HybridSemGraphEmbedLearn"
     registered_model_name = f"{dataset_name}-{random_state_index}-{object_to_annotate}-{model_class_name}"
@@ -468,6 +526,17 @@ def main(args):
                 device=device
             )
 
+            cross_sem_graph_top_k_suggestions = infer_with_cross_sem_graph_model(
+                cross_model=cross_sem_graph_model,
+                test_pos_edge_index=test_pos_ds_edge_index,
+                obj_sem_embeddings=col_sem_embeddings,
+                obj_graph_embeddings=col_graph_embeddings,
+                be_sem_embeddings=be_sem_embeddings,
+                be_graph_embeddings=be_graph_embeddings,
+                k=parameters['top_k'],
+                device=device
+            )
+
             hybrid_sem_graph_top_k_suggestions = infer_with_hybrid_sem_graph_model(
                 hybrid_model=hybrid_sem_graph_model,
                 test_pos_edge_index=test_pos_ds_edge_index,
@@ -501,6 +570,17 @@ def main(args):
                 device=device
             )
 
+            cross_sem_graph_top_k_suggestions = infer_with_cross_sem_graph_model(
+                cross_model=cross_sem_graph_model,
+                test_pos_edge_index=test_pos_ds_edge_index,
+                obj_sem_embeddings=ds_sem_embeddings,
+                obj_graph_embeddings=ds_graph_embeddings,
+                be_sem_embeddings=be_sem_embeddings,
+                be_graph_embeddings=be_graph_embeddings,
+                k=parameters['top_k'],
+                device=device
+            )
+
             hybrid_sem_graph_top_k_suggestions = infer_with_hybrid_sem_graph_model(
                 hybrid_model=hybrid_sem_graph_model,
                 test_pos_edge_index=test_pos_ds_edge_index,
@@ -517,6 +597,7 @@ def main(args):
         print(semantic_top_k_suggestions.shape)
         print(graph_top_k_suggestions.shape)
         print(hybrid_sem_graph_top_k_suggestions.shape)
+        print(cross_sem_graph_top_k_suggestions.shape)
 
         logger.info("Compute MRR and Hit@K")
 
