@@ -21,7 +21,6 @@ def compute_rrf(semantic_suggestions, graph_suggestions, cross_sem_graph_suggest
     top_k_combined_suggestions = torch.tensor([])
 
     for i in range(nb_elements):
-        print(f"{i}/{nb_elements}")
         semantic_suggestions_i = semantic_suggestions[i]
         graph_suggestions_i = graph_suggestions[i]
         cross_sem_graph_suggestions_i = cross_sem_graph_suggestions[i]
@@ -416,6 +415,52 @@ def infer_with_cross_sem_graph_model(
     return sorted_top_k_suggestions
 
 
+def compute_mrr_hits(
+        test_pos_edge_index,
+        combined_suggestions,
+        k=10,
+        device=None
+):
+
+    all_entity_ids = test_pos_edge_index[1,:].unique() # get the right test data, and load the right data
+
+    with torch.no_grad():
+
+        mrrs = []
+        hits_at_k = []
+
+        for i in range(test_pos_edge_index.size(1)):  # Iterate over each test edge (positive)
+
+            # Get the source and target nodes of the positive test edge
+            src, tgt = test_pos_edge_index[0, i], test_pos_edge_index[1, i]
+
+            # Compute the score for all possible links from src to all target entities
+            src_to_entities_edge_index = torch.stack([src.repeat(all_entity_ids.size(0)), all_entity_ids], dim=0).to(device)
+
+            # random index
+            random_index = torch.randperm(src_to_entities_edge_index.shape[1])
+
+            # random sorted entity ids by score
+            sorted_entity_indices = combined_suggestions[i]
+
+            # get rank of true target entity
+            true_edge_rank = (sorted_entity_indices == tgt).nonzero(as_tuple=True)[0].item()
+
+            # MRR Calculation: Reciprocal of the true edge's rank
+            mrrs.append(1.0 / (true_edge_rank+1))
+
+            # Hit@K Calculation: Check if the true edge appears in the top K scores
+            if true_edge_rank <= k:
+                hits_at_k.append(1.0)  # 1 means hit
+            else:
+                hits_at_k.append(0.0)  # 0 means miss
+
+        # Compute average MRR and Hit@K across all test edges
+        mrr = torch.tensor(mrrs).mean().item()
+        hit_at_k = torch.tensor(hits_at_k).mean().item()
+
+    return mrr, hit_at_k
+
 def main(args):
 
     logger = logging.getLogger(__name__)
@@ -648,8 +693,22 @@ def main(args):
 
         logger.info("Compute MRR and Hit@K")
 
-        mrr = 0
-        hit_at_k = 0
+        if object_to_annotate == 'column':
+            mrr, hit_at_k = compute_mrr_hits(
+                test_pos_edge_index=test_pos_col_edge_index,
+                combined_suggestions=top_k_combined_suggestions,
+                k=parameters['top_k'],
+                device=device
+            )
+        elif object_to_annotate == "dataset":
+            mrr, hit_at_k = compute_mrr_hits(
+                test_pos_edge_index=test_pos_col_edge_index,
+                combined_suggestions=top_k_combined_suggestions,
+                k=parameters['top_k'],
+                device=device
+            )
+        else:
+            logger.info("Error object_to_annotate Value!")
 
         logger.info("Save metrics")
 
@@ -663,14 +722,11 @@ def main(args):
 
         save_metrics(metrics, dataset_name, object_to_annotate, random_state, metric_dir_path)
 
-        # compute rrf
-
-        # compute mrr and hit@10
-
         mlflow.log_metric('mrr', round(mrr, 4))
         mlflow.log_metric(f"hit_at_{parameters['top_k']}", round(hit_at_k, 4))
 
-
+        logger.info(f"{dataset_name}, {random_state_index}, {object_to_annotate}, {model_class_name}")
+        logger.info(f"MRR: {mrr}, Hit@{parameters['top_k']}: {hit_at_k}")
 
 
 
