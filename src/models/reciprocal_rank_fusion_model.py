@@ -42,7 +42,7 @@ def compute_rrf(semantic_suggestions, graph_suggestions, cross_sem_graph_suggest
 
         combined_suggestions = list(dict(sorted(dict_entity_id_to_rrf.items(), key=lambda item: item[1])).keys())
 
-        top_k_combined_suggestions = torch.concat((top_k_combined_suggestions, torch.tensor(combined_suggestions[:top_k])), dim=0)
+        top_k_combined_suggestions = torch.concat((top_k_combined_suggestions, torch.tensor(combined_suggestions[:top_k]).reshape(1, -1)), dim=0)
 
     return top_k_combined_suggestions
 
