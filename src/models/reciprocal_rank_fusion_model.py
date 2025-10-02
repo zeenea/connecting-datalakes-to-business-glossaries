@@ -628,7 +628,7 @@ def main(args):
 
             hybrid_sem_graph_top_k_suggestions = infer_with_hybrid_sem_graph_model(
                 hybrid_model=hybrid_sem_graph_model,
-                test_pos_edge_index=test_pos_ds_edge_index,
+                test_pos_edge_index=test_pos_col_edge_index,
                 obj_sem_embeddings=col_sem_embeddings,
                 obj_graph_embeddings=col_graph_embeddings,
                 be_sem_embeddings=be_sem_embeddings,
