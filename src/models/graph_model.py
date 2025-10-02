@@ -122,7 +122,6 @@ class HeteroGraphSage(torch.nn.Module):
 
             self.convs.append(conv)
 
-
     def encode(self, x_dict, edge_index_dict):
         for conv in self.convs:
             z_dict = conv(x_dict, edge_index_dict)

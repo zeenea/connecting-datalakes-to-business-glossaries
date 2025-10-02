@@ -363,11 +363,16 @@ def main(args):
                                                    )
 
     logger.info("Load Graph Model")
-
     model_class_name = "HeteroGraphSage"
     registered_model_name = f"{dataset_name}-{random_state_index}-{object_to_annotate}-{model_class_name}"
     graph_model = mlflow.pytorch.load_model(f"models:/{registered_model_name}/Latest")
     graph_model.to(device)
+
+    logger.info("Load Hybrid-Semantic-Graph Model")
+    model_class_name = "HybridSemGraphEmbedLearn"
+    registered_model_name = f"{dataset_name}-{random_state_index}-{object_to_annotate}-{model_class_name}"
+    hybrid_sem_graph_model = mlflow.pytorch.load_model(f"models:/{registered_model_name}/Latest")
+    hybrid_sem_graph_model.to(device)
 
     logger.info("MLFlow managing")
     mlflow.set_experiment('reciprocal_rank_fusion_model')
