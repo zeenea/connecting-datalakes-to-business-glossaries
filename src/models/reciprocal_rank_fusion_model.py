@@ -28,7 +28,13 @@ def compute_rrf(semantic_suggestions, graph_suggestions, cross_sem_graph_suggest
 
         dict_entity_id_to_rrf = {}
 
-        list_suggestions_i = [semantic_suggestions_i, graph_suggestions_i, cross_sem_graph_suggestions_i, hybrid_sem_graph_suggestions_i]
+        list_suggestions_i = [
+            semantic_suggestions_i,
+            graph_suggestions_i,
+            cross_sem_graph_suggestions_i,
+            hybrid_sem_graph_suggestions_i
+        ]
+
         for suggestions_i in list_suggestions_i:
 
             for j in range(top_k):
@@ -40,6 +46,8 @@ def compute_rrf(semantic_suggestions, graph_suggestions, cross_sem_graph_suggest
                     dict_entity_id_to_rrf[entity_id] = rr_index[j]
 
         combined_suggestions = list(dict(sorted(dict_entity_id_to_rrf.items(), key=lambda item: item[1])).keys())
+        print(combined_suggestions)
+        break
 
         top_k_combined_suggestions = torch.concat((top_k_combined_suggestions, torch.tensor(combined_suggestions[:top_k]).reshape(1, -1)), dim=0)
 
@@ -438,7 +446,7 @@ def compute_mrr_hits(
             #src_to_entities_edge_index = torch.stack([src.repeat(all_entity_ids.size(0)), all_entity_ids], dim=0).to(device)
 
             # random sorted entity ids by score
-            sorted_entity_indices = combined_suggestions[i].flatten()
+            sorted_entity_indices = combined_suggestions[i]
 
             # get rank of true target entity
             print(sorted_entity_indices)
@@ -692,7 +700,7 @@ def main(args):
             hybrid_sem_graph_suggestions=hybrid_sem_graph_top_k_suggestions,
             top_k=parameters['top_k']
         )
-
+        top_k_combined_suggestions = top_k_combined_suggestions.to(torch.LongTensor)
         print(top_k_combined_suggestions.shape)
 
         logger.info("Compute MRR and Hit@K")
