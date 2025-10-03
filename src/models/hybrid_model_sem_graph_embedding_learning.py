@@ -73,6 +73,7 @@ def collate_fn(batch):
 
     return src_sem_embeddings, src_graph_embeddings, trg_sem_embeddings, trg_graph_embeddings, labels
 
+
 class HybridSemGraphEmbedLearn(torch.nn.Module):
 
     def __init__(self, semantic_embedding_dim, graph_embedding_dim, hidden_layer_dim, num_classes):
@@ -549,7 +550,7 @@ def main(args):
         
         save_model(hybrid_link_predictor, models_dir_path, dataset_name, object_to_annotate, parameters['nb_epochs'], model_name, random_state)
     
-        registered_model_name = f"{dataset_name}-{object_to_annotate}-{model_name}"
+        registered_model_name = f"{dataset_name}-{random_state_index}-{object_to_annotate}-{model_name}"
         mlflow.pytorch.log_model(hybrid_link_predictor, model_name, registered_model_name=registered_model_name)
 
     

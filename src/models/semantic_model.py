@@ -42,6 +42,7 @@ def load_processed_data(data_dir_path, dataset_name, object_to_annotate, random_
         else:
             yield pd.DataFrame()
 
+
 def test_mrr_hits_sem_model(
     test_pos_edge_index,
     obj_sem_embeddings,

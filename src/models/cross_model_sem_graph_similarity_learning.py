@@ -526,7 +526,7 @@ def main(args):
         
         save_model(hybrid_link_predictor, models_dir_path, dataset_name, object_to_annotate, parameters['nb_epochs'], model_class_name, random_state)
 
-        registered_model_name = f"{dataset_name}-{object_to_annotate}-{model_class_name}"
+        registered_model_name = f"{dataset_name}-{random_state_index}-{object_to_annotate}-{model_class_name}"
         mlflow.pytorch.log_model(hybrid_link_predictor, model_class_name, registered_model_name=registered_model_name)
 
 
