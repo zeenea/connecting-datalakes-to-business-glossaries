@@ -38,7 +38,6 @@ add_be_to_be
     dataset['column'].x = col_embeddings
     dataset['business_entity'].x = be_embeddings
     dataset['dataset'].x = ds_embeddings
-    
 
     if add_col_to_be: 
         print("Add Implements : column -> business_entity")    
@@ -47,8 +46,8 @@ add_be_to_be
         train_neg_col_edge_index = torch.from_numpy(train_col_alignments[train_col_alignments['is_matching']==0][['col_id', 'be_id']].values).T
         
         if object_to_annotate == 'column':
-            test_pos_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
-            test_neg_col_edge_index =  torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==0][['col_id', 'be_id']].values).T
+            test_pos_col_edge_index = torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==1][['col_id', 'be_id']].values).T
+            test_neg_col_edge_index = torch.from_numpy(test_col_alignments[test_col_alignments['is_matching']==0][['col_id', 'be_id']].values).T
         else:
             test_pos_col_edge_index = None
             test_neg_col_edge_index = None
@@ -56,7 +55,6 @@ add_be_to_be
         dataset['column', 'implements', 'business_entity'].edge_index = train_pos_col_edge_index
         dataset['business_entity', 'rev_implements', 'column'].edge_index = torch.flipud(train_pos_col_edge_index)
 
-    
     if add_ds_to_col: 
         print("Add Contains: dataset -> column")
         
@@ -71,8 +69,8 @@ add_be_to_be
         train_neg_ds_edge_index = torch.from_numpy(train_ds_alignments[train_ds_alignments['is_matching']==0][['ds_id', 'be_id']].values).T
     
         if object_to_annotate == 'dataset':
-            test_pos_ds_edge_index =  torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
-            test_neg_ds_edge_index =  torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==0][['ds_id', 'be_id']].values).T
+            test_pos_ds_edge_index = torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==1][['ds_id', 'be_id']].values).T
+            test_neg_ds_edge_index = torch.from_numpy(test_ds_alignments[test_ds_alignments['is_matching']==0][['ds_id', 'be_id']].values).T
         else:
             test_pos_ds_edge_index = None
             test_neg_ds_edge_index = None
@@ -123,7 +121,6 @@ class HeteroGraphSage(torch.nn.Module):
             })
 
             self.convs.append(conv)
-
 
     def encode(self, x_dict, edge_index_dict):
         for conv in self.convs:
@@ -647,7 +644,7 @@ def main(args):
             train_metrics = {
                 'train_loss': round(train_loss.item(), 4),
                 'test_loss': round(test_loss.item(), 4),
-                'test_auc': round(test_auc.item(), 4)
+                'test_auc': round(test_auc, 4)
             }
             mlflow.log_metrics(train_metrics, epoch)
 
@@ -697,7 +694,7 @@ def main(args):
         
         save_model(hetero_model, models_dir_path, dataset_name, max_epochs, model_name, random_state)
 
-        registered_model_name = f"{dataset_name}-{object_to_annotate}-{model_class_name}"
+        registered_model_name = f"{dataset_name}-{random_state_index}-{object_to_annotate}-{model_class_name}"
         mlflow.pytorch.log_model(hetero_model, model_class_name, registered_model_name=registered_model_name)
 
         logger.info("Save Graph Embeddings")

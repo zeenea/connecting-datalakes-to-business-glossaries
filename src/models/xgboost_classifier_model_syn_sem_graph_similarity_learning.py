@@ -1,19 +1,12 @@
 import torch
 import logging
-from torch.utils.tensorboard import SummaryWriter
 import os
-from torchmetrics.classification import MulticlassPrecision, MulticlassRecall, MulticlassF1Score
 import mlflow
 import yaml
 import argparse
-
-import sklearn
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import GridSearchCV
-
-import xgboost as xgb
-from xgboost import XGBClassifier
+from xgboost.sklearn import XGBClassifier
 
 os.environ['TOKENIZERS_PARALLELISM']='true'
 os.environ['TORCH_USE_CUDA_DSA']='1'
