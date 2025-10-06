@@ -89,6 +89,37 @@ class CrossSemGraphSimLearn(torch.nn.Module):
         
         return logits
 
+class CrossSemGraphSimLearnPolyDeg2(torch.nn.Module):
+
+    def __init__(self, num_similarities, num_classes):
+        super().__init__()
+        
+        self.fc_layer = torch.nn.Linear(in_features=5, out_features=1)
+        
+        self.sigmoid = torch.nn.Sigmoid()
+
+    def forward(self, src_sem_embed, src_graph_embed, tgt_sem_embed, tgt_graph_embed):
+
+        # cosine similarity on semantic embeddings
+        cosine_sim_sem = torch.nn.functional.cosine_similarity(src_sem_embed, tgt_sem_embed)
+        cosine_sim_sem = cosine_sim_sem.reshape(-1, 1)
+        
+        # cosine similarity on graph embeddings
+        cosine_sim_graph = torch.nn.functional.cosine_similarity(src_graph_embed, tgt_graph_embed)
+        cosine_sim_graph = cosine_sim_graph.reshape(-1, 1)
+
+        cosine_sim_mult = cosine_sim_sem * cosine_sim_graph
+        cosine_sim_sem_square = cosine_sim_sem * cosine_sim_sem
+        cosine_sim_graph_square = cosine_sim_graph * cosine_sim_graph
+        
+        # matrix of polynom variables with a size of (batch_size x 5)
+        cosine_sim_matrix = torch.concat([cosine_sim_sem, cosine_sim_graph, cosine_sim_mult, cosine_sim_sem_square, cosine_sim_graph_square], dim=1)
+
+        # dense representation embeddings with a size of (batch_size x hidden_layer_dim)
+        logits = self.sigmoid(self.fc_layer(cosine_sim_matrix))
+        
+        return logits
+
 
 def log_gradients(model, step):
     """Log gradients using mlflow"""
