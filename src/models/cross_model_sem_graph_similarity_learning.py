@@ -472,10 +472,15 @@ def main(args):
 
     logger.info("Cross Similarity Model and Optimizer Instantiation")
     
-    hybrid_link_predictor = CrossSemGraphSimLearn(
+    #hybrid_link_predictor = CrossSemGraphSimLearn(
+    #    num_similarities=2,
+    #    num_classes=parameters['num_classes']
+    #    )
+
+    hybrid_link_predictor = CrossSemGraphSimLearnPolyDeg2(
         num_similarities=2,
         num_classes=parameters['num_classes']
-        )
+    )
 
     model_class_name = hybrid_link_predictor.__class__.__name__
     
