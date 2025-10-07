@@ -114,9 +114,37 @@ class CrossSemGraphSimLearnPolyDeg2(torch.nn.Module):
         
         # matrix of polynom variables with a size of (batch_size x 5)
         cosine_sim_matrix = torch.concat([cosine_sim_sem, cosine_sim_graph, cosine_sim_mult, cosine_sim_sem_square, cosine_sim_graph_square], dim=1)
-
         # dense representation embeddings with a size of (batch_size x hidden_layer_dim)
         logits = self.sigmoid(self.fc_layer(cosine_sim_matrix))
+        
+        return logits
+
+class CrossSemGraphSimLearnNN(torch.nn.Module):
+
+    def __init__(self, num_similarities, hidden_layer_dim, num_classes):
+        super().__init__()
+        
+        self.fc_layer_1 = torch.nn.Linear(in_features=num_similarities, out_features=hidden_layer_dim)
+        self.fc_layer_2 = torch.nn.Linear(in_features=hidden_layer_dim, out_features=1)
+        
+        self.sigmoid = torch.nn.Sigmoid()
+
+    def forward(self, src_sem_embed, src_graph_embed, tgt_sem_embed, tgt_graph_embed):
+
+        # cosine similarity on semantic embeddings
+        cosine_sim_sem = torch.nn.functional.cosine_similarity(src_sem_embed, tgt_sem_embed)
+        cosine_sim_sem = cosine_sim_sem.reshape(-1, 1)
+        
+        # cosine similarity on graph embeddings
+        cosine_sim_graph = torch.nn.functional.cosine_similarity(src_graph_embed, tgt_graph_embed)
+        cosine_sim_graph = cosine_sim_graph.reshape(-1, 1)
+
+        # matrix of polynom variables with a size of (batch_size x 5)
+        cosine_sim_matrix = torch.concat([cosine_sim_sem, cosine_sim_graph], dim=1)
+        # dense representation embeddings with a size of (batch_size x hidden_layer_dim)
+
+        logits = self.Tanh(self.fc_layer_1(cosine_sim_matrix))
+        logits = self.sigmoid(self.fc_layer_2(logits))
         
         return logits
 
