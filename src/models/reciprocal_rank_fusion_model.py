@@ -534,6 +534,8 @@ def main(args):
         train_pos_ds_edge_index = torch.from_numpy(train_ds_alignments[train_ds_alignments['is_matching'] == 1][['ds_id', 'be_id']].values).T
         test_pos_ds_edge_index = None
 
+        nb_test_items = len(set(test_pos_col_edge_index[1, :].cpu().numpy()))
+
     elif object_to_annotate == 'dataset':
         train_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_ds_edge_index.pt')
         test_pos_ds_edge_index = load_torch_tensor(edge_indexes_dir_path, 'test_pos_ds_edge_index.pt')
@@ -541,9 +543,13 @@ def main(args):
         train_pos_col_edge_index = torch.from_numpy(train_col_alignments[train_col_alignments['is_matching'] == 1][['col_id', 'be_id']].values).T
         test_pos_col_edge_index = None
 
+        nb_test_items = len(set(test_pos_ds_edge_index[1, :].cpu().numpy()))
+
     ds_to_col_pos_edge_index = load_torch_tensor(edge_indexes_dir_path, 'ds_to_col_pos_edge_index.pt')
     be_to_be_pos_edge_index = load_torch_tensor(edge_indexes_dir_path, 'be_to_be_pos_edge_index.pt')
 
+    parameters['nb_test_items'] = nb_test_items
+    
     logger.info("Set device to 'cpu' or 'cuda'")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -600,7 +606,7 @@ def main(args):
                 test_pos_col_edge_index,
                 col_sem_embeddings,
                 be_sem_embeddings,
-                k=parameters["top_k"],
+                k=parameters["nb_test_items"],
                 device=device
             )
 
@@ -611,7 +617,7 @@ def main(args):
                 source_object=object_to_annotate,
                 hetero_model=graph_model,
                 test_pos_edge_index=test_pos_col_edge_index,
-                k=parameters['top_k'],
+                k=parameters['nb_test_items'],
                 device=device
             )
 
@@ -622,7 +628,7 @@ def main(args):
                 obj_graph_embeddings=col_graph_embeddings,
                 be_sem_embeddings=be_sem_embeddings,
                 be_graph_embeddings=be_graph_embeddings,
-                k=parameters['top_k'],
+                k=parameters['nb_test_items'],
                 device=device
             )
 
@@ -633,8 +639,8 @@ def main(args):
                 obj_graph_embeddings=col_graph_embeddings,
                 be_sem_embeddings=be_sem_embeddings,
                 be_graph_embeddings=be_graph_embeddings,
-                k=parameters['top_k'],
-                device=None
+                k=parameters['nb_test_items'],
+                device=device
             )
 
         else:
@@ -643,7 +649,7 @@ def main(args):
                 test_pos_ds_edge_index,
                 ds_sem_embeddings,
                 be_sem_embeddings,
-                k=parameters["top_k"],
+                k=parameters["nb_test_items"],
                 device=device
             )
 
@@ -654,7 +660,7 @@ def main(args):
                 source_object=object_to_annotate,
                 hetero_model=graph_model,
                 test_pos_edge_index=test_pos_ds_edge_index,
-                k=parameters['top_k'],
+                k=parameters['nb_test_items'],
                 device=device
             )
 
@@ -665,7 +671,7 @@ def main(args):
                 obj_graph_embeddings=ds_graph_embeddings,
                 be_sem_embeddings=be_sem_embeddings,
                 be_graph_embeddings=be_graph_embeddings,
-                k=parameters['top_k'],
+                k=parameters['nb_test_items'],
                 device=device
             )
 
@@ -676,8 +682,8 @@ def main(args):
                 obj_graph_embeddings=ds_graph_embeddings,
                 be_sem_embeddings=be_sem_embeddings,
                 be_graph_embeddings=be_graph_embeddings,
-                k=parameters['top_k'],
-                device=None
+                k=parameters['nb_test_items'],
+                device=device
             )
 
 
@@ -688,7 +694,7 @@ def main(args):
             graph_suggestions=graph_top_k_suggestions,
             cross_sem_graph_suggestions=cross_sem_graph_top_k_suggestions,
             hybrid_sem_graph_suggestions=hybrid_sem_graph_top_k_suggestions,
-            top_k=parameters['top_k']
+            top_k=parameters['nb_test_items']
         )
         top_k_combined_suggestions = top_k_combined_suggestions.type(torch.LongTensor)
 
@@ -729,7 +735,3 @@ def main(args):
         logger.info(f"{dataset_name}, {random_state_index}, {object_to_annotate}")
         logger.info(f"MRR: {mrr}, Hit@{parameters['top_k']}: {hit_at_k}")
 
-
-if __name__ == "__main__":
-
-    main()
