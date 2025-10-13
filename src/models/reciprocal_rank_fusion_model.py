@@ -114,7 +114,7 @@ def infer_with_semantic_model(
 
     with torch.no_grad():
 
-        sorted_top_k_suggestions = torch.tensor([])
+        sorted_top_k_suggestions = torch.tensor([]).to(device)
 
         for i in range(test_pos_edge_index.size(1)):  # Iterate over each test edge (positive)
 
@@ -220,7 +220,7 @@ def infer_with_graph_model(col_embeddings, ds_embeddings, be_embeddings, source_
         x_dict['dataset'] = ds_embeddings.to(device)
         x_dict['business_entity'] = be_embeddings.to(device)
 
-        sorted_top_k_suggestions = torch.tensor([])
+        sorted_top_k_suggestions = torch.tensor([]).to(device)
 
         for i in range(test_pos_edge_index.size(1)):  # Iterate over each test edge (positive)
             # Get the source and target nodes of the positive test edge
@@ -338,7 +338,7 @@ def infer_with_hybrid_sem_graph_model(
 
     with torch.no_grad():
 
-        sorted_top_k_suggestions = torch.tensor([])
+        sorted_top_k_suggestions = torch.tensor([]).to(device)
 
         for i in range(test_pos_edge_index.size(1)):  # Iterate over each test edge (positive)
 
@@ -392,7 +392,7 @@ def infer_with_cross_sem_graph_model(
 
     with torch.no_grad():
 
-        sorted_top_k_suggestions = torch.tensor([])
+        sorted_top_k_suggestions = torch.tensor([]).to(device)
 
         for i in range(test_pos_edge_index.size(1)):  # Iterate over each test edge (positive)
 
