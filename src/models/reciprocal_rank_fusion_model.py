@@ -6,7 +6,7 @@ import mlflow
 from torch_geometric.data import HeteroData
 
 
-def compute_rrf(semantic_suggestions, graph_suggestions, cross_sem_graph_suggestions, hybrid_sem_graph_suggestions, top_k):
+def compute_rrf(semantic_suggestions, graph_suggestions, cross_sem_graph_suggestions, hybrid_sem_graph_suggestions, top_k, rrf_k_list: [int]):
 
     assert semantic_suggestions.shape[0] == graph_suggestions.shape[0]
     assert graph_suggestions.shape[0] == cross_sem_graph_suggestions.shape[0]
@@ -14,42 +14,45 @@ def compute_rrf(semantic_suggestions, graph_suggestions, cross_sem_graph_suggest
 
     nb_elements = semantic_suggestions.shape[0]
 
-    k = 60
+    results_dict = {}
 
-    rr_index = [1/(k + i) for i in range(top_k)]
+    for k in rrf_k_list:
 
-    top_k_combined_suggestions = torch.tensor([])
+        rr_index = [1/(k + i) for i in range(top_k)]
 
-    for i in range(nb_elements):
-        semantic_suggestions_i = semantic_suggestions[i]
-        graph_suggestions_i = graph_suggestions[i]
-        cross_sem_graph_suggestions_i = cross_sem_graph_suggestions[i]
-        hybrid_sem_graph_suggestions_i = hybrid_sem_graph_suggestions[i]
+        top_k_combined_suggestions = torch.tensor([])
+        
+        for i in range(nb_elements):
+            semantic_suggestions_i = semantic_suggestions[i]
+            graph_suggestions_i = graph_suggestions[i]
+            cross_sem_graph_suggestions_i = cross_sem_graph_suggestions[i]
+            hybrid_sem_graph_suggestions_i = hybrid_sem_graph_suggestions[i]
 
-        dict_entity_id_to_rrf = {}
+            dict_entity_id_to_rrf = {}
 
-        list_suggestions_i = [
-            semantic_suggestions_i,
-            graph_suggestions_i,
-            cross_sem_graph_suggestions_i,
-            hybrid_sem_graph_suggestions_i
-        ]
+            list_suggestions_i = [
+                semantic_suggestions_i,
+                graph_suggestions_i,
+                cross_sem_graph_suggestions_i,
+                hybrid_sem_graph_suggestions_i
+            ]
 
-        for suggestions_i in list_suggestions_i:
+            for suggestions_i in list_suggestions_i:
 
-            for j in range(top_k):
-                entity_id = suggestions_i[j].item()
+                for j in range(top_k):
+                    entity_id = suggestions_i[j].item()
 
-                if entity_id in dict_entity_id_to_rrf.keys():
-                    dict_entity_id_to_rrf[entity_id] += rr_index[j]
-                else:
-                    dict_entity_id_to_rrf[entity_id] = rr_index[j]
+                    if entity_id in dict_entity_id_to_rrf.keys():
+                        dict_entity_id_to_rrf[entity_id] += rr_index[j]
+                    else:
+                        dict_entity_id_to_rrf[entity_id] = rr_index[j]
 
-        combined_suggestions = list(dict(sorted(dict_entity_id_to_rrf.items(), key=lambda item: item[1], reverse=True)).keys())
+            combined_suggestions = list(dict(sorted(dict_entity_id_to_rrf.items(), key=lambda item: item[1], reverse=True)).keys())
 
-        top_k_combined_suggestions = torch.concat((top_k_combined_suggestions, torch.tensor(combined_suggestions[:top_k]).reshape(1, -1)), dim=0)
+            top_k_combined_suggestions = torch.concat((top_k_combined_suggestions, torch.tensor(combined_suggestions[:top_k]).reshape(1, -1)), dim=0)
+        results_dict[k] = top_k_combined_suggestions
 
-    return top_k_combined_suggestions
+        return results_dict
 
 
 def load_embeddings(embeddings_dir_path, dataset_name, model_type, random_state):
@@ -683,51 +686,57 @@ def main(args):
 
         logger.info("Compute final ranking with RRF")
 
-        top_k_combined_suggestions = compute_rrf(
+        k_combined_results_dict = compute_rrf(
             semantic_suggestions=semantic_top_k_suggestions,
             graph_suggestions=graph_top_k_suggestions,
             cross_sem_graph_suggestions=cross_sem_graph_top_k_suggestions,
             hybrid_sem_graph_suggestions=hybrid_sem_graph_top_k_suggestions,
             top_k=parameters['top_k']
+            rrf_k_list=[1, 5, 10, 20, 30, 40, 50, 60, 70, 80, 100]
         )
-        top_k_combined_suggestions = top_k_combined_suggestions.type(torch.LongTensor)
 
-        logger.info("Compute MRR and Hit@K")
+        for key, value in k_combined_results_dict.items():
 
-        if object_to_annotate == 'column':
-            mrr, hit_at_k = compute_mrr_hits(
-                test_pos_edge_index=test_pos_col_edge_index,
-                combined_suggestions=top_k_combined_suggestions,
-                k=parameters['top_k'],
-                device=device
-            )
-        elif object_to_annotate == "dataset":
-            mrr, hit_at_k = compute_mrr_hits(
-                test_pos_edge_index=test_pos_ds_edge_index,
-                combined_suggestions=top_k_combined_suggestions,
-                k=parameters['top_k'],
-                device=device
-            )
-        else:
-            logger.info("Error object_to_annotate Value!")
+            top_k_combined_suggestions = value.type(torch.LongTensor)
 
-        logger.info("Save metrics")
+            logger.info("Compute MRR and Hit@K")
 
-        metric_dir_path = "../gold_data/metrics/semantic-model"
-        metrics = {
-            "MRR": round(mrr, 4),
-            f"Hit@{parameters['top_k']}": round(hit_at_k, 4),
-            "random_state": random_state,
-            "dataset_name": str(dataset_name)
-        }
+            if object_to_annotate == 'column':
+                mrr, hit_at_k = compute_mrr_hits(
+                    test_pos_edge_index=test_pos_col_edge_index,
+                    combined_suggestions=top_k_combined_suggestions,
+                    k=parameters['top_k'],
+                    device=device
+                )
+            elif object_to_annotate == "dataset":
+                mrr, hit_at_k = compute_mrr_hits(
+                    test_pos_edge_index=test_pos_ds_edge_index,
+                    combined_suggestions=top_k_combined_suggestions,
+                    k=parameters['top_k'],
+                    device=device
+                )
+            else:
+                logger.info("Error object_to_annotate Value!")
 
-        save_metrics(metrics, dataset_name, object_to_annotate, random_state, metric_dir_path)
+            logger.info("Save metrics")
 
-        mlflow.log_metric('mrr', round(mrr, 4))
-        mlflow.log_metric(f"hit_at_{parameters['top_k']}", round(hit_at_k, 4))
+            metric_dir_path = "../gold_data/metrics/rrf-model"
+            metrics = {
+                "MRR": round(mrr, 4),
+                f"Hit@{parameters['top_k']}": round(hit_at_k, 4),
+                "random_state": random_state,
+                "dataset_name": str(dataset_name),
+                "rrf_k": key
+            }
 
-        logger.info(f"{dataset_name}, {random_state_index}, {object_to_annotate}")
-        logger.info(f"MRR: {mrr}, Hit@{parameters['top_k']}: {hit_at_k}")
+            save_metrics(metrics, dataset_name, object_to_annotate, random_state, metric_dir_path)
+
+            mlflow.log_metric('mrr', round(mrr, 4))
+            mlflow.log_metric(f"hit_at_{parameters['top_k']}", round(hit_at_k, 4))
+            mlflow.log_metric(f"rrf_k", key)
+
+            logger.info(f"{dataset_name}, {random_state_index}, {object_to_annotate}")
+            logger.info(f"RRF_K: {key}, MRR: {mrr}, Hit@{parameters['top_k']}: {hit_at_k}")
 
 
 if __name__ == "__main__":
