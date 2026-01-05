@@ -639,7 +639,7 @@ def main(args):
                 be_sem_embeddings=be_sem_embeddings,
                 be_graph_embeddings=be_graph_embeddings,
                 k=parameters['top_k'],
-                device=None
+                device=device
             )
 
         else:
@@ -682,7 +682,7 @@ def main(args):
                 be_sem_embeddings=be_sem_embeddings,
                 be_graph_embeddings=be_graph_embeddings,
                 k=parameters['top_k'],
-                device=None
+                device=device
             )
 
 
