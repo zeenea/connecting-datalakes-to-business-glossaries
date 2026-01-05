@@ -697,6 +697,8 @@ def main(args):
             rrf_k_list=[1, 5, 10, 20, 30, 40, 50, 60, 70, 80, 100]
         )
 
+        metrics = {}
+
         for key, value in k_combined_results_dict.items():
             
             top_k_combined_suggestions = value.type(torch.LongTensor)
@@ -733,13 +735,15 @@ def main(args):
 
             save_metrics(metrics, dataset_name, object_to_annotate, random_state, metric_dir_path)
 
-            mlflow.log_metric('mrr', round(mrr, 4))
-            mlflow.log_metric(f"hit_at_{parameters['top_k']}", round(hit_at_k, 4))
-            mlflow.log_metric(f"rrf_k", key)
+            mlflow.log_metric(f'rrf_k_{key}/mrr', round(mrr, 4))
+            mlflow.log_metric(f"rrf_k_{key}/hit_at_{parameters['top_k']}", round(hit_at_k, 4))
+
+            metrics[key] = {'mrr': round(mrr, 4), f"hit_at_{parameters['top_k']}": round(hit_at_k, 4)}
 
             logger.info(f"{dataset_name}, {random_state_index}, {object_to_annotate}")
             logger.info(f"RRF_K: {key}, MRR: {mrr}, Hit@{parameters['top_k']}: {hit_at_k}")
-
+        
+        mlflow.log_dict(metrics, 'metrics.json')
 
 if __name__ == "__main__":
 
