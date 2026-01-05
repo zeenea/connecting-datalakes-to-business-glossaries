@@ -395,7 +395,7 @@ def infer_with_cross_sem_graph_model(
 
     with torch.no_grad():
 
-        sorted_top_k_suggestions = torch.tensor([])
+        sorted_top_k_suggestions = torch.tensor([]).to(device)
 
         for i in range(test_pos_edge_index.size(1)):  # Iterate over each test edge (positive)
 
