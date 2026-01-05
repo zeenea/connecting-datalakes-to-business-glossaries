@@ -350,10 +350,10 @@ def infer_with_hybrid_sem_graph_model(
 
             # Compute the score for all possible links from src to all target entities
             src_to_entities_edge_index = torch.stack([src.repeat(all_entity_ids.size(0)), all_entity_ids], dim=0).to(device)
-            obj_sem_embed_i = obj_sem_embeddings[src_to_entities_edge_index[0]]
-            obj_graph_embed_i = obj_graph_embeddings[src_to_entities_edge_index[0]]
-            be_sem_embed_i = be_sem_embeddings[src_to_entities_edge_index[1]]
-            be_graph_embed_i = be_graph_embeddings[src_to_entities_edge_index[1]]
+            obj_sem_embed_i = obj_sem_embeddings[src_to_entities_edge_index[0]].to(device)
+            obj_graph_embed_i = obj_graph_embeddings[src_to_entities_edge_index[0]].to(device)
+            be_sem_embed_i = be_sem_embeddings[src_to_entities_edge_index[1]].to(device)
+            be_graph_embed_i = be_graph_embeddings[src_to_entities_edge_index[1]].to(device)
 
             src_g_embed, src_w_embed, trg_g_embed, trg_w_embed = hybrid_model.forward(obj_sem_embed_i, obj_graph_embed_i, be_sem_embed_i, be_graph_embed_i)#[:, 1]
 
