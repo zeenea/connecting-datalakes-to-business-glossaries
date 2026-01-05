@@ -697,7 +697,7 @@ def main(args):
             rrf_k_list=[1, 5, 10, 20, 30, 40, 50, 60, 70, 80, 100]
         )
 
-        metrics = {}
+        rrf_metrics = {}
 
         for key, value in k_combined_results_dict.items():
             
@@ -738,12 +738,12 @@ def main(args):
             mlflow.log_metric(f'rrf_k_{key}/mrr', round(mrr, 4))
             mlflow.log_metric(f"rrf_k_{key}/hit_at_{parameters['top_k']}", round(hit_at_k, 4))
 
-            metrics[key] = {'mrr': round(mrr, 4), f"hit_at_{parameters['top_k']}": round(hit_at_k, 4)}
+            rrf_metrics[key] = {'mrr': round(mrr, 4), f"hit_at_{parameters['top_k']}": round(hit_at_k, 4)}
 
             logger.info(f"{dataset_name}, {random_state_index}, {object_to_annotate}")
             logger.info(f"RRF_K: {key}, MRR: {mrr}, Hit@{parameters['top_k']}: {hit_at_k}")
         
-        mlflow.log_dict(metrics, 'metrics.json')
+        mlflow.log_dict(rrf_metrics, 'rrf_metrics.json')
 
 if __name__ == "__main__":
 
