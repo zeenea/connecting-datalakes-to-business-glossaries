@@ -697,7 +697,7 @@ def main(args):
             rrf_k_list=[1, 5, 10, 20, 30, 40, 50, 60, 70, 80, 100]
         )
 
-        print(len(k_combined_results_dict.items()))
+        print(len(k_combined_results_dict.keys()))
 
         for key, value in k_combined_results_dict.items():
             
