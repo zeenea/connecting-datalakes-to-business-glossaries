@@ -691,7 +691,7 @@ def main(args):
             graph_suggestions=graph_top_k_suggestions,
             cross_sem_graph_suggestions=cross_sem_graph_top_k_suggestions,
             hybrid_sem_graph_suggestions=hybrid_sem_graph_top_k_suggestions,
-            top_k=parameters['top_k']
+            top_k=parameters['top_k'],
             rrf_k_list=[1, 5, 10, 20, 30, 40, 50, 60, 70, 80, 100]
         )
 
