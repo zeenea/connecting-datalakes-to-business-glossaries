@@ -6,7 +6,7 @@ import mlflow
 from torch_geometric.data import HeteroData
 
 
-def compute_rrf(semantic_suggestions, graph_suggestions, cross_sem_graph_suggestions, hybrid_sem_graph_suggestions, top_k, rrf_k_list: [int]):
+def compute_rrf(semantic_suggestions, graph_suggestions, cross_sem_graph_suggestions, hybrid_sem_graph_suggestions, top_k, rrf_k_list):
 
     assert semantic_suggestions.shape[0] == graph_suggestions.shape[0]
     assert graph_suggestions.shape[0] == cross_sem_graph_suggestions.shape[0]
@@ -337,7 +337,8 @@ def infer_with_hybrid_sem_graph_model(
     be_sem_embeddings = be_sem_embeddings.to(device)
     be_graph_embeddings = be_graph_embeddings.to(device)
 
-    hybrid_model.eval().to(device)
+    hybrid_model.eval()
+    hybrid_model = hybrid_model.to(device)
 
     with torch.no_grad():
 
@@ -549,6 +550,7 @@ def main(args):
 
     logger.info("Set device to 'cpu' or 'cuda'")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    logger.info(f"device: {device}")
 
     logger.info("Create dataset edge index")
 
