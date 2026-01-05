@@ -337,7 +337,7 @@ def infer_with_hybrid_sem_graph_model(
     be_sem_embeddings = be_sem_embeddings.to(device)
     be_graph_embeddings = be_graph_embeddings.to(device)
 
-    hybrid_model.eval()
+    hybrid_model.eval().to(device)
 
     with torch.no_grad():
 
