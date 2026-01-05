@@ -137,7 +137,7 @@ def infer_with_semantic_model(
             # get sorted entity ids by score
             sorted_entity_indices = src_to_entities_edge_index[1][sorted_indices]
             sorted_entity_indices = sorted_entity_indices[:k]
-            sorted_entity_indices = sorted_entity_indices.reshape(1, -1)
+            sorted_entity_indices = sorted_entity_indices.reshape(1, -1).to(device)
             sorted_top_k_suggestions = torch.concat((sorted_top_k_suggestions, sorted_entity_indices), dim=0)
 
     return sorted_top_k_suggestions
