@@ -52,7 +52,7 @@ def compute_rrf(semantic_suggestions, graph_suggestions, cross_sem_graph_suggest
             top_k_combined_suggestions = torch.concat((top_k_combined_suggestions, torch.tensor(combined_suggestions[:top_k]).reshape(1, -1)), dim=0)
         results_dict[k] = top_k_combined_suggestions
 
-        return results_dict
+    return results_dict
 
 
 def load_embeddings(embeddings_dir_path, dataset_name, model_type, random_state):
@@ -696,8 +696,6 @@ def main(args):
             top_k=parameters['top_k'],
             rrf_k_list=[1, 5, 10, 20, 30, 40, 50, 60, 70, 80, 100]
         )
-
-        print(len(k_combined_results_dict.keys()))
 
         for key, value in k_combined_results_dict.items():
             
