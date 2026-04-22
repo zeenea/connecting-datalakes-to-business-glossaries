@@ -291,7 +291,7 @@ def starts_binary_classifier_model():
     
 def are_embeddings_generated(dataset_name, model_name, random_state_index):
     
-    random_state = [42, 84, 13][random_state_index]
+    random_state = random_state_index
 
     embedding_path = f"../gold_data/embeddings/dataset_name={dataset_name}/model_type={model_name}/random_state={random_state}"
 
