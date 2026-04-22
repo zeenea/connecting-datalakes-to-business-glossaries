@@ -328,7 +328,7 @@ def main(args):
 
     logger.info(args)
 
-    random_state = [42, 84, 13][random_state_index]
+    random_state = random_state_index
 
     logger.info("Load Semantic Embeddings")
     embeddings_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings"

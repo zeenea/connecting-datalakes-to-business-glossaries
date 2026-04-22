@@ -401,7 +401,7 @@ def main(args):
 
     logger.info(args)
     
-    random_state = [42, 84, 13][random_state_index]
+    random_state = random_state_index
 
     logger.info("Set device to 'cpu' or 'cuda'")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

@@ -1,35 +1,24 @@
-#!/usr/bin/bash
-
-#SBATCH --nodes=1
-#SBATCH --gpus-per-node=a100_7g.80gb:1
-#SBATCH --time=21600
-#SBATCH --mail-type=ALL
-#SBATCH --output=logs/%x-%j.out
-#SBATCH --error=logs/%x-%j.err
-
 dataset_name='zeenea-open-ds'
 object_to_annotate='dataset'         # 'column' or 'dataset'
-#random_state_index=3
+random_state_indexes=(42 48 13 31 88 199 98 3 76 99)         # list of random states for multiple runs
 
-mlflow server --host 127.0.0.1 --port 8080 &
 
-#source ../venv/bin/activate
+for random_state_index in "${random_state_indexes[@]}"; do
+    python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=$random_state_index --generate_semantic_embeddings --enable_semantic_model
+    python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=$random_state_index --enable_graph_model
+    python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=$random_state_index --enable_binary_classifier_model
 
-#python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=0 --generate_semantic_embeddings --enable_semantic_model
-#python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=0 --enable_graph_model 
-#python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=0 --enable_hybrid_model_sem_graph_embedding_learning
-#python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=0 --enable_cross_model_sem_graph_similarity_learning
-python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=0 --enable_reciprocal_rank_fusion_model
+    python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=$random_state_index --enable_hybrid_model_sem_graph_embedding_learning
+    python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=$random_state_index --enable_hybrid_model_syn_graph_similarity_learning
+    python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=$random_state_index --enable_hybrid_model_syn_sem_similarity_learning
+    python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=$random_state_index --enable_hybrid_model_syn_sem_graph_similarity_learning
 
-#python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=1 --generate_semantic_embeddings --enable_semantic_model
-#python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=1 --enable_graph_model 
-#python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=1 --enable_hybrid_model_sem_graph_embedding_learning
-#python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=1 --enable_cross_model_sem_graph_similarity_learning
-python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=1 --enable_reciprocal_rank_fusion_model
 
-#python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=2 --generate_semantic_embeddings --enable_semantic_model
-#python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=2 --enable_graph_model 
-#python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=2 --enable_hybrid_model_sem_graph_embedding_learning
-#python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=2 --enable_cross_model_sem_graph_similarity_learning
-python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=2 --enable_reciprocal_rank_fusion_model
+    python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=$random_state_index --enable_cross_model_sem_graph_similarity_learning
+    python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=$random_state_index --enable_cross_model_syn_sem_similarity_learning
+    python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=$random_state_index --enable_cross_model_syn_graph_similarity_learning
+    python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=$random_state_index --enable_cross_model_syn_sem_graph_similarity_learning
+
+    python entrypoint.py --dataset_name=$dataset_name --object_to_annotate=$object_to_annotate --random_state_index=$random_state_index --enable_reciprocal_rank_fusion_model
+done
 

@@ -131,7 +131,7 @@ def main(args):
     
     logger.info(args)
 
-    random_state = [42, 84, 13][random_state_index]
+    random_state = random_state_index
 
         
     logger.info('Load processed data')

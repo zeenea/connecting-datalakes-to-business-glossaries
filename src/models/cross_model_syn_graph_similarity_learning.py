@@ -367,7 +367,7 @@ def main(args):
 
     logger.info(args)
 
-    random_state = [42, 84, 13][random_state_index]
+    random_state = random_state_index
 
     logger.info("Load Syntactic Embeddings")
     embeddings_dir_path = "../gold_data/embeddings"

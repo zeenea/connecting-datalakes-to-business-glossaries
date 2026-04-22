@@ -9,12 +9,13 @@ from models import semantic_model, syntactic_model, random_model, graph_model,\
     svm_classifier_model_syn_sem_graph_similarity_learning, xgboost_classifier_model_syn_sem_graph_similarity_learning,\
     reciprocal_rank_fusion_model
 
-
 import argparse
 import yaml
 import logging
 import os
 import mlflow
+import dotenv
+
 
 def load_yaml(file_path):
     with open(file_path, 'r') as file:
@@ -388,7 +389,8 @@ def starts_reciprocal_rank_fusion_model():
     
 if __name__ == "__main__":
 
-    mlflow.set_tracking_uri("http://127.0.0.1:8080")
+    dotenv.load_dotenv()
+    mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
 
     logger = logging.getLogger(__name__)
     logging.basicConfig(
