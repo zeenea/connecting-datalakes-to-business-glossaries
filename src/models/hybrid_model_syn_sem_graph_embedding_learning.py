@@ -400,21 +400,21 @@ def main(args):
     random_state = random_state_index
 
     logger.info("Load Semantic Embeddings")
-    embeddings_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings"
+    embeddings_dir_path = "../gold_data/embeddings"
     sem_embeddings = list(load_embeddings(embeddings_dir_path, dataset_name, 'semantic-based', random_state))
     col_sem_embeddings = sem_embeddings[0]
     ds_sem_embeddings = sem_embeddings[1]
     be_sem_embeddings = sem_embeddings[2]
     
     logger.info("Load Syntactic Embeddings")
-    embeddings_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings"
+    embeddings_dir_path = "../gold_data/embeddings"
     syn_embeddings = list(load_embeddings(embeddings_dir_path, dataset_name, 'syntactic-based', random_state))
     col_syn_embeddings = syn_embeddings[0].float()
     ds_syn_embeddings = syn_embeddings[1].float()
     be_syn_embeddings = syn_embeddings[2].float()
 
     logger.info("load Graph Embeddings")
-    embeddings_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings"
+    embeddings_dir_path = "../gold_data/embeddings"
     graph_embeddings = list(load_embeddings(embeddings_dir_path, dataset_name, 'graph-based', random_state))
     col_graph_embeddings = graph_embeddings[0].detach().cpu().float()
     ds_graph_embeddings = graph_embeddings[1].detach().cpu().float()
@@ -422,7 +422,7 @@ def main(args):
     
 
     logger.info("Load Edge Indexes")
-    edge_indexes_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/edge_indexes/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
+    edge_indexes_dir_path = f"../gold_data/edge_indexes/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
     
     if object_to_annotate == 'column':
         train_pos_col_edge_index = load_torch_tensor(edge_indexes_dir_path, 'train_pos_col_edge_index.pt')
@@ -543,7 +543,7 @@ def main(args):
     optimizer = torch.optim.AdamW(hybrid_link_predictor.parameters(), lr=parameters['learning_rate'])
 
     logger.info("Tensorboard SummaryWriter Instatiation")
-    writer_log_dir = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/trainings/{model_name}/dataset_name={dataset_name}/random_state={random_state}/epochs={parameters['nb_epochs']}"
+    writer_log_dir = f"../gold_data/trainings/{model_name}/dataset_name={dataset_name}/random_state={random_state}/epochs={parameters['nb_epochs']}"
 
     if not os.path.exists(writer_log_dir):
         os.makedirs(writer_log_dir)
@@ -602,7 +602,7 @@ def main(args):
     
         logger.info("Save metrics")
         
-        metric_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/{model_name}"
+        metric_dir_path = f"../gold_data/metrics/{model_name}"
         metrics = {
             "MRR": round(mrr, 4),
             "Hit@10": round(hit_at_10, 4),
@@ -617,7 +617,7 @@ def main(args):
         mlflow.log_metric('hit_at_10', round(hit_at_10, 4))
         
         logger.info("Save Hybrid Model")
-        models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
+        models_dir_path = "../gold_data/models"
         
         save_model(hybrid_link_predictor, models_dir_path, dataset_name, parameters['nb_epochs'], model_name, random_state)
 
