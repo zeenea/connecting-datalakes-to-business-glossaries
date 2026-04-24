@@ -16,7 +16,7 @@ def load_yaml(file_path):
 
 def load_semantic_textual_link_embeddings(dataset_name, object_to_annotate, random_state):
 
-    embeddings_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/embeddings/dataset_name={dataset_name}/model_type=semantic-based/random_state={random_state}/"
+    embeddings_path = f"../gold_data/embeddings/dataset_name={dataset_name}/model_type=semantic-based/random_state={random_state}/"
 
     embedding_file_names = [f"train_{object_to_annotate}_be_textual_link_embeddings.pt", f"test_{object_to_annotate}_be_textual_link_embeddings.pt"]
 
@@ -24,10 +24,12 @@ def load_semantic_textual_link_embeddings(dataset_name, object_to_annotate, rand
         file_path = f"{embeddings_path}/{file_name}"
         if os.path.exists(file_path):
             yield torch.load(file_path)
+        else:
+            print(f"File {file_path} does not exist.")
 
 
 def load_textual_links(dataset_name, object_to_annotate, random_state):
-    obj_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/raw_to_dataframes/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
+    obj_path = f"../gold_data/raw_to_dataframes/dataset_name={dataset_name}/object_to_annotate={object_to_annotate}/random_state={random_state}"
 
     file_names = ['train_textual_links.parquet', 'test_textual_links.parquet']
     
@@ -35,6 +37,8 @@ def load_textual_links(dataset_name, object_to_annotate, random_state):
         file_path = f"{obj_path}/{file_name}"
         if os.path.exists(file_path):
             yield pd.read_parquet(file_path)
+        else:
+            print(f"File {file_path} does not exist.")
 
                         
 class TextualLinkEmbeddingsDataset(torch.utils.data.Dataset):
@@ -458,7 +462,7 @@ def main(args):
     test_loader = torch.utils.data.DataLoader(test_dataset, collate_fn=collate_test_dataset_fn, shuffle=True, batch_size=parameters['batch_size'], num_workers=parameters['num_workers'])
 
     logger.info("Tensorboard SummaryWriter Instatiation")
-    writer_log_dir = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/trainings/{model_class_name}/dataset_name={dataset_name}/random_state={random_state}/epochs={parameters['max_epochs']}"
+    writer_log_dir = f"../gold_data/trainings/{model_class_name}/dataset_name={dataset_name}/random_state={random_state}/epochs={parameters['max_epochs']}"
 
     if not os.path.exists(writer_log_dir):
         os.makedirs(writer_log_dir)
@@ -490,7 +494,7 @@ def main(args):
     
         logger.info("Save metrics")
         
-        metric_dir_path = f"/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/metrics/{model_class_name}"
+        metric_dir_path = f"../gold_data/metrics/{model_class_name}"
         metrics = {
             "MRR": round(mrr, 4),
             "Hit@10": round(hit_at_k, 4),
@@ -505,7 +509,7 @@ def main(args):
         mlflow.log_metric('hit_at_10', round(hit_at_k, 4))
     
         logger.info("Save Binary Classifier Model")
-        models_dir_path = "/home/aknouchea/link-prediction-experiments/hybrid-link-prediction/gold_data/models"
+        models_dir_path = "../gold_data/models"
         
         save_model(link_predictor, models_dir_path, dataset_name, object_to_annotate, parameters['max_epochs'], model_class_name, random_state)
 
